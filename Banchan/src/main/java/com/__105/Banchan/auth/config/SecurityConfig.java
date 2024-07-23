@@ -22,6 +22,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.List;
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -39,10 +41,10 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         config.setAllowCredentials(true);
-        config.addAllowedOriginPattern("*"); // 모든 출처 허용
+        config.addAllowedOrigin("http://localhost:8080"); // 모든 출처 허용
         config.addAllowedHeader("*"); // 모든 헤더 허용
-        config.addAllowedMethod("*"); // 모든 메소드 허용
-
+//        config.addAllowedMethod("*"); // 모든 메소드 허용
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         // 모든 URL 패턴에 대해 위의 CORS 설정을 적용
         source.registerCorsConfiguration("/**", config);
         return source;

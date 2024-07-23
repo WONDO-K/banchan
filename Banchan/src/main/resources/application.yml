@@ -4,9 +4,9 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://mysql-db:3305/banchan?serverTimezone=Asia/Seoul
+    url: jdbc:mysql://mysql:3306/banchan
     username: root
-    password: 1234
+    password: root
 
   jpa:
     properties:
@@ -24,10 +24,9 @@ jwt:
   secret: e13af114d471424d6c9f2b7d03c3e25e630f269fbb3587f35068cb7d253150f568812b114afd8fd6941a005cdcf64b8b8baec4ce9de512b6aaad9ba732c6eee4
   expiration: 1296000000
 
-redis:
-  host: redis-refresh-token
+spring.data.redis:
+  host: localhost
   port: 6379
-  password: banchan201105
 
 server:
   port: 8080
