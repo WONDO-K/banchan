@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API 테스트</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        h1 { text-align: center; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; }
+        input, textarea { width: 100%; padding: 8px; box-sizing: border-box; }
+        button { padding: 10px 15px; background-color: #007bff; color: white; border: none; cursor: pointer; }
+        button:hover { background-color: #0056b3; }
+        .response { margin-top: 20px; }
+        pre { background-color: #f8f9fa; padding: 10px; border: 1px solid #e9ecef; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>API 테스트</h1>
+
+    <!-- 카카오 로그인 버튼 -->
+    <div class="form-group">
+        <h2>카카오 로그인</h2>
+        <button onclick="kakaoLogin()">카카오 로그인 시작</button>
+    </div>
+
+    <!-- 로그인 성공 테스트 -->
+    <div class="form-group">
+        <h2>로그인 성공 테스트</h2>
+        <label for="loginAccessToken">Access Token:</label>
+        <input type="text" id="loginAccessToken" placeholder="로그인 성공 시 Access Token 입력">
+        <button onclick="testLoginSuccess()">테스트</button>
+        <div id="loginSuccessResponse" class="response"></div>
+    </div>
+
+    <!-- 회원가입 페이지 테스트 -->
+    <div class="form-group">
+        <h2>회원가입 페이지 테스트</h2>
+        <label for="signupToken">Signup Token:</label>
+        <input type="text" id="signupToken" placeholder="회원가입 시 Token 입력">
+        <button onclick="testSignup()">테스트</button>
+        <div id="signupResponse" class="response"></div>
+    </div>
+
+    <!-- 회원가입 처리 테스트 -->
+    <div class="form-group">
+        <h2>회원가입 처리 테스트</h2>
+        <label for="signupTokenForProcessing">Signup Token:</label>
+        <input type="text" id="signupTokenForProcessing" placeholder="회원가입 처리 시 Token 입력">
+        <label for="realname">Realname:</label>
+        <input type="text" id="realname" placeholder="Realname 입력">
+        <label for="phone">Phone:</label>
+        <input type="text" id="phone" placeholder="Phone 입력">
+        <label for="attributeKey">Attribute Key:</label>
+        <input type="text" id="attributeKey" placeholder="Attribute Key 입력">
+        <button onclick="testSignupProcessing()">테스트</button>
+        <div id="signupProcessingResponse" class="response"></div>
+    </div>
+
+    <!-- 토큰 갱신 테스트 -->
+    <div class="form-group">
+        <h2>토큰 갱신 테스트</h2>
+        <label for="refreshToken">Access Token:</label>
+        <input type="text" id="refreshToken" placeholder="Access Token 입력">
+        <button onclick="testTokenRefresh()">테스트</button>
+        <div id="tokenRefreshResponse" class="response"></div>
+    </div>
+</div>
+
+<script>
+    const KAKAO_LOGIN_URL = 'https://kauth.kakao.com/oauth/authorize';
+    const KAKAO_CLIENT_ID = 'YOUR_KAKAO_CLIENT_ID'; // 카카오 앱의 Client ID
+    const REDIRECT_URI = 'http://localhost:8080/loginSuccess'; // 리디렉션 URI
+
+    function kakaoLogin() {
+        const loginUrl = `${KAKAO_LOGIN_URL}?client_id=${KAKAO_CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code`;
+        window.location.href = loginUrl;
+    }
+
+    async function testLoginSuccess() {
+        const accessToken = document.getElementById('loginAccessToken').value;
+        try {
+            const response = await fetch(`http://localhost:8080/loginSuccess?accessToken=${encodeURIComponent(accessToken)}`);
+            const result = await response.text();
+            document.getElementById('loginSuccessResponse').innerHTML = `<pre>${result}</pre>`;
+        } catch (error) {
+            document.getElementById('loginSuccessResponse').innerHTML = `<pre>Error: ${error.message}</pre>`;
+        }
+    }
+
+    async function testSignup() {
+        const signupToken = document.getElementById('signupToken').value;
+        try {
+            const response = await fetch(`http://localhost:8080/signup?signupToken=${encodeURIComponent(signupToken)}`);
+            const result = await response.json();
+            document.getElementById('signupResponse').innerHTML = `<pre>${JSON.stringify(result, null, 2)}</pre>`;
+        } catch (error) {
+            document.getElementById('signupResponse').innerHTML = `<pre>Error: ${error.message}</pre>`;
+        }
+    }
+
+    async function testSignupProcessing() {
+        const signupToken = document.getElementById('signupTokenForProcessing').value;
+        const realname = document.getElementById('realname').value;
+        const phone = document.getElementById('phone').value;
+        const attributeKey = document.getElementById('attributeKey').value;
+
+        try {
+            const response = await fetch('http://localhost:8080/signup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    signupToken,
+                    realname,
+                    phone,
+                    attributeKey
+                })
+            });
+
+            const result = await response.json();
+            document.getElementById('signupProcessingResponse').innerHTML = `<pre>${JSON.stringify(result, null, 2)}</pre>`;
+        } catch (error) {
+            document.getElementById('signupProcessingResponse').innerHTML = `<pre>Error: ${error.message}</pre>`;
+        }
+    }
+
+    async function testTokenRefresh() {
+        const accessToken = document.getElementById('refreshToken').value;
+        try {
+            const response = await fetch('http://localhost:8080/token/refresh', {
+                method: 'POST',
+                headers: {
+                    'Authorization': accessToken
+                }
+            });
+
+            const result = await response.json();
+            document.getElementById('tokenRefreshResponse').innerHTML = `<pre>${JSON.stringify(result, null, 2)}</pre>`;
+        } catch (error) {
+            document.getElementById('tokenRefreshResponse').innerHTML = `<pre>Error: ${error.message}</pre>`;
+        }
+    }
+</script>
+</body>
+</html>
