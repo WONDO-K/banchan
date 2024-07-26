@@ -56,7 +56,7 @@ public class MyAuthenticationSuccessHandler extends SimpleUrlAuthenticationSucce
             GeneratedToken token = jwtUtil.generateToken(email, role);
             log.info("jwtToken = {}", token.getAccessToken());
 
-            String targetUrl = UriComponentsBuilder.fromUriString("http://localhost:8080/loginSuccess")
+            String targetUrl = UriComponentsBuilder.fromUriString("http://localhost/api/auth/loginSuccess")
                     .queryParam("accessToken", token.getAccessToken())
                     .build()
                     .encode(StandardCharsets.UTF_8)
@@ -66,7 +66,7 @@ public class MyAuthenticationSuccessHandler extends SimpleUrlAuthenticationSucce
         } else {
             // 수정된 부분: signupToken 생성 후 URL로 전달
             String signupToken = jwtUtil.generateTokenForSignup(email, provider);
-            String targetUrl = UriComponentsBuilder.fromUriString("http://localhost:8080/signup")
+            String targetUrl = UriComponentsBuilder.fromUriString("http://localhost/api/auth/signup")
                     .queryParam("signupToken", signupToken)
                     .build()
                     .encode(StandardCharsets.UTF_8)

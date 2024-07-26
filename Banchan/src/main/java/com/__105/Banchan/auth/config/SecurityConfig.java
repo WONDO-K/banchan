@@ -22,12 +22,16 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
+import org.springframework.security.oauth2.client.registration.ClientRegistration;
+
 import java.util.List;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-public class SecurityConfig {
+public class SecurityConfig{
 
     private final MyAuthenticationSuccessHandler oAuth2LoginSuccessHandler;
     private final CustomOAuth2UserService customOAuth2UserService;
@@ -41,10 +45,10 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         config.setAllowCredentials(true);
-        config.addAllowedOrigin("http://localhost:8080"); // 모든 출처 허용
+        config.addAllowedOrigin("http://localhost"); // 모든 출처 허용
         config.addAllowedHeader("*"); // 모든 헤더 허용
-//        config.addAllowedMethod("*"); // 모든 메소드 허용
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")); // 모든 메소드 허용
+
         // 모든 URL 패턴에 대해 위의 CORS 설정을 적용
         source.registerCorsConfiguration("/**", config);
         return source;
@@ -58,9 +62,9 @@ public class SecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable) // form 로그인 비활성화
                 .sessionManagement(configure -> configure.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 관리 정책을 STATELESS로 설정
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api_test").permitAll()
-                        .requestMatchers("/token/refresh").hasRole("USER") // USER 권한이 필요한 상황을 먼저 설정
-                        .requestMatchers("/token/**", "/loginSuccess", "/signup").permitAll() // 나머지 /token/** 경로와 /loginSuccess 경로는 모두 허용
+                        .requestMatchers("/api/auth/token/refresh").hasRole("USER") // USER 권한이 필요한 상황을 먼저 설정
+                        .requestMatchers("/api/auth/**").permitAll() // 나머지 /token/** 경로와 /loginSuccess 경로는 모두 허용
+                        .requestMatchers("/api/v1/**").authenticated()
                         .requestMatchers("/", "/css/**", "/images/**", "/js/**", "/favicon.ico", "/h2-console/**").permitAll() // 기타 경로는 모두 허용
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll() // Swagger 관련 경로 모두 허용
                         .anyRequest().authenticated() // 그 외의 모든 요청은 인증이 필요함
@@ -77,6 +81,4 @@ public class SecurityConfig {
                 .addFilterBefore(jwtExceptionFilter, JwtAuthFilter.class)
                 .build();
     }
-
-
 }

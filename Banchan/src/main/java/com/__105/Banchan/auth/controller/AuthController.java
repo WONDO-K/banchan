@@ -31,6 +31,7 @@ import java.util.Optional;
 @CrossOrigin(origins = "*")
 @Controller
 @RequiredArgsConstructor
+@RequestMapping("/api/auth")
 @Tag(name = "AuthController", description = "인증 관련 API")
 public class AuthController {
 

@@ -21,7 +21,7 @@ import org.springframework.context.annotation.Configuration;
                 contact = @Contact(name = "201105", email = "your.email@example.com")
         ),
         servers = @Server(
-                url = "http://localhost:8080", // 실제 배포된 URL로 변경 필요
+                url = "http://localhost", // 실제 배포된 URL로 변경 필요
                 description = "Default Server URL"
         )
 )

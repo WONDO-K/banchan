@@ -1,11 +1,32 @@
-# 사용할 기본 이미지를 지정합니다.
+# 베이스 이미지 설정 (OpenJDK 17)
 FROM openjdk:17-jdk-slim
 
-# JAR 파일을 컨테이너의 /app 디렉토리로 복사합니다.
-COPY build/libs/Banchan-0.0.1-SNAPSHOT.jar /app/Banchan-0.0.1-SNAPSHOT.jar
+# 빌드 타임 변수 설정
+ARG APP_HOME=/app
+ARG APP_JAR=Banchan-0.0.1-SNAPSHOT.jar
+ARG APP_TARGET=build/libs
 
-# 컨테이너에서 애플리케이션을 실행할 포트를 설정합니다.
-EXPOSE 8080
+WORKDIR $APP_HOME
 
-# 애플리케이션을 실행합니다.
-ENTRYPOINT ["java", "-jar", "/app/Banchan-0.0.1-SNAPSHOT.jar"]
+# Gradle 설치
+RUN apt-get update && apt-get install -y wget unzip dos2unix \
+    && wget https://services.gradle.org/distributions/gradle-7.3.3-bin.zip \
+    && unzip gradle-7.3.3-bin.zip -d /opt \
+    && rm gradle-7.3.3-bin.zip \
+    && ln -s /opt/gradle-7.3.3/bin/gradle /usr/bin/gradle
+
+# Gradle과 프로젝트 관련 파일들을 복사
+COPY build.gradle settings.gradle gradle /app/
+COPY gradlew /app/gradlew
+COPY gradlew.bat /app/gradlew.bat
+COPY gradle/wrapper /app/gradle/wrapper
+COPY src /app/src
+
+# gradlew에 실행 권한 추가 및 dos2unix 변환
+RUN chmod +x /app/gradlew && dos2unix /app/gradlew
+
+# Gradle을 사용하여 애플리케이션 빌드
+RUN ./gradlew build
+
+# 애플리케이션 실행 명령어 설정
+CMD ["java", "-jar", "build/libs/Banchan-0.0.1-SNAPSHOT.jar"]

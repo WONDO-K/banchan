@@ -35,3 +35,9 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### db_volume
+mysql_data/
+
+###
+redis_data/dump.rdb

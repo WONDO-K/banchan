@@ -4,19 +4,19 @@ spring:
       client:
         registration:
           kakao:
-            client-id: bf8b973a0abee43c16fb3c2f2321ec29
-            client-secret: GIngwIogfJz2Rq3ewBz3euQN2RRYYXfU
-            redirect-uri: http://localhost:8080/login/oauth2/code/kakao
-            authorization-grant-type: authorization_code
-            client-authentication-method: client_secret_post
+            client-id: ${KAKAO_CLIENT_ID} # 카카오 클라이언트 ID
+            client-secret: ${KAKAO_CLIENT_SECRET} # 카카오 클라이언트 시크릿
+            redirect-uri: ${KAKAO_REDIRECT_URI} # 카카오 리다이렉트 URI
+            authorization-grant-type: authorization_code # 인증 유형
+            client-authentication-method: client_secret_post # 클라이언트 인증 방법
             scope:
-              - account_email
-              - talk_message
-            client-name: kakao
+              - account_email # 요청할 권한: 이메일
+              - talk_message # 요청할 권한: 카카오톡 메시지
+            client-name: kakao # 클라이언트 이름
 
         provider:
           kakao:
-            authorization-uri: https://kauth.kakao.com/oauth/authorize
-            token-uri: https://kauth.kakao.com/oauth/token
-            user-info-uri: https://kapi.kakao.com/v2/user/me
-            user-name-attribute: id
+            authorization-uri: https://kauth.kakao.com/oauth/authorize # 카카오 인증 URI
+            token-uri: https://kauth.kakao.com/oauth/token # 카카오 토큰 URI
+            user-info-uri: https://kapi.kakao.com/v2/user/me # 카카오 사용자 정보 URI
+            user-name-attribute: id # 사용자 이름 속성
