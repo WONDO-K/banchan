@@ -1,44 +1,33 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-// import axios from "axios";
+import axios from "axios";
 
 const CreateMeeting: React.FC = () => {
-  const [title, setTitle] = useState("");
-  const [date, setDate] = useState("");
+  const [roomName, setRoomName] = useState("");
+  const [startDate, setStartDate] = useState("");
   const [startTime, setStartTime] = useState("");
 
   const navigate = useNavigate();
 
-  const handleCreateMeeting = async () => {
-    navigate(`/meeting/reservedMeeting`, {
-      state: { title, date, startTime },
-    });
+  const handleCreateMeeting = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await axios.post("http://localhost:8080/api/session/createRoom", {
+        roomName,
+        startDate,
+        startTime,
+      });
+      navigate(`/meeting/reservedMeeting`);
+    } catch (error) {
+      console.error("Error creating meeting:", error);
+    }
   };
-
-  // const handleCreateMeeting = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   try {
-  //     await axios.post("http://localhost:8080/api/meetings", {
-  //       title,
-  //       date,
-  //       startTime,
-  //     });
-  //     navigate(`/meeting/reservedMeeting`);
-  //   } catch (error) {
-  //     console.error("Error creating meeting:", error);
-  //   }
-  // };
 
   return (
     <div className=" flex items-center justify-center ">
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md  mt-[200px]">
         <h2 className="text-2xl font-bold mb-6">회의 생성</h2>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            handleCreateMeeting();
-          }}
-        >
+        <form onSubmit={handleCreateMeeting}>
           <div className="mb-4">
             <label
               htmlFor="title"
@@ -49,8 +38,8 @@ const CreateMeeting: React.FC = () => {
             <input
               type="text"
               id="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              value={roomName}
+              onChange={(e) => setRoomName(e.target.value)}
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               required
             />
@@ -65,8 +54,8 @@ const CreateMeeting: React.FC = () => {
             <input
               type="date"
               id="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               required
             />

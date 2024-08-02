@@ -1,59 +1,20 @@
-import SmallButton from "../Buttons/SmallButton";
-import Nav from "../Nav";
-import NavItem from "../NavItem";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import Pagination from "../Pagination";
 import Table from "../Table";
+import Nav from "../Nav";
+import NavItem from "../NavItem";
+import SmallButton from "../Buttons/SmallButton";
 
-const checkResult = () => {
-  return (
-    <SmallButton
-      title="회의 내용보기"
-      bgColor="bg-white"
-      txtColor=""
-      borderColor="border-customGreen"
-    />
-  );
-};
-
-const deleteMeeting = () => {
-  return (
-    <SmallButton
-      title="삭제하기"
-      bgColor="bg-white"
-      txtColor="text-customRed"
-      borderColor="border-customRed"
-    />
-  );
-};
-
-const headers = ["번호", "제목", "주최자", "회의 일시"];
-
-const data = [
-  [
-    1,
-    "LH 7월 4주차 정기회의",
-    "관리자",
-    "2022-07-27 16:00",
-    checkResult(),
-    deleteMeeting(),
-  ],
-  [
-    2,
-    "103동 아파트 정기 회계 감사",
-    "관리자",
-    "2022-07-30 22:00",
-    checkResult(),
-    deleteMeeting(),
-  ],
-  [
-    3,
-    "[긴급] 급한 일 있습니다.",
-    "관리자",
-    "2022-08-05 13:00",
-    checkResult(),
-    deleteMeeting(),
-  ],
-];
+interface Meeting {
+  id: number;
+  roomName: string;
+  startDate: string;
+  startTime: string;
+  session: string | null;
+  createdAt: string | null;
+  active: boolean;
+}
 
 const NavElements = () => {
   return (
@@ -64,7 +25,79 @@ const NavElements = () => {
   );
 };
 
-const FinishedMeeting = () => {
+const FinishedMeeting: React.FC = () => {
+  const [meetings, setMeetings] = useState<Meeting[]>([]);
+
+  useEffect(() => {
+    const fetchMeetings = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:8080/api/session/get/roomList"
+        );
+        if (response.data && Array.isArray(response.data.data)) {
+          setMeetings(response.data.data);
+        } else {
+          console.error("Expected an array but got:", response.data);
+        }
+      } catch (error) {
+        console.error("Error fetching meetings:", error);
+      }
+    };
+
+    fetchMeetings();
+  }, []);
+
+  const checkResult = () => {
+    return (
+      <SmallButton
+        title="회의 내용보기"
+        bgColor="bg-white"
+        txtColor=""
+        borderColor="border-customGreen"
+      />
+    );
+  };
+
+  const deleteMeeting = (meetingId: number) => {
+    return (
+      <SmallButton
+        title="삭제하기"
+        bgColor="bg-white"
+        txtColor="text-customRed"
+        borderColor="border-customRed"
+        onClick={() => {
+          handleDeleteMeeting(meetingId);
+        }}
+      />
+    );
+  };
+
+  const handleDeleteMeeting = async (meetingId: number) => {
+    try {
+      await axios.delete(
+        `http://localhost:8080/api/session/delete/room/${meetingId}`
+      );
+      setMeetings((prevMeetings) =>
+        prevMeetings.filter((meeting) => meeting.id !== meetingId)
+      );
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const headers = ["번호", "제목", "주최자", "참가 인원", "상세정보", "삭제"];
+
+  const data = meetings
+    .filter((meeting) => !meeting.active && meeting.session)
+    .map((meeting, index) => [
+      index + 1,
+      meeting.roomName,
+      "관리자",
+      `${meeting.id}` + "명",
+      checkResult(),
+      deleteMeeting(meeting.id),
+    ]);
+
   return (
     <>
       <NavElements />

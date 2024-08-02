@@ -4,8 +4,19 @@ import Table from "../Table";
 import SmallButton from "../Buttons/SmallButton";
 import Nav from "../Nav";
 import NavItem from "../NavItem";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import React, { useEffect, useState } from "react";
+
+interface Meeting {
+  id: number;
+  roomName: string;
+  startDate: string;
+  startTime: string;
+  session: string | null;
+  createdAt: string | null;
+  active: boolean;
+}
 
 const NavElements = () => {
   return (
@@ -16,29 +27,35 @@ const NavElements = () => {
   );
 };
 
-const ReservedMeeting = () => {
-  const location = useLocation();
+const ReservedMeeting: React.FC = () => {
   const navigate = useNavigate();
-  const { title, date, startTime } = location.state || {};
-  // const [meetings, setMeetings] = useState([]);
+  const [meetings, setMeetings] = useState<Meeting[]>([]);
 
-  //  useEffect(() => {
-  //    const fetchMeetings = async () => {
-  //      try {
-  //        const response = await axios.get("http://localhost:8080/api/meetings");
-  //        setMeetings(response.data);
-  //      } catch (error) {
-  //        console.error("Error fetching meetings:", error);
-  //      }
-  //    };
+  useEffect(() => {
+    const fetchMeetings = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:8080/api/session/get/roomList"
+        );
 
-  //    fetchMeetings();
-  //  }, []);
+        // meetings가 배열인지 확인
+        if (response.data && Array.isArray(response.data.data)) {
+          setMeetings(response.data.data);
+        } else {
+          console.error("Expected an array but got:", response.data);
+        }
+      } catch (error) {
+        console.error("Error fetching meetings:", error);
+      }
+    };
 
-  const createSession = async (): Promise<string> => {
+    fetchMeetings();
+  }, []);
+
+  const createSession = async (meetingId: number): Promise<string> => {
     const response = await axios.post(
-      "http://ec2-54-66-234-44.ap-southeast-2.compute.amazonaws.com:8080/api/session",
-
+      `http://localhost:8080/api/session/${meetingId}`,
+      {},
       {
         headers: {
           "Content-Type": "application/json",
@@ -50,57 +67,56 @@ const ReservedMeeting = () => {
     return response.data;
   };
 
-  const handleActivateMeeting = async () => {
-    const sessionId = await createSession();
+  const handleActivateMeeting = async (meeting: Meeting) => {
+    const sessionId = await createSession(meeting.id);
     navigate(`/meetingPage/${sessionId}`, {
-      state: { title, date, startTime },
+      state: {
+        roomName: meeting.roomName,
+        startDate: meeting.startDate,
+        startTime: meeting.startTime,
+        active: meeting.active,
+      },
     });
   };
 
-  const startMeeting = () => {
+  const startMeeting = (meeting: Meeting) => {
     return (
       <SmallButton
         title="회의 활성화"
         bgColor="bg-white"
         txtColor=""
         borderColor="border-customGreen"
-        onClick={handleActivateMeeting}
+        onClick={() => handleActivateMeeting(meeting)}
       />
     );
   };
 
-  const sendNoti = () => {
+  const sendNoti = (meeting: Meeting) => {
     return (
       <SmallButton
         title="알림 보내기"
         bgColor="bg-white"
         txtColor=""
         borderColor="border-customYellow"
+        onClick={() =>
+          console.log(`Sending notification for meeting ID: ${meeting.id}`)
+        }
       />
     );
   };
 
   const headers = ["번호", "제목", "주최자", "회의 예정시각", "활성화", "알림"];
 
-  const data = [
-    [
-      1,
-      "LH 7월 4주차 정기회의",
+  const data = meetings
+    .filter((meeting) => !meeting.active && meeting.session == null)
+    .map((meeting, index) => [
+      index + 1,
+      meeting.roomName,
       "관리자",
-      "2022-07-27 16:00",
-      startMeeting(),
-      sendNoti(),
-    ],
-  ];
-
-  // const data = meetings.map((meeting, index) => [
-  //   index + 1,
-  //   meeting.title,
-  //   "관리자",
-  //   `${meeting.date} ${meeting.startTime}`,
-  //   startMeeting(meeting),
-  //   sendNoti(),
-  // ]);
+      `${meeting.startDate} ${meeting.startTime}`,
+      startMeeting(meeting),
+      sendNoti(meeting),
+    ]);
 
   return (
     <>
