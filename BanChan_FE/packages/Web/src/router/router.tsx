@@ -27,6 +27,7 @@ import UserManagePage from "../pages/UserManagePage";
 import OtherManagePage from "../pages/OtherManagePage";
 import CreateMeeting from "../components/MeetingManage/CreateMeeting";
 import MyPage from "../pages/MyPage";
+import VoteEnd from "../components/VoteManage/VoteEnd";
 
 function AppRoutes() {
   return (
@@ -75,7 +76,7 @@ function AppRoutes() {
           <Route path="finish" element={<FinishedVote />} />
           <Route path="create" element={<VoteCreatePage />} />
           <Route path="active/:id" element={<VoteDetail />} />
-          <Route path="finish/:id" element={<VoteDetail />} />
+          <Route path="finish/:id" element={<VoteEnd />} />
         </Route>
         {/* 메세지 전송 */}
         <Route path="/message" element={<SendMessage />} />

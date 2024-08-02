@@ -1,0 +1,20 @@
+services:
+  jenkins:
+    container_name: jenkins
+    build:
+      dockerfile: Dockerfile
+    expose:
+      - "8080"
+      - "50000"
+    environment:
+      JENKINS_OPTS: --prefix=/jenkins
+      JAVA_OPTS: "-Djenkins.install.runSetupWizard=false"
+    volumes:
+      - ../jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
+    external: true

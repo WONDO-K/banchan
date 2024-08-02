@@ -14,8 +14,7 @@ const HeaderFormet: { [key: string]: string } = {
     id: '번호',
     title: '제목',
     writer: '작성자',
-    startDate: '투표 시작일',
-    endDate: '투표 종료일',
+    voteDate: '투표 기간',
     createdAt: '작성일',
     voteRate:'투표율'
 };

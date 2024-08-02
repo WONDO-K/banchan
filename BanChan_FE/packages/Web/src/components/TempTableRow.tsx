@@ -15,7 +15,7 @@ console.log(row)
         <td key={cellIndex} className="p-4 text-center">
           <Link to={`${row['id']}`}>
           {row[column]}
-        </Link>
+          </Link>
         </td>
       ))}
     </tr>

@@ -1,0 +1,15 @@
+# docker-compose-resource.yml
+services:
+  nginx:
+    container_name: reverse
+    build:
+      context: ../nginx
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
+    external: true

@@ -57,7 +57,7 @@ const VoteCreateForm: React.FC<VoteCreateFormProps> = ({ id, onDelete, onChange 
     onKeyDown={handleKeyDown}
     >
       <div className='flex  justify-between'>
-        <p className='m-0 pt-4 text-sm text font-semibold'>투표 주제 {id}</p>
+        <p className='m-0 pt-4 text-sm text font-semibold'>투표 주제</p>
       <button
         onClick={() => onDelete(id)}
         className="self-end ml-2 p-2 text-red-500 hover:text-red-700"

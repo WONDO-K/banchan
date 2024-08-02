@@ -1,3 +1,5 @@
 ###환경변수
 docker-compose/.env
 Banchan_FE/.env
+.env
+jenkins_home/

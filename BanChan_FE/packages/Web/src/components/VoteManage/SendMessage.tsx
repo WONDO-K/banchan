@@ -73,7 +73,7 @@ const SendMessage: React.FC = () => {
       const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         navigate(-1)
         e.preventDefault()
-        const phone = ['010-2098-3066','010-7132-4405']
+        const phone = ['010-2098-3066','010-2859-4797']
         phone.map((number) => {
           const after = number.replace(/-/gi,'')
           const messages = [

@@ -58,14 +58,13 @@ const VoteDetail: React.FC = () => {
       const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (Object.keys(votes).length === voteData.questions.length){
-            alert('투표 완료')
             const voteResult = Object.keys(votes).map((question_id) => ({
               question_id: Number(question_id),
               option_id: votes[Number(question_id)],
             }));
             const Data = {
                 voteId : voteData.id,
-                response : [voteResult]
+                response : voteResult
             }
             console.log(Data);
             // 이 밑에 axios 요청이 들어감
@@ -115,7 +114,7 @@ const VoteDetail: React.FC = () => {
         {/* 투표 기간 */}
             <div className='flex justify-end pt-2'>
                 <span className='text-sm font-semibold mx-4'>
-                    투표 기간 : {voteData.start_date} ~ {voteData.end_date}
+                    투표 기간 : {voteData.start_date.replace('T',' ').slice(0,-3)} ~ {voteData.end_date.replace('T',' ').slice(0,-3)}
                 </span>
             </div>
     {/* 투표 버튼 */}

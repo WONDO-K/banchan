@@ -1,10 +1,20 @@
-import { Link } from "react-router-dom";
 import Nav from "../Nav";
 import NavItem from "../NavItem";
 import Sorting from "../Sorting";
 import Pagination from "../Pagination";
 import TempTable from "../TempTable";
-const vote = {
+import LargeButton from "../Buttons/LargeButton";
+
+interface dataType {
+  id:number,
+  title:string
+  writer:string,
+  startDate:string,
+  endDate:string,
+  voteRate:string,
+}
+
+const vote:{crt_page:number, max_page:number, data:dataType[]} = {
   crt_page : 3,
   max_page : 10,
   data : [
@@ -82,8 +92,14 @@ const vote = {
   ]
 }
 const header:string[] = [
-  'id','title','writer','startDate','endDate','voteRate'
+  'id','title','writer','voteDate','voteRate'
 ]
+const fixVote = vote.data.map((items) => {
+  return {
+    ...items,
+    voteDate: `${items.startDate.replace('T',' ').slice(0,-3)} ~ ${items.endDate.replace('T',' ').slice(0,-3)}`
+  }
+})
 const NavElements = () => {
   return (
     <Nav>
@@ -93,10 +109,6 @@ const NavElements = () => {
   );
 };
 
-// const empty_vote = {
-//   data : []
-// }
-
 const ActiveVote = () => {
   return (
     <>
@@ -104,13 +116,9 @@ const ActiveVote = () => {
     <div className="container mx-auto p-4 mt-3">
       <div className="flex justify-end items-center mb-6 mr-6">
         <Sorting/>
-          <button className=" my-2  bg-blue-600/70 text-white px-4 rounded-full">
-          <Link to='/vote/create'>
-          투표 생성하기
-          </Link>
-          </button>
+          <LargeButton title="투표 생성" to="/vote/create"></LargeButton>
         </div>
-        <TempTable headerProp={header}data={vote.data} />
+        <TempTable headerProp={header}data={fixVote} />
         <Pagination/>
       </div>
     </>

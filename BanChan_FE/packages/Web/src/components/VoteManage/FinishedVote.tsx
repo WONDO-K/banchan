@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import Nav from "../Nav";
 import NavItem from "../NavItem";
 import Sorting from "../Sorting";
@@ -83,8 +82,16 @@ const vote = {
   ]
 }
 const header:string[] = [
-  'id','title','writer','startDate','endDate'
+  'id','title','writer','voteDate','voteRate'
 ]
+
+const fixVote = vote.data.map((items) => {
+  return {
+    ...items,
+    voteDate: `${items.startDate.replace('T',' ').slice(0,-3)} ~ ${items.endDate.replace('T',' ').slice(0,-3)}`
+  }
+})
+
 const NavElements = () => {
   return (
     <Nav>
@@ -101,13 +108,8 @@ const ActiveVote = () => {
     <div className="container mx-auto p-4 mt-3">
       <div className="flex justify-end items-center mb-6 mr-6">
         <Sorting/>
-          <button className=" my-2  bg-blue-600/70 text-white px-4 rounded-full">
-          <Link to='/vote/create'>
-          투표 생성하기
-          </Link>
-          </button>
         </div>
-        <TempTable headerProp={header}data={vote.data} />
+        <TempTable headerProp={header}data={fixVote} />
         <Pagination/>
       </div>
     </>
