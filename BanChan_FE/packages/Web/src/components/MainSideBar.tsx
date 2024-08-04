@@ -1,6 +1,6 @@
 // import React from "react";
 import { NavLink } from "react-router-dom";
-import logo from "../../../../shared/public/assets/logo.png";
+import logo from "@assets/logo.png";
 
 interface SidebarItemProps {
   icon: string;

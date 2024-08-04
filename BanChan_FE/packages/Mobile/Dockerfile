@@ -6,6 +6,12 @@ WORKDIR /app
 COPY package.json ./
 RUN npm install
 
+RUN npm install --save-dev ts-node
+
+RUN npm install @types/node --save-dev
+
+RUN npm install @types/crypto-js --save-dev
+
 COPY . .
 
 RUN npm run build
@@ -13,7 +19,8 @@ RUN npm run build
 # Stage 2: Serve the app with Nginx
 FROM nginx:alpine
 
-COPY --from=build /app/dist /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=build /app/dist /etc/nginx/html
 
 # Copy custom Nginx configuration if needed
 # COPY nginx.conf /etc/nginx/nginx.conf

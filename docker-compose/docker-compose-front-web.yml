@@ -1,13 +1,11 @@
 services:
-  front_dt:
-    container_name: banchan_front
+  banchan_front_web:
+    container_name: banchan_front_web
     build:
-      context: ../BanChan_FE
+      context: ../BanChan_FE/packages/Web
       dockerfile: Dockerfile
     expose:
       - "80"
-    volumes:
-      - /usr/share/nginx/html
     networks:
       - mynetwork
 

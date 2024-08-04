@@ -10,7 +10,7 @@ export default defineConfig({
   plugins: [react(), tsconfigPaths()],
   resolve: {
     alias: {
-      "@assets": path.resolve(__dirname, "../../shared/public/assets"),
+      "@assets": path.resolve(__dirname, "./src/assets"),
     },
   },
   build: {

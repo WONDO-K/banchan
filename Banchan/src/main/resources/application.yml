@@ -14,7 +14,7 @@ spring:
         show_sql: true # SQL 쿼리를 콘솔에 출력
         format_sql: true # SQL 쿼리를 읽기 쉽게 포맷팅
     hibernate:
-      ddl-auto: create # 애플리케이션 시작 시 데이터베이스 스키마 자동 생성
+      ddl-auto: update # 애플리케이션 시작 시 데이터베이스 스키마 자동 생성
     database-platform: org.hibernate.dialect.MySQLDialect # MySQL Dialect 설정
 
   profiles:
