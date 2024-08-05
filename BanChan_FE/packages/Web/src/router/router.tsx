@@ -37,7 +37,6 @@ function AppRoutes() {
       <Route path="/" element={<SocialLoginPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/write" element={<Write />} />
-      <Route path="/detail" element={<Detail />} />
       <Route path="/update" element={<Update />} />
       <Route path="/meetingPage/:id" element={<MeetingPage />} />
       <Route path="/chatBox" element={<ChatBox />} />
@@ -69,6 +68,7 @@ function AppRoutes() {
           <Route path="notice" element={<Notice />} />
           <Route path="board" element={<Board />} />
           <Route path="ask" element={<Ask />} />
+          <Route path="/community/:boardType/:id" element={<Detail />} />
         </Route>
 
         {/* 투표관리 페이지 */}
