@@ -38,7 +38,6 @@ const ReservedMeeting: React.FC = () => {
           "http://localhost:8080/api/session/get/roomList"
         );
 
-        // meetings가 배열인지 확인
         if (response.data && Array.isArray(response.data.data)) {
           setMeetings(response.data.data);
         } else {
@@ -52,7 +51,9 @@ const ReservedMeeting: React.FC = () => {
     fetchMeetings();
   }, []);
 
-  const createSession = async (meetingId: number): Promise<string> => {
+  const createSession = async (
+    meetingId: number
+  ): Promise<{ sessionId: string; token: string }> => {
     const response = await axios.post(
       `http://localhost:8080/api/session/${meetingId}`,
       {},
@@ -64,13 +65,28 @@ const ReservedMeeting: React.FC = () => {
       }
     );
 
-    return response.data;
+    const sessionId = response.data;
+    const tokenResponse = await axios.post(
+      `http://localhost:8080/api/session/${sessionId}/token`,
+      {},
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Basic " + btoa("OPENVIDUAPP:YOUR_SECRET"),
+        },
+      }
+    );
+
+    const token = tokenResponse.data;
+    return { sessionId, token };
   };
 
   const handleActivateMeeting = async (meeting: Meeting) => {
-    const sessionId = await createSession(meeting.id);
+    const { sessionId, token } = await createSession(meeting.id);
     navigate(`/meetingPage/${sessionId}`, {
       state: {
+        token,
+        sessionId,
         roomName: meeting.roomName,
         startDate: meeting.startDate,
         startTime: meeting.startTime,

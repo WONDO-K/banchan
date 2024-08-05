@@ -28,6 +28,7 @@ import OtherManagePage from "../pages/OtherManagePage";
 import CreateMeeting from "../components/MeetingManage/CreateMeeting";
 import MyPage from "../pages/MyPage";
 import VoteEnd from "../components/VoteManage/VoteEnd";
+import SessionJoinPage from "../pages/SessionJoinPage";
 
 function AppRoutes() {
   return (
@@ -59,6 +60,7 @@ function AppRoutes() {
           <Route path="reservedMeeting" element={<ReservedMeeting />} />
           <Route path="finishedMeeting" element={<FinishedMeeting />} />
           <Route path="createMeeting" element={<CreateMeeting />} />
+          <Route path="sessionJoin" element={<SessionJoinPage />} />
         </Route>
 
         {/* 커뮤니티 페이지 */}
