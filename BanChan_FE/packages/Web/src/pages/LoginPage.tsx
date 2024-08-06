@@ -1,12 +1,16 @@
 import axios from "axios";
 import { useState } from "react";
 import { useCookies } from "react-cookie";
-import { useEffect} from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-const API_URL = import.meta.env.VITE_API_URL
+const API_URL = import.meta.env.VITE_API_URL;
 const LoginPage = () => {
-  const navigate = useNavigate()
-  const [cookies,setCookie,removeCookie] = useCookies(['Token','rememberUserId','rememberUserPw'])
+  const navigate = useNavigate();
+  const [cookies, setCookie, removeCookie] = useCookies([
+    "Token",
+    "rememberUserId",
+    "rememberUserPw",
+  ]);
   const [user, setUser] = useState({
     userId: "",
     password: "",
@@ -15,19 +19,20 @@ const LoginPage = () => {
   const [rememberMe, setRememberMe] = useState(false);
 
   useEffect(() => {
-    if (cookies.rememberUserId !== undefined || cookies.rememberUserPw !== undefined) {
-      setUser(
-      {
+    if (
+      cookies.rememberUserId !== undefined ||
+      cookies.rememberUserPw !== undefined
+    ) {
+      setUser({
         userId: cookies.rememberUserId,
-        password : cookies.rememberUserPw
-      }
-      );
+        password: cookies.rememberUserPw,
+      });
       // setUserId 함수를 호출하여 state 변수인 userId의 값을 cookies.rememberUserId로 설정
       setRememberMe(true);
       // state 변수인 setIsRemember 값을 true로 설정
-      console.log('hi')
+      console.log("hi");
     }
-  }, [cookies.rememberUserId,cookies.rememberUserPw]);
+  }, [cookies.rememberUserId, cookies.rememberUserPw]);
   // rememberUserId 값이 변경될 때만 useEffect 함수가 실행되도록 설정한다.
   // 이렇게 하면 불필요한 state 업데이트를 방지할 수 있음
 
@@ -39,20 +44,26 @@ const LoginPage = () => {
     });
   };
 
-  const handleCheckboxChange = (e : React.ChangeEvent<HTMLInputElement>) => {
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setRememberMe(e.target.checked);
     if (!e.target.checked) {
-      removeCookie('rememberUserId'); // 쿠키 삭제
-      removeCookie('rememberUserPw'); // 쿠키 삭제
-
-    } else if(rememberMe){ // 체크박스가 체크되어있고, isRemember이 true라면
-      setCookie("rememberUserId", user.userId, { path: '/', expires: new Date(Date.now() + 604800000) });
-      setCookie("rememberUserPw", user.password, { path: '/', expires: new Date(Date.now() + 604800000) });
-
+      removeCookie("rememberUserId"); // 쿠키 삭제
+      removeCookie("rememberUserPw"); // 쿠키 삭제
+    } else if (rememberMe) {
+      // 체크박스가 체크되어있고, isRemember이 true라면
+      setCookie("rememberUserId", user.userId, {
+        path: "/",
+        expires: new Date(Date.now() + 604800000),
+      });
+      setCookie("rememberUserPw", user.password, {
+        path: "/",
+        expires: new Date(Date.now() + 604800000),
+      });
     }
   };
 
   const validate = async () => {
+    console.log(API_URL);
     console.log("로그인 유효성 검증:", user);
     if (user.userId === "") {
       alert("아이디를 입력해주세요.");
@@ -65,7 +76,7 @@ const LoginPage = () => {
           passwordHash: user.password,
         });
 
-        setCookie('Token', response.data.accessToken);
+        setCookie("Token", response.data.accessToken);
 
         const config = {
           headers: {
@@ -74,23 +85,31 @@ const LoginPage = () => {
         };
 
         try {
-          const user_data = await axios.get(`${API_URL}/api/user/myinfo`, config);
+          const user_data = await axios.get(
+            `${API_URL}/api/user/myinfo`,
+            config
+          );
 
-          
-          console.log(user_data.data)
-          alert(`${user_data.data.username}님 환영합니다!`)
+          console.log(user_data.data);
+          alert(`${user_data.data.username}님 환영합니다!`);
           if (rememberMe) {
-            setCookie("rememberUserId", user.userId, { path: '/', expires: new Date(Date.now() + 604800000) });
-            setCookie("rememberUserPw", user.password, { path: '/', expires: new Date(Date.now() + 604800000) });      
+            setCookie("rememberUserId", user.userId, {
+              path: "/",
+              expires: new Date(Date.now() + 604800000),
+            });
+            setCookie("rememberUserPw", user.password, {
+              path: "/",
+              expires: new Date(Date.now() + 604800000),
+            });
           }
-          navigate('/home')
+          navigate("/home");
         } catch (err) {
           console.log(err);
-          alert('유저 정보를 들고오는데 실패하였습니다')
+          alert("유저 정보를 들고오는데 실패하였습니다");
         }
       } catch (err) {
         console.log(err);
-        alert('로그인에 실패하였습니다 아이디,비밀번호를 확인해주세요')
+        alert("로그인에 실패하였습니다 아이디,비밀번호를 확인해주세요");
       }
     }
   };
@@ -147,7 +166,7 @@ const LoginPage = () => {
             className="w-full h-14 bg-customBlue text-white rounded-lg transition-transform transform hover:bg-customBlue hover:scale-105"
             id="submit"
             onClick={validate}
-            >
+          >
             로그인
           </button>
         </div>

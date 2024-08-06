@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
+const baseUrl = import.meta.env.VITE_BASE_API_URL;
+console.log(baseUrl);
+
 const SessionJoinPage: React.FC = () => {
   const [sessionId, setSessionId] = useState("");
   const navigate = useNavigate();
@@ -23,7 +26,7 @@ const SessionJoinPage: React.FC = () => {
 
   const createToken = async (sessionId: string): Promise<string> => {
     const response = await axios.post(
-      `http://localhost:8080/api/session/${sessionId}/token`,
+      `${baseUrl}/api/session/${sessionId}/token`,
       {},
       {
         headers: {
@@ -33,28 +36,9 @@ const SessionJoinPage: React.FC = () => {
       }
     );
 
-    const url = response.data;
-    const urlParams = new URLSearchParams(new URL(url).search);
-    const token = urlParams.get("token");
-
-    console.log("Token created: ", token);
-
-    if (!token) {
-      throw new Error("Failed to retrieve token from response.");
-    }
+    const token = response.data;
 
     return token;
-
-    // const url = response.data;
-    // const urlParams = new URLSearchParams(new URL(url).search);
-    // const token: string | null = urlParams.get("token");
-
-    // if (!token) {
-    //   throw new Error("Token is null");
-    // }
-    // console.log("Token created: ", token);
-
-    // return response.data;
   };
 
   return (

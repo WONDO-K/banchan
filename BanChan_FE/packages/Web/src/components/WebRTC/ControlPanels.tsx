@@ -25,36 +25,36 @@ const ControlPanels: React.FC<{
       <div className="flex space-x-8 ml-[210px]">
         <button
           className={`bg-gray-800 text-white flex items-center px-4 py-2 rounded-full ${
-            activeIcons.mic ? "text-customRed" : "text-white"
+            !activeIcons.mic ? "text-customRed" : "text-white"
           }`}
           onClick={() => handleButtonClick("mic")}
         >
           <span
             className={`material-symbols-outlined ${
-              activeIcons.mic ? "text-customRed" : "text-white"
+              !activeIcons.mic ? "text-customRed" : "text-white"
             }`}
           >
-            {activeIcons.mic ? "mic_off" : "mic"}
+            {!activeIcons.mic ? "mic_off" : "mic"}
           </span>
           <span className="ml-2">
-            {activeIcons.mic ? "마이크 켜기" : "마이크 끄기"}
+            {!activeIcons.mic ? "마이크 켜기" : "마이크 끄기"}
           </span>
         </button>
         <button
           className={`bg-gray-800 text-white flex items-center px-4 py-2 rounded-full ${
-            activeIcons.videocam ? "text-customRed" : "text-white"
+            !activeIcons.videocam ? "text-customRed" : "text-white"
           }`}
           onClick={() => handleButtonClick("videocam")}
         >
           <span
             className={`material-symbols-outlined ${
-              activeIcons.videocam ? "text-customRed" : "text-white"
+              !activeIcons.videocam ? "text-customRed" : "text-white"
             }`}
           >
-            {activeIcons.videocam ? "videocam_off" : "videocam"}
+            {!activeIcons.videocam ? "videocam_off" : "videocam"}
           </span>
           <span className="ml-2">
-            {activeIcons.videocam ? "비디오 켜기" : "비디오 끄기"}
+            {!activeIcons.videocam ? "비디오 켜기" : "비디오 끄기"}
           </span>
         </button>
         <button
@@ -92,7 +92,7 @@ const ControlPanels: React.FC<{
           onClick={() => handleButtonClick("exit_to_app")}
         >
           <span className={`material-symbols-outlined`}>exit_to_app</span>
-          <span className="ml-2">회의 떠나기</span>
+          <span className="ml-2">회의 종료하기</span>
         </button>
       </div>
 

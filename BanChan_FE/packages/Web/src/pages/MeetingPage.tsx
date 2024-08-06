@@ -3,6 +3,8 @@ import { OpenVidu, Session, Publisher, Subscriber } from "openvidu-browser";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import ControlPanels from "../components/WebRTC/ControlPanels";
+import ThumbnailPlayer from "../components/WebRTC/ThumbnailPlayer";
+import SubscriberList from "../components/WebRTC/SubscribeList";
 
 type IconName =
   | "record_voice_over"
@@ -16,6 +18,8 @@ type IconName =
   | "chat_bubble"
   | "notifications";
 
+const baseUrl = import.meta.env.VITE_BASE_API_URL;
+
 const MeetingPage: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -24,16 +28,18 @@ const MeetingPage: React.FC = () => {
   const [publisher, setPublisher] = useState<Publisher | null>(null);
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
   const [isChatBoxVisible, setIsChatBoxVisible] = useState<boolean>(false);
+  const [thumbnailPlayer, setThumbnailPlayer] = useState<
+    Publisher | Subscriber | null
+  >(null);
 
-  const { token, title, date, startTime, active } = location.state as {
+  const { token, roomName, date, startTime, active } = location.state as {
     token: string;
-    title: string;
+    roomName: string;
     date: string;
     startTime: string;
     active: boolean;
   };
 
-  const videoRef = useRef<HTMLVideoElement>(null);
   const subscriberStreams = useRef<Set<string>>(new Set());
   const [activeIcons, setActiveIcons] = useState<Record<IconName, boolean>>({
     record_voice_over: false,
@@ -59,7 +65,9 @@ const MeetingPage: React.FC = () => {
         console.log("Received sessionId:", sessionId);
         console.log("Received token:", token);
 
-        await mySession.connect(token, { clientData: "Participant" });
+        // 세션에 연결
+        await mySession.connect(token, { clientData: "Host" });
+        console.log("Successfully connected to session");
 
         const OV = new OpenVidu();
         const publisher = OV.initPublisher(undefined, {
@@ -73,15 +81,18 @@ const MeetingPage: React.FC = () => {
           mirror: false,
         });
 
+        // 퍼블리셔를 세션에 추가
         mySession.publish(publisher);
         setPublisher(publisher);
-        publisher.addVideoElement(videoRef.current);
+        setThumbnailPlayer(publisher);
 
         setActiveIcons((prevState) => ({
           ...prevState,
           videocam: publisher.stream.videoActive,
           mic: publisher.stream.audioActive,
         }));
+
+        console.log("Publisher added to session");
       } catch (error) {
         console.error("Error connecting to session:", error);
       }
@@ -125,32 +136,29 @@ const MeetingPage: React.FC = () => {
 
       await joinSession(mySession, token);
       setSession(mySession);
-
-      return () => {
-        if (mySession) {
-          mySession.off("streamCreated", streamCreatedHandler);
-          mySession.off("streamDestroyed", streamDestroyedHandler);
-          mySession.disconnect();
-          setSubscribers([]);
-          subscriberStreams.current.clear();
-        }
-      };
     };
 
     initSession();
+
+    return () => {
+      if (session) {
+        session.off("streamCreated", streamCreatedHandler);
+        session.off("streamDestroyed", streamDestroyedHandler);
+        session.disconnect();
+        setSubscribers([]);
+        subscriberStreams.current.clear();
+      }
+    };
   }, [sessionId, token, joinSession]);
 
   const deleteSession = async (sessionId: string): Promise<void> => {
     try {
-      await axios.delete(
-        `http://localhost:8080/api/session/delete/${sessionId}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Basic " + btoa("OPENVIDUAPP:YOUR_SECRET"),
-          },
-        }
-      );
+      await axios.delete(`${baseUrl}/api/session/delete/${sessionId}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Basic " + btoa("OPENVIDUAPP:YOUR_SECRET"),
+        },
+      });
       navigate("/meeting/reservedMeeting");
 
       console.log(`Session ${sessionId} deleted successfully`);
@@ -201,25 +209,17 @@ const MeetingPage: React.FC = () => {
 
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-customTextColor">
-      <h1 className="text-2xl mb-4">회의 ID: {title}</h1>
-      <video
-        ref={videoRef}
-        autoPlay
-        playsInline
-        muted
-        className="w-[400px] bg-black"
-      ></video>
-      {subscribers.map((sub, index) => (
-        <video
-          key={index}
-          ref={(el) => {
-            if (el) sub.addVideoElement(el);
-          }}
-          autoPlay
-          playsInline
-          className="w-[400px] bg-black"
-        ></video>
-      ))}
+      <h1 className="text-2xl mb-4">회의 ID: {roomName}</h1>
+      <div className="flex flex-col items-center">
+        <div className="flex justify-center items-center mb-4">
+          {thumbnailPlayer && (
+            <ThumbnailPlayer
+              stream={thumbnailPlayer.stream?.getMediaStream() ?? null}
+            />
+          )}
+        </div>
+        <SubscriberList subscribers={subscribers} />
+      </div>
       <ControlPanels
         onChatToggle={handleChatToggle}
         activeIcons={activeIcons}
