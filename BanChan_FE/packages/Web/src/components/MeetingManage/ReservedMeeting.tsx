@@ -150,7 +150,7 @@ const ReservedMeeting: React.FC = () => {
           </Link>
         </div>
         <Table headers={headers} data={data} />
-        <Pagination />
+        <Pagination  maxPage={1} />
       </div>
     </>
   );

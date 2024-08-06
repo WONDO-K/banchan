@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import Sorting from "../Sorting";
-import Table from "../Table";
 import Pagination from "../Pagination";
 import Nav from "../Nav";
 import NavItem from "../NavItem";
@@ -82,7 +80,7 @@ const Ask: React.FC = () => {
           <Sorting />
         </div>
         <TempTable headerProp={headers} data={data} />
-        <Pagination />
+        <Pagination maxPage={maxPage}/>
       </div>
     </>
   );

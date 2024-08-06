@@ -95,7 +95,7 @@ const Board = () => {
             <Sorting />
           </div>
           <Table headers={headers} data={data} />
-          <Pagination />
+          <Pagination maxPage={1}  />
         </div>
     </>
   );

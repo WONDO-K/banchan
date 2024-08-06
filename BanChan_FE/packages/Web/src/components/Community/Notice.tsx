@@ -145,7 +145,7 @@ const Notice: React.FC = () => {
                     <LargeButton title="글작성" to="/write" />
                   </div>
                   <Table headers={headers} data={data} />
-                  <Pagination />
+                  <Pagination maxPage={1}  />
                 </>
               }
               />

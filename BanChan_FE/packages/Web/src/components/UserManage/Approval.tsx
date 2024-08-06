@@ -96,7 +96,7 @@ const Approval = () => {
         <div className="container mx-auto p-4 mt-3">
           <div className="flex justify-end items-center mb-6 mr-6"></div>
           <Table headers={headers} data={data} />
-          <Pagination />
+          <Pagination maxPage={1}  />
         </div>
     </>
   );
