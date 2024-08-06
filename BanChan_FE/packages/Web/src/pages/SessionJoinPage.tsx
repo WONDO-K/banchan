@@ -33,6 +33,18 @@ const SessionJoinPage: React.FC = () => {
       }
     );
 
+    const url = response.data;
+    const urlParams = new URLSearchParams(new URL(url).search);
+    const token = urlParams.get("token");
+
+    console.log("Token created: ", token);
+
+    if (!token) {
+      throw new Error("Failed to retrieve token from response.");
+    }
+
+    return token;
+
     // const url = response.data;
     // const urlParams = new URLSearchParams(new URL(url).search);
     // const token: string | null = urlParams.get("token");
@@ -42,7 +54,7 @@ const SessionJoinPage: React.FC = () => {
     // }
     // console.log("Token created: ", token);
 
-    return response.data;
+    // return response.data;
   };
 
   return (

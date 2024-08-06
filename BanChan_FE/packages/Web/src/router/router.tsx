@@ -29,6 +29,7 @@ import CreateMeeting from "../components/MeetingManage/CreateMeeting";
 import MyPage from "../pages/MyPage";
 import VoteEnd from "../components/VoteManage/VoteEnd";
 import SessionJoinPage from "../pages/SessionJoinPage";
+import OpenViduSession from "../OpenviduSession";
 
 function AppRoutes() {
   return (
@@ -40,6 +41,7 @@ function AppRoutes() {
       <Route path="/update" element={<Update />} />
       <Route path="/meetingPage/:id" element={<MeetingPage />} />
       <Route path="/chatBox" element={<ChatBox />} />
+      <Route path="/openvidu" element={<OpenViduSession />} />
 
       {/* 메인레이아웃 - 상단 툴바 및 좌측 메뉴바 */}
       <Route element={<MainLayout />}>

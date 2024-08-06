@@ -77,7 +77,13 @@ const ReservedMeeting: React.FC = () => {
       }
     );
 
-    const token = tokenResponse.data;
+    const url = tokenResponse.data;
+    const urlParams = new URLSearchParams(new URL(url).search);
+    const token = urlParams.get("token");
+
+    if (!token) {
+      throw new Error("Failed to retrieve token from response");
+    }
     return { sessionId, token };
   };
 

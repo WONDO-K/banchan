@@ -4,6 +4,18 @@ import { useParams, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import ControlPanels from "../components/WebRTC/ControlPanels";
 
+type IconName =
+  | "record_voice_over"
+  | "mic"
+  | "videocam"
+  | "screen_share"
+  | "headset_mic"
+  | "exit_to_app"
+  | "book"
+  | "group"
+  | "chat_bubble"
+  | "notifications";
+
 const MeetingPage: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -13,8 +25,8 @@ const MeetingPage: React.FC = () => {
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
   const [isChatBoxVisible, setIsChatBoxVisible] = useState<boolean>(false);
 
-  const { token } = location.state as { token: string };
-  const { title, date, startTime, active } = location.state as {
+  const { token, title, date, startTime, active } = location.state as {
+    token: string;
     title: string;
     date: string;
     startTime: string;
@@ -47,7 +59,7 @@ const MeetingPage: React.FC = () => {
         console.log("Received sessionId:", sessionId);
         console.log("Received token:", token);
 
-        await mySession.connect(token, { clientData: "Host" });
+        await mySession.connect(token, { clientData: "Participant" });
 
         const OV = new OpenVidu();
         const publisher = OV.initPublisher(undefined, {
@@ -78,50 +90,54 @@ const MeetingPage: React.FC = () => {
   );
 
   useEffect(() => {
-    if (!sessionId || !token) {
-      console.error("sessionId or token is undefined");
-      return;
-    }
-
-    const OV = new OpenVidu();
-    const mySession = OV.initSession();
-
-    const streamCreatedHandler = (event: any) => {
-      console.log("Stream created:", event.stream.streamId);
-      if (!subscriberStreams.current.has(event.stream.streamId)) {
-        subscriberStreams.current.add(event.stream.streamId);
-        const subscriber = mySession.subscribe(event.stream, undefined);
-        setSubscribers((prevSubscribers) => [...prevSubscribers, subscriber]);
+    const initSession = async () => {
+      if (!sessionId || !token) {
+        console.error("sessionId or token is undefined");
+        return;
       }
-      console.log("Current number of subscribers:", subscribers.length + 1); // +1 to include the current stream being added
+
+      const OV = new OpenVidu();
+      const mySession = OV.initSession();
+
+      const streamCreatedHandler = (event: any) => {
+        console.log("Stream created:", event.stream.streamId);
+        if (!subscriberStreams.current.has(event.stream.streamId)) {
+          subscriberStreams.current.add(event.stream.streamId);
+          const subscriber = mySession.subscribe(event.stream, undefined);
+          setSubscribers((prevSubscribers) => [...prevSubscribers, subscriber]);
+          console.log("Number of subscribers: ", subscribers.length + 1);
+        }
+      };
+
+      const streamDestroyedHandler = (event: any) => {
+        console.log("Stream destroyed:", event.stream.streamId);
+        subscriberStreams.current.delete(event.stream.streamId);
+        setSubscribers((prevSubscribers) =>
+          prevSubscribers.filter(
+            (subscriber) => subscriber.stream.streamId !== event.stream.streamId
+          )
+        );
+        console.log("Number of subscribers: ", subscribers.length);
+      };
+
+      mySession.on("streamCreated", streamCreatedHandler);
+      mySession.on("streamDestroyed", streamDestroyedHandler);
+
+      await joinSession(mySession, token);
+      setSession(mySession);
+
+      return () => {
+        if (mySession) {
+          mySession.off("streamCreated", streamCreatedHandler);
+          mySession.off("streamDestroyed", streamDestroyedHandler);
+          mySession.disconnect();
+          setSubscribers([]);
+          subscriberStreams.current.clear();
+        }
+      };
     };
 
-    const streamDestroyedHandler = (event: any) => {
-      console.log("Stream destroyed:", event.stream.streamId);
-      subscriberStreams.current.delete(event.stream.streamId);
-      setSubscribers((prevSubscribers) =>
-        prevSubscribers.filter(
-          (subscriber) => subscriber.stream.streamId !== event.stream.streamId
-        )
-      );
-      console.log("Current number of subscribers:", subscribers.length - 1); // -1 to reflect the stream being removed
-    };
-
-    mySession.on("streamCreated", streamCreatedHandler);
-    mySession.on("streamDestroyed", streamDestroyedHandler);
-
-    joinSession(mySession, token);
-    setSession(mySession);
-
-    return () => {
-      if (mySession) {
-        mySession.off("streamCreated", streamCreatedHandler);
-        mySession.off("streamDestroyed", streamDestroyedHandler);
-        mySession.disconnect();
-        setSubscribers([]);
-        subscriberStreams.current.clear();
-      }
-    };
+    initSession();
   }, [sessionId, token, joinSession]);
 
   const deleteSession = async (sessionId: string): Promise<void> => {

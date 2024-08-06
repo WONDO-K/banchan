@@ -1,168 +1,148 @@
-// import React, { useEffect, useState, useRef } from "react";
-// // import {
-// //   OpenVidu,
-// //   Session,
-// //   Publisher,
-// //   StreamManager,
-// //   StreamEvent,
-// // } from "openvidu-browser";
+import React, { useEffect, useRef, useState } from "react";
+import axios from "axios";
+import { OpenVidu } from "openvidu-browser";
 
-// interface OpenViduSessionProps {
-//   sessionId: string;
-//   userName: string;
-//   setActiveSpeaker: (stream: MediaStream | null) => void;
-//   setRemoteStreams: (streams: MediaStream[]) => void;
-// }
+const OPENVIDU_SERVER_SECRET = "YOUR_SECRET";
 
-// const OpenViduSession: React.FC<OpenViduSessionProps> = ({
-//   sessionId,
-//   userName,
-//   setActiveSpeaker,
-//   setRemoteStreams,
-// }) => {
-//   const [session, setSession] = useState<Session | null>(null);
-//   const [publisher, setPublisher] = useState<Publisher | null>(null);
-//   const [subscribers, setSubscribers] = useState<StreamManager[]>([]);
-//   const OV = useRef<OpenVidu>(new OpenVidu());
+interface Meeting {
+  id: number;
+  roomName: string;
+  startDate: string;
+  startTime: string;
+  session: string | null;
+  createdAt: string | null;
+  active: boolean;
+}
 
-//   useEffect(() => {
-//     window.addEventListener("beforeunload", leaveSession);
+const OpenViduSession: React.FC = () => {
+  const [session, setSession] = useState<any>(null);
+  const [token, setToken] = useState<string>("");
+  const [subscribers, setSubscribers] = useState<any[]>([]);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
-//     return () => {
-//       window.removeEventListener("beforeunload", leaveSession);
-//       leaveSession();
-//     };
-//   }, []);
+  const meeting: Meeting = {
+    id: 1,
+    roomName: "Test Room",
+    startDate: "2023-01-01",
+    startTime: "10:00",
+    session: null,
+    createdAt: null,
+    active: true,
+  };
 
-//   const joinSession = () => {
-//     const mySession = OV.current.initSession();
-//     setSession(mySession);
+  useEffect(() => {
+    if (token && !session) {
+      joinSession();
+    }
+  }, [token]);
 
-//     mySession.on("streamCreated", (event: StreamEvent) => {
-//       const subscriber = mySession.subscribe(event.stream, undefined);
-//       setSubscribers((prevSubscribers) => [...prevSubscribers, subscriber]);
-//       setRemoteStreams((prevStreams) => [
-//         ...prevStreams,
-//         event.stream.getMediaStream(),
-//       ]);
-//     });
+  const getToken = async (meeting: Meeting) => {
+    try {
+      const sessionId = await createSession(meeting.id);
+      console.log("Session ID:", sessionId);
+      const token = await createToken(sessionId);
+      console.log("Token:", token);
+      setToken(token);
+    } catch (error) {
+      console.error("Error getting token:", error);
+    }
+  };
 
-//     mySession.on("streamDestroyed", (event: StreamEvent) => {
-//       setSubscribers((prevSubscribers) =>
-//         prevSubscribers.filter((sub) => sub !== event.stream.streamManager)
-//       );
-//       setRemoteStreams((prevStreams) =>
-//         prevStreams.filter((stream) => stream !== event.stream.getMediaStream())
-//       );
-//     });
+  const createSession = async (meetingId: number) => {
+    try {
+      const response = await axios.post(
+        `http://localhost:8080/api/session/${meetingId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Basic ${btoa(
+              "OPENVIDUAPP:" + OPENVIDU_SERVER_SECRET
+            )}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log("Create Session Response:", response.data);
+      return response.data; // Assuming the response contains an 'id' field
+    } catch (error) {
+      console.error("Error creating session:", error);
+      throw error;
+    }
+  };
 
-//     getToken().then((token) => {
-//       mySession
-//         .connect(token, { clientData: userName })
-//         .then(() => {
-//           console.log(token, session);
-//           const publisher = OV.current.initPublisher(undefined, {
-//             audioSource: undefined,
-//             videoSource: undefined,
-//             publishAudio: true,
-//             publishVideo: true,
-//             resolution: "640x480",
-//             frameRate: 30,
-//             insertMode: "APPEND",
-//             mirror: false,
-//           });
+  const createToken = async (sessionId: string) => {
+    try {
+      const response = await axios.post(
+        `http://localhost:8080/api/session/${sessionId}/token`,
+        { session: sessionId },
+        {
+          headers: {
+            Authorization: `Basic ${btoa(
+              "OPENVIDUAPP:" + OPENVIDU_SERVER_SECRET
+            )}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log("Create Token Response:", response.data);
+      return response.data; // Assuming the response contains a 'token' field
+    } catch (error) {
+      console.error("Error creating token:", error);
+      throw error;
+    }
+  };
 
-//           mySession.publish(publisher);
-//           setPublisher(publisher);
-//           setActiveSpeaker(publisher.stream.getMediaStream());
-//         })
-//         .catch((error) => {
-//           console.error(
-//             "There was an error connecting to the session:",
-//             error.code,
-//             error.message
-//           );
-//         });
-//     });
-//   };
+  const joinSession = () => {
+    const OV = new OpenVidu();
+    const session = OV.initSession();
 
-//   const leaveSession = () => {
-//     if (session) {
-//       session.disconnect();
-//     }
+    session.on("streamCreated", (event: any) => {
+      const subscriber = session.subscribe(event.stream, undefined);
+      setSubscribers((prevSubscribers) => [...prevSubscribers, subscriber]);
+    });
 
-//     OV.current = new OpenVidu();
-//     setSession(null);
-//     setSubscribers([]);
-//     setPublisher(null);
-//     setActiveSpeaker(null);
-//     setRemoteStreams([]);
-//   };
+    session
+      .connect(token)
+      .then(() => {
+        const publisher = OV.initPublisher(videoRef.current, {
+          insertMode: "APPEND",
+          width: "100%",
+          height: "100%",
+        });
+        session.publish(publisher);
+      })
+      .catch((error: any) => {
+        console.error(
+          "There was an error connecting to the session:",
+          error.message
+        );
+      });
 
-//   const getToken = async (): Promise<string> => {
-//     const response = await fetch("http://localhost:8080/api/session", {
-//       method: "POST",
-//       headers: {
-//         Authorization: "Basic " + btoa("OPENVIDUAPP:YOUR_SECRET"),
-//         "Content-Type": "application/json",
-//       },
-//       body: JSON.stringify({ customSessionId: sessionId }),
-//     });
-//     const sessionIdData = await response.json();
+    setSession(session);
+  };
 
-//     const tokenResponse = await fetch(
-//       `http://localhost:8080/api/session/${sessionIdData.id}/token`,
-//       {
-//         method: "POST",
-//         headers: {
-//           Authorization: "Basic " + btoa("OPENVIDUAPP:YOUR_SECRET"),
-//           "Content-Type": "application/json",
-//         },
-//         body: JSON.stringify({}),
-//       }
-//     );
-//     const tokenData = await tokenResponse.json();
+  useEffect(() => {
+    console.log("Number of subscribers:", subscribers.length);
+  }, [subscribers]);
 
-//     return tokenData.token;
-//   };
-
-//   return (
-//     <div>
-//       <button onClick={joinSession}>Join</button>
-//       <button onClick={leaveSession}>Leave</button>
-
-//       {publisher && (
-//         <div>
-//           <h3>Publisher</h3>
-//           <div
-//             id="publisher"
-//             ref={(ref) => ref && publisher.addVideoElement(ref)}
-//           />
-//         </div>
-//       )}
-
-//       {subscribers.length > 0 && (
-//         <div>
-//           <h3>Subscribers</h3>
-//           {subscribers.map((sub, index) => (
-//             <div
-//               key={index}
-//               id="subscriber"
-//               ref={(ref) => ref && sub.addVideoElement(ref)}
-//             />
-//           ))}
-//         </div>
-//       )}
-//     </div>
-//   );
-// };
-
-// export default OpenViduSession;
-
-import React from "react";
-
-const OpenviduSession: React.FC = () => {
-  return <div>OpenviduSession</div>;
+  return (
+    <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
+      <h1 className="text-2xl font-bold mb-4">OpenVidu React Demo</h1>
+      <button
+        onClick={() => getToken(meeting)}
+        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
+      >
+        Join Session
+      </button>
+      <div className="mt-4">
+        <video
+          ref={videoRef}
+          autoPlay={true}
+          className="rounded shadow-md"
+        ></video>
+      </div>
+    </div>
+  );
 };
 
-export default OpenviduSession;
+export default OpenViduSession;
