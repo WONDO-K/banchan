@@ -2,9 +2,11 @@
 import React, { useState, useRef, useEffect } from "react";
 import VoteCreateForm from "./VoteCreateForm";
 import BackButton from "../Buttons/BackButton";
-import { Form } from "../../Type";
-
+import { Form,VoteCreateType } from "../../Type";
+import { CreateVote } from "../../api/VoteAPI";
+import { useCookies } from "react-cookie";
 const VoteCreatePage: React.FC = () => {
+  const [cookies] = useCookies();
   const [forms, setForms] = useState<Form[]>([]);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -58,17 +60,23 @@ const VoteCreatePage: React.FC = () => {
 
   // 투표 등록
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    const data = {
+    const data:VoteCreateType = {
       title,
       content,
-      voteStart,
-      voteEnd,
-      forms,
-    };
+      startDate :voteStart,
+      endDate : voteEnd,
+      imageUrl: "",
+      questions: forms.map((form) => ({
+        questionText: form.questionText,
+        options: form.options
+      }))
+        
+    }
     console.log(data);
     // 서브밋 이벤트 방지
     e.preventDefault();
     // 백엔드로 POST 요청 보내는 로직 필요(axios)
+    CreateVote(cookies.Token,'api/vote/regist' ,data)
   };
 
   return (

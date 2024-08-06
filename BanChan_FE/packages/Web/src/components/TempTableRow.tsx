@@ -7,7 +7,6 @@ interface TableRowProps {
 }
 
 const TempTableRow: React.FC<TableRowProps> = ({ row, columns }) => {
-  console.log(row);
   return (
     <tr className="w-full border-b">
       {columns.map((column, cellIndex) => (

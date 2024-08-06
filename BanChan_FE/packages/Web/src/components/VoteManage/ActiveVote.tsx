@@ -1,106 +1,14 @@
 import Nav from "../Nav";
 import NavItem from "../NavItem";
 import Sorting from "../Sorting";
-import Pagination from "../Pagination";
 import TempTable from "../TempTable";
 import LargeButton from "../Buttons/LargeButton";
-import { dataType } from "../../Type";
+import {DataItem} from "../../Type";
+import { useEffect,useState } from "react";
+import { getVote } from "../../api/VoteAPI";
+import { useCookies } from "react-cookie";
 
-const vote: { crt_page: number; max_page: number; data: dataType[] } = {
-  crt_page: 3,
-  max_page: 10,
-  data: [
-    {
-      id: 1,
-      title: "LH 7월 3주차 회의 안건 관련 투표",
-      writer: "관리자",
-      startDate: "2024-07-30T15:14:10",
-      endDate: "2024-08-06T15:14:10",
-      voteRate: "23%",
-    },
-    {
-      id: 2,
-      title: "LH 7월 3주차 회의 안건 관련 투표",
-      writer: "관리자",
-      startDate: "2024-07-30T15:14:10",
-      endDate: "2024-08-06T15:14:10",
-      voteRate: "23%",
-    },
-    {
-      id: 3,
-      title: "LH 7월 3주차 회의 안건 관련 투표",
-      writer: "관리자",
-      startDate: "2024-07-30T15:14:10",
-      endDate: "2024-08-06T15:14:10",
-      voteRate: "23%",
-    },
-    {
-      id: 4,
-      title: "LH 7월 3주차 회의 안건 관련 투표",
-      writer: "관리자",
-      startDate: "2024-07-30T15:14:10",
-      endDate: "2024-08-06T15:14:10",
-      voteRate: "23%",
-    },
-    {
-      id: 5,
-      title: "LH 7월 3주차 회의 안건 관련 투표",
-      writer: "관리자",
-      startDate: "2024-07-30T15:14:10",
-      endDate: "2024-08-06T15:14:10",
-      voteRate: "23%",
-    },
-    {
-      id: 6,
-      title: "LH 7월 3주차 회의 안건 관련 투표",
-      writer: "관리자",
-      startDate: "2024-07-30T15:14:10",
-      endDate: "2024-08-06T15:14:10",
-      voteRate: "23%",
-    },
-    {
-      id: 7,
-      title: "LH 7월 3주차 회의 안건 관련 투표",
-      writer: "관리자",
-      startDate: "2024-07-30T15:14:10",
-      endDate: "2024-08-06T15:14:10",
-      voteRate: "23%",
-    },
-    {
-      id: 8,
-      title: "LH 7월 3주차 회의 안건 관련 투표",
-      writer: "관리자",
-      startDate: "2024-07-30T15:14:10",
-      endDate: "2024-08-06T15:14:10",
-      voteRate: "23%",
-    },
-    {
-      id: 9,
-      title: "LH 7월 3주차 회의 안건 관련 투표",
-      writer: "관리자",
-      startDate: "2024-07-30T15:14:10",
-      endDate: "2024-08-06T15:14:10",
-      voteRate: "23%",
-    },
-    {
-      id: 10,
-      title: "LH 7월 3주차 회의 안건 관련 투표",
-      writer: "관리자",
-      startDate: "2024-07-30T15:14:10",
-      endDate: "2024-08-06T15:14:10",
-      voteRate: "23%",
-    },
-  ],
-};
-const header: string[] = ["id", "title", "writer", "voteDate", "voteRate"];
-const fixVote = vote.data.map((items) => {
-  return {
-    ...items,
-    voteDate: `${items.startDate
-      .replace("T", " ")
-      .slice(0, -3)} ~ ${items.endDate.replace("T", " ").slice(0, -3)}`,
-  };
-});
+const header: string[] = ["id", "title", "voteDate", "voteRate"];
 const NavElements = () => {
   return (
     <Nav>
@@ -111,6 +19,33 @@ const NavElements = () => {
 };
 
 const ActiveVote = () => {
+
+  const [votes, setVotes] = useState<DataItem[]>([]);
+  const [cookies] = useCookies();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const voteData = await getVote(cookies.Token,'api/votes/list/current');
+        console.log(voteData);
+        const fixVote = voteData.data.map((items) => {
+          return {
+            ...(items),
+            voteDate: `${items.startDate
+              .replace("T", " ")
+              .slice(0, -3)} ~ ${items.endDate.replace("T", " ").slice(0, -3)}`,
+            voteRate: ((items.finishCount / items.voteCount) * 100).toFixed(1) + '%'
+            };
+          });
+          setVotes(fixVote);
+        }
+      catch (error) {
+        alert('데이터를 가져오는 중 오류가 발생했습니다.')
+      }
+      }
+      fetchData();
+  },[])
+  
   return (
     <>
       <NavElements />
@@ -119,8 +54,7 @@ const ActiveVote = () => {
           <Sorting />
           <LargeButton title="투표 생성" to="/vote/create"></LargeButton>
         </div>
-        <TempTable headerProp={header} data={fixVote} />
-        <Pagination maxPage={2} />
+        <TempTable headerProp={header} data={votes} />
       </div>
     </>
   );

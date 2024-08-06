@@ -16,6 +16,7 @@ const HeaderFormet: { [key: string]: string } = {
   voteRate: "투표율",
   views: "조회수",
   likes: "추천수",
+  voted: "투표 여부",
 };
 
 const TempTable: React.FC<TableProps> = ({ headerProp, data }) => {

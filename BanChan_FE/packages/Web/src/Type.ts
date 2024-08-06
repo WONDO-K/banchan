@@ -73,13 +73,18 @@ export interface Meeting {
   active: boolean;
 }
 
+export interface ActiveVoteType {
+  data : dataType[]
+}
 export interface dataType {
-  id: number;
-  title: string;
-  writer: string;
-  startDate: string;
-  endDate: string;
-  voteRate: string;
+    id: number;
+    content : string;
+    title: string;
+    startDate: string;
+    endDate: string;
+    voteCount: number;
+    finishCount: number;
+    voted: boolean;
 }
 
 export interface MultiSelectDropdownProps {
@@ -88,7 +93,18 @@ export interface MultiSelectDropdownProps {
   selectedOptions: string[];
   setSelectedOptions: React.Dispatch<React.SetStateAction<string[]>>;
 }
+export interface VoteCreateType {
+  title:string;
+  content:string
+  imageUrl:string;
+  startDate:string;
+  endDate:string;
+  questions : {
+    questionText : string;
+    options : string[]
+  } []
 
+}
 export interface Form {
   id: number;
   questionText: string;
@@ -155,5 +171,5 @@ export interface TableRowProps {
 }
 
 export interface DataItem {
-  [key: string]: string | number | React.ReactNode;
+  [key: string]: string | number | boolean | React.ReactNode;
 }

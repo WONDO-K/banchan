@@ -6,8 +6,13 @@ const VoteCreateForm: React.FC<VoteCreateFormProps> = ({
   onDelete,
   onChange,
 }) => {
+  // 초기 항목 2개 설정
+  const initialItems: PollItem[] = [
+    { id: Date.now(), text: "" },
+    { id: Date.now() + 1, text: "" },
+  ];
   const [title, setTitle] = useState<string>("");
-  const [items, setItems] = useState<PollItem[]>([]);
+  const [items, setItems] = useState<PollItem[]>(initialItems);
 
   const notifyChange = (newTitle: string, newItems: PollItem[]) => {
     onChange(id, {
@@ -15,12 +20,14 @@ const VoteCreateForm: React.FC<VoteCreateFormProps> = ({
       options: newItems.map((item) => item.text),
     });
   };
+
   // 항목 생성
   const handleAddItem = () => {
     const newItems = [...items, { id: Date.now(), text: "" }];
     setItems(newItems);
     notifyChange(title, newItems);
   };
+
   // 항목 변경
   const handleItemChange = (id: number, text: string) => {
     const newItems = items.map((item) =>
@@ -29,6 +36,7 @@ const VoteCreateForm: React.FC<VoteCreateFormProps> = ({
     setItems(newItems);
     notifyChange(title, newItems);
   };
+
   // 항목 삭제
   const handleRemoveItem = (id: number) => {
     const newItems = items.filter((item) => item.id !== id);
@@ -42,6 +50,7 @@ const VoteCreateForm: React.FC<VoteCreateFormProps> = ({
     setTitle(newTitle);
     notifyChange(newTitle, items);
   };
+
   // 엔터 키 이벤트 삭제
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.key === "Enter") {
@@ -54,7 +63,7 @@ const VoteCreateForm: React.FC<VoteCreateFormProps> = ({
       className="p-4 mb-4 mx-auto text-end flex flex-col w-10/12 border rounded-3xl shadow-md"
       onKeyDown={handleKeyDown}
     >
-      <div className="flex  justify-between">
+      <div className="flex justify-between">
         <p className="m-0 pt-4 text-sm text font-semibold">투표 주제</p>
         <button
           onClick={() => onDelete(id)}
@@ -75,22 +84,30 @@ const VoteCreateForm: React.FC<VoteCreateFormProps> = ({
         />
       </div>
 
-      {items.map((item) => (
-        <div key={item.id} className="w-11/12 flex mb-2 mx-auto">
+      {items.map((item, index) => (
+        <div key={item.id} className="w-10/12 flex mb-2 mx-auto items-center">
           <input
             type="text"
             value={item.text}
             onChange={(e) => handleItemChange(item.id, e.target.value)}
-            className="mt-1 p-2  flex-1 border border-gray-300 rounded-md"
+            className="mt-1 p-2 flex-1 border border-gray-300 rounded-md"
             placeholder="투표 항목을 입력해주세요"
             required
           />
-          <button
-            onClick={() => handleRemoveItem(item.id)}
-            className=" ml-4 p-2 text-sm text-red-500 hover:text-red-700"
-          >
-            항목 삭제
-          </button>
+          {index >= 2 && (
+            <button
+              onClick={() => handleRemoveItem(item.id)}
+              className="ml-2 p-1 text-sm text-red-500 hover:text-red-700"
+            >
+              삭제
+            </button>
+          )}
+          {index < 2 && (
+            <div
+              className="ml-8 p-1 text-sm"
+            >
+            </div>
+          )}
         </div>
       ))}
       <button
