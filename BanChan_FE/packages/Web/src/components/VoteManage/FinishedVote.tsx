@@ -110,7 +110,7 @@ const ActiveVote = () => {
         <Sorting/>
         </div>
         <TempTable headerProp={header}data={fixVote} />
-        <Pagination/>
+        <Pagination maxPage={1} />
       </div>
     </>
   );

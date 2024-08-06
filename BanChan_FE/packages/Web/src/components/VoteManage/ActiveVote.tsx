@@ -119,7 +119,7 @@ const ActiveVote = () => {
           <LargeButton title="투표 생성" to="/vote/create"></LargeButton>
         </div>
         <TempTable headerProp={header}data={fixVote} />
-        <Pagination/>
+        <Pagination maxPage = {2} />
       </div>
     </>
   );

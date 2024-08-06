@@ -1,16 +1,16 @@
-import React, { useEffect } from "react";
+// import React, { useEffect } from "react";
 
-type IconName =
-  | "record_voice_over"
-  | "mic"
-  | "videocam"
-  | "screen_share"
-  | "headset_mic"
-  | "exit_to_app"
-  | "book"
-  | "group"
-  | "chat_bubble"
-  | "notifications";
+// type IconName =
+//   | "record_voice_over"
+//   | "mic"
+//   | "videocam"
+//   | "screen_share"
+//   | "headset_mic"
+//   | "exit_to_app"
+//   | "book"
+//   | "group"
+//   | "chat_bubble"
+//   | "notifications";
 
 const ControlPanels: React.FC<{
   onChatToggle: () => void;
@@ -96,32 +96,39 @@ const ControlPanels: React.FC<{
         </button>
       </div>
 
-      <div className="flex space-x-10 ml-[100px]">
-        <span className="cursor-pointer material-symbols-outlined text-white">
-          book
-        </span>
-        <span className="cursor-pointer material-symbols-outlined text-white">
-          group
-        </span>
-        <span
-          className={`cursor-pointer material-symbols-outlined ${
-            activeIcons.chat_bubble ? "text-blue-500" : "text-white"
-          }`}
-          onClick={() => handleButtonClick("chat_bubble")}
-        >
-          chat_bubble
-        </span>
-        <div className="relative">
-          <span className="cursor-pointer material-symbols-outlined text-yellow-500">
-            notifications
-          </span>
-          <span className="absolute top-0 right-0 bg-red-500 text-white rounded-full text-xs w-4 h-4 flex items-center justify-center">
-            1
-          </span>
-        </div>
-      </div>
-    </div>
-  );
+//       <div className="flex space-x-10 ml-[100px]">
+//         <span className="cursor-pointer material-symbols-outlined text-white">
+//           book
+//         </span>
+//         <span className="cursor-pointer material-symbols-outlined text-white">
+//           group
+//         </span>
+//         <span
+//           className={`cursor-pointer material-symbols-outlined ${
+//             activeIcons.chat_bubble ? "text-blue-500" : "text-white"
+//           }`}
+//           onClick={() => handleButtonClick("chat_bubble")}
+//         >
+//           chat_bubble
+//         </span>
+//         <div className="relative">
+//           <span className="cursor-pointer material-symbols-outlined text-yellow-500">
+//             notifications
+//           </span>
+//           <span className="absolute top-0 right-0 bg-red-500 text-white rounded-full text-xs w-4 h-4 flex items-center justify-center">
+//             1
+//           </span>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default ControlPanels;
+import React from "react";
+
+const ControlPanels: React.FC = () => {
+  return <div>MeetingPage</div>;
 };
 
 export default ControlPanels;
