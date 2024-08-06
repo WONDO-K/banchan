@@ -1,13 +1,35 @@
+import axios from "axios";
 import { useState } from "react";
-import { Link } from "react-router-dom";
-// import { Link } from "react-router-dom";
-
+import { useCookies } from "react-cookie";
+import { useEffect} from "react";
+import { useNavigate } from "react-router-dom";
+const API_URL = import.meta.env.VITE_API_URL
 const LoginPage = () => {
+  const navigate = useNavigate()
+  const [cookies,setCookie,removeCookie] = useCookies(['Token','rememberUserId','rememberUserPw'])
   const [user, setUser] = useState({
     userId: "",
     password: "",
   });
+
   const [rememberMe, setRememberMe] = useState(false);
+
+  useEffect(() => {
+    if (cookies.rememberUserId !== undefined || cookies.rememberUserPw !== undefined) {
+      setUser(
+      {
+        userId: cookies.rememberUserId,
+        password : cookies.rememberUserPw
+      }
+      );
+      // setUserId 함수를 호출하여 state 변수인 userId의 값을 cookies.rememberUserId로 설정
+      setRememberMe(true);
+      // state 변수인 setIsRemember 값을 true로 설정
+      console.log('hi')
+    }
+  }, [cookies.rememberUserId,cookies.rememberUserPw]);
+  // rememberUserId 값이 변경될 때만 useEffect 함수가 실행되도록 설정한다.
+  // 이렇게 하면 불필요한 state 업데이트를 방지할 수 있음
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -17,13 +39,60 @@ const LoginPage = () => {
     });
   };
 
-  const handleCheckboxChange = () => {
-    setRememberMe(!rememberMe);
+  const handleCheckboxChange = (e : React.ChangeEvent<HTMLInputElement>) => {
+    setRememberMe(e.target.checked);
+    if (!e.target.checked) {
+      removeCookie('rememberUserId'); // 쿠키 삭제
+      removeCookie('rememberUserPw'); // 쿠키 삭제
+
+    } else if(rememberMe){ // 체크박스가 체크되어있고, isRemember이 true라면
+      setCookie("rememberUserId", user.userId, { path: '/', expires: new Date(Date.now() + 604800000) });
+      setCookie("rememberUserPw", user.password, { path: '/', expires: new Date(Date.now() + 604800000) });
+
+    }
   };
 
-  const validate = () => {
-    // 로그인 유효성 검증 로직
+  const validate = async () => {
     console.log("로그인 유효성 검증:", user);
+    if (user.userId === "") {
+      alert("아이디를 입력해주세요.");
+    } else if (user.password === "") {
+      alert("비밀번호를 입력해주세요.");
+    } else {
+      try {
+        const response = await axios.post(`${API_URL}/api/auth/origin/login`, {
+          userId: user.userId,
+          passwordHash: user.password,
+        });
+
+        setCookie('Token', response.data.accessToken);
+
+        const config = {
+          headers: {
+            Authorization: `Bearer ${cookies.Token}`, // Use response data here
+          },
+        };
+
+        try {
+          const user_data = await axios.get(`${API_URL}/api/user/myinfo`, config);
+
+          
+          console.log(user_data.data)
+          alert(`${user_data.data.username}님 환영합니다!`)
+          if (rememberMe) {
+            setCookie("rememberUserId", user.userId, { path: '/', expires: new Date(Date.now() + 604800000) });
+            setCookie("rememberUserPw", user.password, { path: '/', expires: new Date(Date.now() + 604800000) });      
+          }
+          navigate('/home')
+        } catch (err) {
+          console.log(err);
+          alert('유저 정보를 들고오는데 실패하였습니다')
+        }
+      } catch (err) {
+        console.log(err);
+        alert('로그인에 실패하였습니다 아이디,비밀번호를 확인해주세요')
+      }
+    }
   };
 
   return (
@@ -67,15 +136,13 @@ const LoginPage = () => {
               checked={rememberMe}
               onChange={handleCheckboxChange}
             />
-            아이디 기억하기
+            로그인 정보 저장
           </label>
           <a href="#" className="text-sm text-gray-600 hover:underline">
             비밀번호 찾기
           </a>
         </div>
         <div className="relative">
-          {/* 임시 통과용 */}
-          <Link to='/home'>
           <button
             className="w-full h-14 bg-customBlue text-white rounded-lg transition-transform transform hover:bg-customBlue hover:scale-105"
             id="submit"
@@ -83,7 +150,6 @@ const LoginPage = () => {
             >
             로그인
           </button>
-            </Link>
         </div>
         {/* <div className="text-center text-sm">
           <p>
