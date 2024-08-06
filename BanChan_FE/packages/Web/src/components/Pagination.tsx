@@ -1,11 +1,5 @@
 import React, { useState } from "react";
-
-interface PageProps {
-  totalItems: number;
-  itemsPerPage: number;
-  currentPage: number;
-  onPageChange: (page: number) => void;
-}
+import { PageProps } from "../Type";
 
 const Page: React.FC<PageProps> = ({
   totalItems,
@@ -105,11 +99,11 @@ const Page: React.FC<PageProps> = ({
 };
 
 interface PaginationProps {
-  maxPage : number
+  maxPage: number;
 }
-const Pagination:React.FC<PaginationProps> = ({maxPage}) => {
+const Pagination: React.FC<PaginationProps> = ({ maxPage }) => {
   const [currentPage, setCurrentPage] = useState(1);
-  const totalItems = maxPage*10;
+  const totalItems = maxPage * 10;
   const itemsPerPage = 10;
 
   const handlePageChange = (page: number) => {

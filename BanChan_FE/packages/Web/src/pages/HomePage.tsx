@@ -1,8 +1,8 @@
-// import React from "react";
+import React from "react";
 
-const HomePage = () => {
+const HomePage: React.FC = () => {
   return (
-<>
+    <>
       {/* Main Content */}
       <div className="flex-1 p-6 ">
         <div className="grid grid-cols-3 gap-6">
@@ -42,7 +42,7 @@ const HomePage = () => {
               src="src/assets/apartment_market.png"
               alt="아파트 당근마켓"
               className="rounded-lg"
-              />
+            />
           </div>
 
           {/* 공지사항 */}

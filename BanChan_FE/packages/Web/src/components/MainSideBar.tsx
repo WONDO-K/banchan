@@ -1,12 +1,7 @@
 // import React from "react";
 import { NavLink } from "react-router-dom";
 import logo from "@assets/logo.png";
-
-interface SidebarItemProps {
-  icon: string;
-  text: string;
-  to: string;
-}
+import { SidebarItemProps } from "../Type";
 
 const SidebarItem: React.FC<SidebarItemProps> = ({ icon, text, to }) => {
   return (

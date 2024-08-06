@@ -6,9 +6,10 @@ import Nav from "../Nav";
 import NavItem from "../NavItem";
 import { useCookies } from "react-cookie";
 import TempTable from "../TempTable";
+import { AskItem } from "../../Type";
 
 const API_URL = import.meta.env.VITE_API_URL;
-const headers = ['id','title','writer','createdAt','views','likes'];
+const headers = ["id", "title", "writer", "createdAt", "views", "likes"];
 
 // axios 요청 함수
 const NavElements = () => {
@@ -21,27 +22,23 @@ const NavElements = () => {
   );
 };
 
-interface AskItem {
-  [key: string]: string | number | React.ReactNode;
-}
-
 const Ask: React.FC = () => {
   const [data, setData] = useState<AskItem[]>([]);
   const [cookies] = useCookies();
-  const [maxPage, setMaxPage] = useState<number>(1)
-  const [crtPage, setCrtPage] = useState<number>(1)
+  const [maxPage, setMaxPage] = useState<number>(1);
+  const [crtPage, setCrtPage] = useState<number>(1);
   const fetchAskList = async () => {
     try {
       const response = await axios.get(`${API_URL}/api/ask/list`, {
         headers: {
           Authorization: `Bearer ${cookies.Token}`, // Use response data here
         },
-        params : {
-          page : crtPage-1,
-          size : 10,
-          sortBy : 'createdAt',
-          sortDirection : 'desc',
-        }
+        params: {
+          page: crtPage - 1,
+          size: 10,
+          sortBy: "createdAt",
+          sortDirection: "desc",
+        },
       });
       return response.data; // content 배열만 반환
     } catch (error) {
@@ -49,28 +46,25 @@ const Ask: React.FC = () => {
       return [];
     }
   };
-  
+
   useEffect(() => {
     const getData = async () => {
       const askList = await fetchAskList();
       console.log(askList);
-      setMaxPage(askList.totalPages)
-      setCrtPage(askList.pageable.pageNumber+1)
+      setMaxPage(askList.totalPages);
+      setCrtPage(askList.pageable.pageNumber + 1);
       const real_data = askList.content.map((item: AskItem) => ({
-        'id': item.id,
-        'title': item.title,
-        'writer': item.username,
-        'createdAt': item.createdAt,
-        'views': item.views,
-        'likes': item.likes,
+        id: item.id,
+        title: item.title,
+        writer: item.username,
+        createdAt: item.createdAt,
+        views: item.views,
+        likes: item.likes,
       }));
       setData(real_data);
     };
     getData();
   }, [crtPage]);
-
-
-
 
   return (
     <>
@@ -80,7 +74,7 @@ const Ask: React.FC = () => {
           <Sorting />
         </div>
         <TempTable headerProp={headers} data={data} />
-        <Pagination maxPage={maxPage}/>
+        <Pagination maxPage={maxPage} />
       </div>
     </>
   );

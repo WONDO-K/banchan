@@ -1,12 +1,5 @@
 import React from "react";
-
-interface SmallButtonProps {
-  title?: string;
-  bgColor?: string;
-  txtColor?: string;
-  borderColor?: string;
-  onClick?: () => void; // onClick prop 추가
-}
+import { SmallButtonProps } from "../../Type";
 
 const SmallButton: React.FC<SmallButtonProps> = ({
   title = "",

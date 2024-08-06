@@ -4,16 +4,9 @@ import { useParams } from "react-router-dom";
 import SmallButton from "../Buttons/SmallButton";
 import MainHeader from "../MainHeader";
 import MainSideBar from "../MainSideBar";
+import { Post } from "../../Type";
 
-interface Post {
-  id: number;
-  title: string;
-  content: string;
-  username: string;
-  views: number;
-  likes: number;
-  createdAt: string;
-}
+const baseUrl = import.meta.env.VITE_BASE_API_URL;
 
 const DetailContent: React.FC<{ post: Post }> = ({ post }) => {
   return (
@@ -76,7 +69,7 @@ const Detail: React.FC = () => {
     const fetchPostDetail = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8080/${boardType}/detail/${id}`
+          `${baseUrl}/${boardType}/detail/${id}`
         );
         setPost(response.data);
       } catch (error) {

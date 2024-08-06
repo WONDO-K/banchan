@@ -5,16 +5,7 @@ import Table from "../Table";
 import Nav from "../Nav";
 import NavItem from "../NavItem";
 import SmallButton from "../Buttons/SmallButton";
-
-interface Meeting {
-  id: number;
-  roomName: string;
-  startDate: string;
-  startTime: string;
-  session: string | null;
-  createdAt: string | null;
-  active: boolean;
-}
+import { Meeting } from "../../Type";
 
 const NavElements = () => {
   return (
@@ -25,15 +16,15 @@ const NavElements = () => {
   );
 };
 
+const baseUrl = import.meta.env.VITE_BASE_API_URL;
+
 const FinishedMeeting: React.FC = () => {
   const [meetings, setMeetings] = useState<Meeting[]>([]);
 
   useEffect(() => {
     const fetchMeetings = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:8080/api/session/get/roomList"
-        );
+        const response = await axios.get(`${baseUrl}/api/session/get/roomList`);
         if (response.data && Array.isArray(response.data.data)) {
           setMeetings(response.data.data);
         } else {
@@ -74,9 +65,7 @@ const FinishedMeeting: React.FC = () => {
 
   const handleDeleteMeeting = async (meetingId: number) => {
     try {
-      await axios.delete(
-        `http://localhost:8080/api/session/delete/room/${meetingId}`
-      );
+      await axios.delete(`${baseUrl}/api/session/delete/room/${meetingId}`);
       setMeetings((prevMeetings) =>
         prevMeetings.filter((meeting) => meeting.id !== meetingId)
       );
@@ -104,7 +93,7 @@ const FinishedMeeting: React.FC = () => {
       <div className="container mx-auto p-4 mt-3">
         <div className="flex justify-end items-center mb-6 mr-6"></div>
         <Table headers={headers} data={data} />
-        <Pagination maxPage={1}  />
+        <Pagination maxPage={1} />
       </div>
     </>
   );

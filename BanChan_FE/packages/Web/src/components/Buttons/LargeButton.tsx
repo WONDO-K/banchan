@@ -1,11 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-
-interface LargeButtonProps {
-  title: string;
-  to?: string;
-  onClick?: () => void;
-}
+import { LargeButtonProps } from "../../Type";
 
 const LargeButton: React.FC<LargeButtonProps> = ({ title, to, onClick }) => {
   const navigate = useNavigate();

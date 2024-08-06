@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
+const baseUrl = import.meta.env.VITE_BASE_API_URL;
+
 const CreateMeeting: React.FC = () => {
   const [roomName, setRoomName] = useState("");
   const [startDate, setStartDate] = useState("");
@@ -12,7 +14,7 @@ const CreateMeeting: React.FC = () => {
   const handleCreateMeeting = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:8080/api/session/createRoom", {
+      await axios.post(`${baseUrl}/api/session/createRoom`, {
         roomName,
         startDate,
         startTime,

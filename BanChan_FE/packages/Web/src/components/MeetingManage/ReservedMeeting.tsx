@@ -7,17 +7,9 @@ import NavItem from "../NavItem";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { Meeting } from "../../Type";
 
 const baseUrl = import.meta.env.VITE_BASE_API_URL;
-interface Meeting {
-  id: number;
-  roomName: string;
-  startDate: string;
-  startTime: string;
-  session: string | null;
-  createdAt: string | null;
-  active: boolean;
-}
 
 const NavElements = () => {
   return (
@@ -143,7 +135,7 @@ const ReservedMeeting: React.FC = () => {
           </Link>
         </div>
         <Table headers={headers} data={data} />
-        <Pagination  maxPage={1} />
+        <Pagination maxPage={1} />
       </div>
     </>
   );
