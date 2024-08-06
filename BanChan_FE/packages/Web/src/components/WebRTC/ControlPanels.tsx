@@ -12,89 +12,89 @@
 //   | "chat_bubble"
 //   | "notifications";
 
-// const ControlPanels: React.FC<{
-//   onChatToggle: () => void;
-//   activeIcons: Record<IconName, boolean>;
-//   handleButtonClick: (icon: IconName) => void;
-// }> = ({ onChatToggle, activeIcons, handleButtonClick }) => {
-//   useEffect(() => {
-//     console.log(activeIcons); // activeIcons 상태가 변경될 때마다 로그를 출력
-//   }, [activeIcons]);
-//   return (
-//     <div className="px-4 flex items-center mt-4">
-//       <div className="flex space-x-8 ml-[210px]">
-//         <button
-//           className={`bg-gray-800 text-white flex items-center px-4 py-2 rounded-full ${
-//             activeIcons.mic ? "text-customRed" : "text-white"
-//           }`}
-//           onClick={() => handleButtonClick("mic")}
-//         >
-//           <span
-//             className={`material-symbols-outlined ${
-//               activeIcons.mic ? "text-customRed" : "text-white"
-//             }`}
-//           >
-//             {activeIcons.mic ? "mic_off" : "mic"}
-//           </span>
-//           <span className="ml-2">
-//             {activeIcons.mic ? "마이크 켜기" : "마이크 끄기"}
-//           </span>
-//         </button>
-//         <button
-//           className={`bg-gray-800 text-white flex items-center px-4 py-2 rounded-full ${
-//             activeIcons.videocam ? "text-customRed" : "text-white"
-//           }`}
-//           onClick={() => handleButtonClick("videocam")}
-//         >
-//           <span
-//             className={`material-symbols-outlined ${
-//               activeIcons.videocam ? "text-customRed" : "text-white"
-//             }`}
-//           >
-//             {activeIcons.videocam ? "videocam_off" : "videocam"}
-//           </span>
-//           <span className="ml-2">
-//             {activeIcons.videocam ? "비디오 켜기" : "비디오 끄기"}
-//           </span>
-//         </button>
-//         <button
-//           className="bg-gray-800 text-white flex items-center px-4 py-2 rounded-full"
-//           onClick={() => handleButtonClick("screen_share")}
-//         >
-//           <span
-//             className={`material-symbols-outlined ${
-//               activeIcons.screen_share ? "text-customRed" : "text-white"
-//             }`}
-//           >
-//             screen_share
-//           </span>
-//           <span className="ml-2">화면 공유</span>
-//         </button>
-//         <button
-//           className={`bg-gray-800 text-white flex items-center px-4 py-2 rounded-full ${
-//             activeIcons.headset_mic ? "text-customRed" : "text-white"
-//           }`}
-//           onClick={() => handleButtonClick("headset_mic")}
-//         >
-//           <span
-//             className={`material-symbols-outlined ${
-//               activeIcons.headset_mic ? "text-customRed" : "text-white"
-//             }`}
-//           >
-//             {activeIcons.headset_mic ? "headset_off" : "headset_mic"}
-//           </span>
-//           <span className="ml-2">
-//             {activeIcons.headset_mic ? "음소거 끄기" : "음소거 켜기"}
-//           </span>
-//         </button>
-//         <button
-//           className="bg-red-500 text-white flex items-center px-4 py-2 rounded-full"
-//           onClick={() => handleButtonClick("exit_to_app")}
-//         >
-//           <span className={`material-symbols-outlined`}>exit_to_app</span>
-//           <span className="ml-2">회의 떠나기</span>
-//         </button>
-//       </div>
+const ControlPanels: React.FC<{
+  onChatToggle: () => void;
+  activeIcons: Record<IconName, boolean>;
+  handleButtonClick: (icon: IconName) => void;
+}> = ({ onChatToggle, activeIcons, handleButtonClick }) => {
+  useEffect(() => {
+    console.log(activeIcons); // activeIcons 상태가 변경될 때마다 로그를 출력
+  }, [activeIcons]);
+  return (
+    <div className="px-4 flex items-center mt-4">
+      <div className="flex space-x-8 ml-[210px]">
+        <button
+          className={`bg-gray-800 text-white flex items-center px-4 py-2 rounded-full ${
+            !activeIcons.mic ? "text-customRed" : "text-white"
+          }`}
+          onClick={() => handleButtonClick("mic")}
+        >
+          <span
+            className={`material-symbols-outlined ${
+              !activeIcons.mic ? "text-customRed" : "text-white"
+            }`}
+          >
+            {!activeIcons.mic ? "mic_off" : "mic"}
+          </span>
+          <span className="ml-2">
+            {!activeIcons.mic ? "마이크 켜기" : "마이크 끄기"}
+          </span>
+        </button>
+        <button
+          className={`bg-gray-800 text-white flex items-center px-4 py-2 rounded-full ${
+            !activeIcons.videocam ? "text-customRed" : "text-white"
+          }`}
+          onClick={() => handleButtonClick("videocam")}
+        >
+          <span
+            className={`material-symbols-outlined ${
+              !activeIcons.videocam ? "text-customRed" : "text-white"
+            }`}
+          >
+            {!activeIcons.videocam ? "videocam_off" : "videocam"}
+          </span>
+          <span className="ml-2">
+            {!activeIcons.videocam ? "비디오 켜기" : "비디오 끄기"}
+          </span>
+        </button>
+        <button
+          className="bg-gray-800 text-white flex items-center px-4 py-2 rounded-full"
+          onClick={() => handleButtonClick("screen_share")}
+        >
+          <span
+            className={`material-symbols-outlined ${
+              activeIcons.screen_share ? "text-customRed" : "text-white"
+            }`}
+          >
+            screen_share
+          </span>
+          <span className="ml-2">화면 공유</span>
+        </button>
+        <button
+          className={`bg-gray-800 text-white flex items-center px-4 py-2 rounded-full ${
+            activeIcons.headset_mic ? "text-customRed" : "text-white"
+          }`}
+          onClick={() => handleButtonClick("headset_mic")}
+        >
+          <span
+            className={`material-symbols-outlined ${
+              activeIcons.headset_mic ? "text-customRed" : "text-white"
+            }`}
+          >
+            {activeIcons.headset_mic ? "headset_off" : "headset_mic"}
+          </span>
+          <span className="ml-2">
+            {activeIcons.headset_mic ? "음소거 끄기" : "음소거 켜기"}
+          </span>
+        </button>
+        <button
+          className="bg-red-500 text-white flex items-center px-4 py-2 rounded-full"
+          onClick={() => handleButtonClick("exit_to_app")}
+        >
+          <span className={`material-symbols-outlined`}>exit_to_app</span>
+          <span className="ml-2">회의 종료하기</span>
+        </button>
+      </div>
 
 //       <div className="flex space-x-10 ml-[100px]">
 //         <span className="cursor-pointer material-symbols-outlined text-white">

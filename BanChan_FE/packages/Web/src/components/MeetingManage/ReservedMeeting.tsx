@@ -8,6 +8,7 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 
+const baseUrl = import.meta.env.VITE_BASE_API_URL;
 interface Meeting {
   id: number;
   roomName: string;
@@ -34,9 +35,7 @@ const ReservedMeeting: React.FC = () => {
   useEffect(() => {
     const fetchMeetings = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:8080/api/session/get/roomList"
-        );
+        const response = await axios.get(`${baseUrl}/api/session/get/roomList`);
 
         if (response.data && Array.isArray(response.data.data)) {
           setMeetings(response.data.data);
@@ -55,7 +54,7 @@ const ReservedMeeting: React.FC = () => {
     meetingId: number
   ): Promise<{ sessionId: string; token: string }> => {
     const response = await axios.post(
-      `http://localhost:8080/api/session/${meetingId}`,
+      `${baseUrl}/api/session/${meetingId}`,
       {},
       {
         headers: {
@@ -67,7 +66,7 @@ const ReservedMeeting: React.FC = () => {
 
     const sessionId = response.data;
     const tokenResponse = await axios.post(
-      `http://localhost:8080/api/session/${sessionId}/token`,
+      `${baseUrl}/api/session/${sessionId}/token`,
       {},
       {
         headers: {
@@ -77,13 +76,7 @@ const ReservedMeeting: React.FC = () => {
       }
     );
 
-    const url = tokenResponse.data;
-    const urlParams = new URLSearchParams(new URL(url).search);
-    const token = urlParams.get("token");
-
-    if (!token) {
-      throw new Error("Failed to retrieve token from response");
-    }
+    const token = tokenResponse.data;
     return { sessionId, token };
   };
 
