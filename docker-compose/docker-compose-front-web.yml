@@ -1,0 +1,14 @@
+services:
+  banchan_front_web:
+    container_name: banchan_front_web
+    build:
+      context: ../BanChan_FE/packages/Web
+      dockerfile: Dockerfile
+    expose:
+      - "80"
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
+    external: true

@@ -13,6 +13,7 @@ export default {
         customBlue: "#2D60FF",
         customLineColor: "#EBEEF2",
         customBackgroundColor: "#F6F8FA",
+        customButtonColor: "#0075FF",
         customTextColor: "#718EBF",
         customFocusedTextColor: "#2D60FF",
         customSideBarTextColor: "#B1B1B1",
@@ -21,6 +22,7 @@ export default {
         customYellow: "#FFE812",
         customPink: "#FE5C73",
         customInputStyle: "#F3F7FA",
+        customMobileHeader: "#F0F8FF",
         customWebRTCHeader: {
           default: "rgba(217,217,217,1)",
           light: "rgba(217,217,217,0.5)", // 투명도 50%

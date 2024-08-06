@@ -1,12 +1,8 @@
 {
-  "name": "banchane-fe",
+  "name": "banchan-mobile",
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "workspaces": [
-    "packages/Web",
-    "packages/Mobile"
-  ],
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
@@ -16,12 +12,11 @@
   "dependencies": {
     "autoprefixer": "^10.4.19",
     "axios": "^1.7.2",
-    "livekit-client": "^2.4.1",
-    "openvidu-browser": "2.28.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.25.1",
     "react-swipeable": "^7.0.1",
+    "shared": "^0.2.0",
     "vite-plugin-pwa": "^0.20.1"
   },
   "devDependencies": {
