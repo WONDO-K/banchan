@@ -53,6 +53,7 @@ const LoginPage = () => {
   };
 
   const validate = async () => {
+    console.log(API_URL)
     console.log("로그인 유효성 검증:", user);
     if (user.userId === "") {
       alert("아이디를 입력해주세요.");
