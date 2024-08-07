@@ -61,14 +61,13 @@ const VoteCreatePage: React.FC = () => {
   // 투표 등록
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     const data:VoteCreateType = {
-      title,
-      content,
-      startDate :voteStart,
-      endDate : voteEnd,
-      imageUrl: "",
-      questions: forms.map((form) => ({
-        questionText: form.questionText,
-        options: form.options
+      "title" : title,
+      "content" : content,
+      "startDate" :voteStart,
+      "endDate" : voteEnd,
+      "questions": forms.map((form) => ({
+        "questionText": form.questionText,
+        "options": form.options
       }))
         
     }
@@ -76,7 +75,7 @@ const VoteCreatePage: React.FC = () => {
     // 서브밋 이벤트 방지
     e.preventDefault();
     // 백엔드로 POST 요청 보내는 로직 필요(axios)
-    CreateVote(cookies.Token,'api/vote/regist' ,data)
+    CreateVote(cookies.Token,'api/votes/regist' ,data)
   };
 
   return (

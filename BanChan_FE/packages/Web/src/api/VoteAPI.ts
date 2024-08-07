@@ -20,15 +20,23 @@ export const CreateVote = async (Token:string,API_REST:string,data:VoteCreateTyp
   try {
     const response: AxiosResponse<VoteGetType> = await axios.post(`${API_URL}/${API_REST}`,
       {
-        data
+        ...data
       }, {
       headers: {
-        Authorization: `Bearer ${Token}`, // Use response data here
+        'Authorization': `Bearer ${Token}`, // Use response data here
+        'Content-Type': 'application/json',
+
       }
     });
     console.log(response);
     return response.data; // content 배열만 반환
   } catch (error) {
-    console.error("생성 중 오류가 발생하였습니다", error);
+    if (axios.isAxiosError(error)) {
+      console.error('Error data:', error.response?.data);
+      console.error('Error status:', error.response?.status);
+      console.error('Error headers:', error.response?.headers);
+    } else {
+      console.error('Error message:', error);
+    }
   }
 };

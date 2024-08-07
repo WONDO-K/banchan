@@ -107,7 +107,6 @@ export interface MultiSelectDropdownProps {
 export interface VoteCreateType {
   title:string;
   content:string
-  imageUrl:string;
   startDate:string;
   endDate:string;
   questions : {

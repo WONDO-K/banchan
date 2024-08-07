@@ -19,7 +19,7 @@ const WriteContent = () => {
   const CreateCommunity = async (Token:string,data:{title:string,content:string}) => {
     try {
       console.log(data)
-      const response = await axios.post(`${baseUrl}/api/notice/regist`,
+      const response = await axios.post(`${baseUrl}/api/${boardType}/regist`,
         {
           ...data
         }, {
