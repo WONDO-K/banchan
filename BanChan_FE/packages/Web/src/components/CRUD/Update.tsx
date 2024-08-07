@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 import SmallButton from "../Buttons/SmallButton";
-import MainHeader from "../MainHeader";
-import MainSideBar from "../MainSideBar";
 
 const UpdateContent = () => {
   const [title, setTitle] = useState("");
@@ -75,9 +73,7 @@ const UpdateContent = () => {
 const Update = () => {
   return (
     <div className="flex h-screen">
-      <MainSideBar />
       <div className="flex-1 flex flex-col">
-        <MainHeader />
         <div className="flex-1 flex items-center justify-center bg-customBackgroundColor p-4">
           <UpdateContent />
         </div>

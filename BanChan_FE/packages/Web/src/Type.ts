@@ -49,9 +49,6 @@ export interface SmallButtonProps {
   onClick?: () => void;
 }
 
-export interface AskItem {
-  [key: string]: string | number | React.ReactNode;
-}
 
 export interface Post {
   id: number;
@@ -73,10 +70,10 @@ export interface Meeting {
   active: boolean;
 }
 
-export interface ActiveVoteType {
-  data : dataType[]
+export interface VoteGetType {
+  data : VoteListType[]
 }
-export interface dataType {
+export interface VoteListType {
     id: number;
     content : string;
     title: string;
@@ -85,6 +82,20 @@ export interface dataType {
     voteCount: number;
     finishCount: number;
     voted: boolean;
+}
+
+export interface CommunityGetType {
+  content : CommunityListType[]
+
+}
+export interface CommunityListType {
+  id : number
+  title : string
+  content : string
+  username : string
+  views : number
+  likes : number
+  createdAt : string
 }
 
 export interface MultiSelectDropdownProps {
@@ -172,4 +183,12 @@ export interface TableRowProps {
 
 export interface DataItem {
   [key: string]: string | number | boolean | React.ReactNode;
+}
+
+export interface CommunityParamsType{
+  keyword:string
+  sortBy:string
+  sortDirection:string
+  page:number
+  size:number
 }

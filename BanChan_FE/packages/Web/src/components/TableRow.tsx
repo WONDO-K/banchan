@@ -2,7 +2,6 @@ import React from "react";
 import { TableRowProps } from "../Type";
 
 const TableRow: React.FC<TableRowProps> = ({ row }) => {
-  console.log(row);
   return (
     <tr className="w-full border-b">
       {row.map((cell, index) => (

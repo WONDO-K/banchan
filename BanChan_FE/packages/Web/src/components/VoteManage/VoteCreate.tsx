@@ -144,7 +144,7 @@ const VoteCreatePage: React.FC = () => {
                 <input
                   name="voteStart"
                   className="w-52 h-10 p-2 rounded-full border-2 text-sm transition-transform transform"
-                  type="datetime-local"
+                  type="date"
                   required
                   value={voteStart}
                   onChange={handleVoteStartChange}
@@ -153,7 +153,7 @@ const VoteCreatePage: React.FC = () => {
                 <input
                   name="voteEnd"
                   className="w-52 h-10 p-2 rounded-full border-2 text-sm transition-transform transform"
-                  type="datetime-local"
+                  type="date"
                   required
                   value={voteEnd}
                   onChange={handleVoteEndChange}

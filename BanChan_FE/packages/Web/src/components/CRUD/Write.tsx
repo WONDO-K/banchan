@@ -1,18 +1,49 @@
 import React, { useState } from "react";
-import MainHeader from "../MainHeader";
-import MainSideBar from "../MainSideBar";
 import SmallButton from "../Buttons/SmallButton";
+import axios from "axios";
+import { useParams } from "react-router-dom";
+import { useCookies } from "react-cookie";
+const baseUrl = import.meta.env.VITE_API_URL;
 
 const WriteContent = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [file, setFile] = useState<File | null>(null);
-
+  const {boardType} = useParams();
+  const [cookies] = useCookies()
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       setFile(e.target.files[0]);
     }
   };
+  const CreateCommunity = async (Token:string,data:{title:string,content:string}) => {
+    try {
+      console.log(data)
+      const response = await axios.post(`${baseUrl}/api/notice/regist`,
+        {
+          ...data
+        }, {
+        headers: {
+          'Authorization': `Bearer ${Token}`, // Use response data here
+        }
+      });
+      console.log(response);
+      return response.data; // content 배열만 반환
+    } catch (error) {
+      console.error("생성 중 오류가 발생하였습니다", error);
+    }
+  };
+  const SubmitHandle = () => {
+    const data = {
+      "title" : title,
+      "content" : content
+    }
+    
+    CreateCommunity(cookies.Token,data)
+
+
+    console.log(data)
+  }
   return (
     <div className="bg-white shadow-md rounded-lg p-6 w-full max-w-7xl h-[750px]">
       <div className="mt-[20px]">
@@ -36,7 +67,7 @@ const WriteContent = () => {
             placeholder="본문 내용을 입력해 주세요"
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            className="w-full h-[350px] px-3 py-2 bg-customInputStyle border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-200"
+            className="w-full h-[350px] px-3 py-2 bg-customInputStyle border border-gray-300 rounded-lg  resize-none focus:outline-none focus:ring focus:ring-blue-200"
           ></textarea>
         </div>
         <div className="mb-4">
@@ -58,13 +89,11 @@ const WriteContent = () => {
           )}
         </div>
         <div className="flex  justify-end mt-[40px]">
-          {/* <button className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-200 ">
-            글쓰기
-          </button> */}
           <SmallButton
             title="글작성"
             bgColor="bg-customFocusedTextColor"
             txtColor="text-white"
+            onClick={SubmitHandle}
           />
         </div>
       </div>
@@ -74,15 +103,11 @@ const WriteContent = () => {
 
 const Write = () => {
   return (
-    <div className="flex h-screen">
-      <MainSideBar />
-      <div className="flex-1 flex flex-col">
-        <MainHeader />
+
         <div className="flex-1 flex items-center justify-center bg-customBackgroundColor p-4">
           <WriteContent />
         </div>
-      </div>
-    </div>
+
   );
 };
 

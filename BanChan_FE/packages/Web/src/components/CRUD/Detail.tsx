@@ -2,11 +2,9 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import SmallButton from "../Buttons/SmallButton";
-import MainHeader from "../MainHeader";
-import MainSideBar from "../MainSideBar";
 import { Post } from "../../Type";
-
-const baseUrl = import.meta.env.VITE_BASE_API_URL;
+import { useCookies } from "react-cookie";
+const baseUrl = import.meta.env.VITE_API_URL;
 
 const DetailContent: React.FC<{ post: Post }> = ({ post }) => {
   return (
@@ -61,38 +59,51 @@ const DetailContent: React.FC<{ post: Post }> = ({ post }) => {
   );
 };
 
+type Params = {
+  boardType: string;
+  id: string;
+};
+
 const Detail: React.FC = () => {
-  const { boardType, id } = useParams<{ boardType: string; id: string }>();
+  const { boardType, id } = useParams<Params>();
   const [post, setPost] = useState<Post | null>(null);
+  const [cookies] = useCookies(['Token']);
 
   useEffect(() => {
     const fetchPostDetail = async () => {
       try {
+        const token = cookies.Token;
+        if (!token) {
+          console.error("토큰이 없습니다!");
+          return;
+        }
+        console.log(token)
         const response = await axios.get(
-          `${baseUrl}/${boardType}/detail/${id}`
+          `${baseUrl}/api/${boardType}/detail/${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          }
         );
+
         setPost(response.data);
+        console.log(response);
       } catch (error) {
         console.error("데이터를 가져오는 중 오류가 발생했습니다!", error);
       }
     };
 
     fetchPostDetail();
-  }, [boardType, id]);
+  }, [boardType, id, cookies.Token]);
 
   if (!post) {
     return <div>Loading...</div>;
   }
 
   return (
-    <div className="flex h-screen">
-      <MainSideBar />
-      <div className="flex-1 flex flex-col">
-        <MainHeader />
-        <div className="flex-1 flex items-center justify-center bg-customBackgroundColor p-4">
-          <DetailContent post={post} />
-        </div>
-      </div>
+    <div className="flex-1 flex items-center justify-center bg-customBackgroundColor p-4">
+      <DetailContent post={post} />
     </div>
   );
 };

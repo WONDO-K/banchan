@@ -3,7 +3,6 @@ import HomePage from "../pages/HomePage";
 import SocialLoginPage from "../pages/SocialLoginPage";
 import LoginPage from "../pages/LoginPage";
 import Notice from "../components/Community/Notice";
-import Board from "../components/Community/Board";
 import Ask from "../components/Community/Ask";
 import ReservedMeeting from "../components/MeetingManage/ReservedMeeting";
 import FinishedMeeting from "../components/MeetingManage/FinishedMeeting";
@@ -41,7 +40,6 @@ function AppRoutes() {
       {/* 레이아웃 적용 X */}
       <Route path="/" element={<SocialLoginPage />} />
       <Route path="/login" element={<LoginPage />} />
-      <Route path="/write" element={<Write />} />
       <Route path="/update" element={<Update />} />
       <Route path="/meetingPage/:id" element={<MeetingPage />} />
       <Route path="/chatBox" element={<ChatBox />} />
@@ -74,10 +72,10 @@ function AppRoutes() {
         {/* 커뮤니티 페이지 */}
         <Route path="/community" element={<CommunityPage />}>
           <Route index element={<Navigate to="notice" />} />
-          <Route path="notice" element={<Notice />} />
-          <Route path="board" element={<Board />} />
+          <Route path="notice/*" element={<Notice />} />
           <Route path="ask" element={<Ask />} />
-          <Route path="/community/:boardType/:id" element={<Detail />} />
+          <Route path=":boardType/detail/:id" element={<Detail />} />
+          <Route path=":boardType/write" element={<Write />} />
         </Route>
 
         {/* 투표관리 페이지 */}
@@ -86,8 +84,8 @@ function AppRoutes() {
           <Route path="active" element={<ActiveVote />} />
           <Route path="finish" element={<FinishedVote />} />
           <Route path="create" element={<VoteCreatePage />} />
-          <Route path="active/:id" element={<VoteDetail />} />
-          <Route path="finish/:id" element={<VoteEnd />} />
+          <Route path="active/detail/:id" element={<VoteDetail />} />
+          <Route path="finish/detail/:id" element={<VoteEnd />} />
         </Route>
         {/* 메세지 전송 */}
         <Route path="/message" element={<SendMessage />} />

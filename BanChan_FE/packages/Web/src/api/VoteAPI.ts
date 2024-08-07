@@ -1,10 +1,10 @@
-import { ActiveVoteType, VoteCreateType} from "../Type";
+import { VoteGetType, VoteCreateType} from "../Type";
 import axios,{AxiosResponse } from "axios";
 const API_URL = import.meta.env.VITE_API_URL;
 
-export const getVote = async (Token:string,API_REST:string):Promise<ActiveVoteType> => {
+export const getVote = async (Token:string,API_REST:string):Promise<VoteGetType> => {
   try {
-    const response: AxiosResponse<ActiveVoteType> = await axios.get(`${API_URL}/${API_REST}`, {
+    const response: AxiosResponse<VoteGetType> = await axios.get(`${API_URL}/${API_REST}`, {
       headers: {
         Authorization: `Bearer ${Token}`, // Use response data here
       }
@@ -18,7 +18,7 @@ export const getVote = async (Token:string,API_REST:string):Promise<ActiveVoteTy
 
 export const CreateVote = async (Token:string,API_REST:string,data:VoteCreateType) => {
   try {
-    const response: AxiosResponse<ActiveVoteType> = await axios.post(`${API_URL}/${API_REST}`,
+    const response: AxiosResponse<VoteGetType> = await axios.post(`${API_URL}/${API_REST}`,
       {
         data
       }, {

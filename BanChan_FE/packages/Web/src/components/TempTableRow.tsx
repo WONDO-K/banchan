@@ -11,7 +11,7 @@ const TempTableRow: React.FC<TableRowProps> = ({ row, columns }) => {
     <tr className="w-full border-b">
       {columns.map((column, cellIndex) => (
         <td key={cellIndex} className="p-4 text-center">
-          <Link to={`${row["id"]}`}>{row[column]}</Link>
+          <Link to={`detail/${row["id"]}`}>{row[column]}</Link>
         </td>
       ))}
     </tr>
