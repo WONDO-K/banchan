@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -48,7 +49,6 @@ public class VoteServiceImpl implements VoteService {
                 .createdUser(user)
                 .title(voteRequestDto.getTitle())
                 .content(voteRequestDto.getContent())
-                .imageUrl(voteRequestDto.getImageUrl())
                 .startDate(voteRequestDto.getStartDate())
                 .endDate(voteRequestDto.getEndDate())
                 .build();
@@ -112,7 +112,7 @@ public class VoteServiceImpl implements VoteService {
     public List<VoteListResponseDto> getCurrentVoteList(String username) {
 
         User user = findUserByUsername(username);
-        LocalDateTime currentDate = LocalDateTime.now();
+        LocalDate currentDate = LocalDate.now();
         List<Vote> votes = voteParticipantRepository.findVotesByUserId(user.getId(), currentDate);
 
         return votes.stream()
@@ -130,7 +130,7 @@ public class VoteServiceImpl implements VoteService {
     public List<VoteListResponseDto> getlistFinished(String username) {
 
         User user = findUserByUsername(username);
-        LocalDateTime currentDate = LocalDateTime.now();
+        LocalDate currentDate = LocalDate.now();
         List<Vote> votes = voteParticipantRepository.findDoneVotesByUserId(user.getId(), currentDate);
 
         return votes.stream()
@@ -230,6 +230,15 @@ public class VoteServiceImpl implements VoteService {
                 .collect(Collectors.toList());
 
         return new VoteResultDto(vote.getId(), vote.getTitle(), vote.getContent(), questionResults);
+    }
+
+    @Override
+    public void deleteVote(Long voteId) {
+
+        Vote vote = voteRepository.findById(voteId)
+                .orElseThrow(() -> new RuntimeException("Invalid vote ID"));
+
+        voteRepository.delete(vote);
     }
 
     private User findUserByUsername(String username) {

@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -36,10 +37,10 @@ public class Vote {
     private String imageUrl;
 
     @Column(name = "start_date", nullable = false)
-    private LocalDateTime startDate;
+    private LocalDate startDate;
 
     @Column(name = "end_date", nullable = false)
-    private LocalDateTime endDate;
+    private LocalDate endDate;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
@@ -47,11 +48,18 @@ public class Vote {
     @Column(name = "isActive")
     private boolean isActive;
 
-    @OneToMany(mappedBy = "vote", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "vote", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<VoteQuestion> questions;
+
+    @OneToMany(mappedBy = "vote", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<VoteResult> results;
+
+    @OneToMany(mappedBy = "vote", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<VoteParticipant> participants;
 
     @PrePersist
     protected void onCreate() {
+
         createdAt = LocalDateTime.now();
     }
 }

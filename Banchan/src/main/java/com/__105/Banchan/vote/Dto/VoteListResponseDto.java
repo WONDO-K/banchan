@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /*
@@ -36,8 +37,8 @@ public class VoteListResponseDto {
     private Long id;
     private String title;
     private String content;
-    private LocalDateTime startDate;
-    private LocalDateTime endDate;
+    private LocalDate startDate;
+    private LocalDate endDate;
     private int voteCount;
     private int finishCount;
     private boolean isVoted;

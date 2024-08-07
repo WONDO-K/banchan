@@ -22,7 +22,7 @@ public class VoteResult {
     @Column(name = "vote_res_id")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "vote_id")
     private Vote vote;
 

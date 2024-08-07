@@ -54,7 +54,12 @@ public class  NoticeController {
             isAdmin = true;
         }
 
-        Optional<Cookie> noticeCookie = Arrays.stream(request.getCookies())
+        Cookie[] cookies = request.getCookies();
+        if (cookies == null) {
+            cookies = new Cookie[0];
+        }
+
+        Optional<Cookie> noticeCookie = Arrays.stream(cookies)
                 .filter(cookie -> cookie.getName().equals("viewed_notices"))
                 .findFirst();
 

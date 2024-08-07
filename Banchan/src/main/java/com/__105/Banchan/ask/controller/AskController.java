@@ -48,7 +48,12 @@ public class AskController {
             isAdmin = true;
         }
 
-        Optional<Cookie> askCookie = Arrays.stream(request.getCookies())
+        Cookie[] cookies = request.getCookies();
+        if (cookies == null) {
+            cookies = new Cookie[0];
+        }
+
+        Optional<Cookie> askCookie = Arrays.stream(cookies)
                 .filter(cookie -> cookie.getName().equals("viewed_ask"))
                 .findFirst();
 

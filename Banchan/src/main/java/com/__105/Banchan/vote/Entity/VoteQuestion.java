@@ -28,6 +28,6 @@ public class VoteQuestion {
     @Column(name = "question_text", nullable = false)
     private String questionText;
 
-    @OneToMany(mappedBy = "voteQuestion", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "voteQuestion", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<VoteOption> options;
 }

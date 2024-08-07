@@ -5,6 +5,7 @@ import com.__105.Banchan.vote.Entity.VoteOption;
 import com.__105.Banchan.vote.Entity.VoteQuestion;
 import lombok.Getter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,8 +17,8 @@ public class VoteResponseDto {
     private String title;
     private String content;
     private String imageUrl;
-    private LocalDateTime startDate;
-    private LocalDateTime endDate;
+    private LocalDate startDate;
+    private LocalDate endDate;
     private LocalDateTime createdAt;
     private List<QuestionResponseDto> questions;
 

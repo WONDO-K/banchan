@@ -19,7 +19,7 @@ public class VoteController {
 
     @PostMapping("/regist")
     public ResponseEntity<?> registVote(@RequestBody VoteRequestDto voteRequestDto,
-                                    @AuthenticationPrincipal UserDetails userDetails) {
+                                        @AuthenticationPrincipal UserDetails userDetails) {
         voteService.createVote(voteRequestDto, userDetails.getUsername());
         return ResponseEntity.ok().build();
     }
@@ -61,5 +61,13 @@ public class VoteController {
 
         voteService.vote(voteRequestDto, userDetails.getUsername());
         return ResponseEntity.ok().body("success vote");
+    }
+
+    @DeleteMapping("/delete/{voteId}")
+    public ResponseEntity<?> delete(@PathVariable Long voteId,
+                                    @AuthenticationPrincipal UserDetails userDetails) {
+
+        voteService.deleteVote(voteId);
+        return ResponseEntity.ok().body("success delete");
     }
 }

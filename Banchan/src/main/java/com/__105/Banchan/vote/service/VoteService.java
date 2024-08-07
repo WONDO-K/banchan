@@ -17,4 +17,6 @@ public interface VoteService {
     void vote(DoVoteRequestDto doVoteRequestDto, String username);
 
     VoteResultDto getResult(Long voteId);
+
+    void deleteVote(Long voteId);
 }

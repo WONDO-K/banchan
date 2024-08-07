@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -18,13 +19,13 @@ public interface VoteParticipantRepository extends JpaRepository<VoteParticipant
             "where vp.user.id = :userId " +
             "and :currentDate between vp.vote.startDate and vp.vote.endDate " +
             "order by vp.vote.id desc")
-    List<Vote> findVotesByUserId(@Param("userId") Long userId, @Param("currentDate") LocalDateTime currentDate);
+    List<Vote> findVotesByUserId(@Param("userId") Long userId, @Param("currentDate") LocalDate currentDate);
 
     @Query("select vp.vote from VoteParticipant vp " +
             "where vp.user.id = :userId " +
-            "and :currentDate >= vp.vote.endDate " +
+            "and :currentDate > vp.vote.endDate " +
             "order by vp.vote.id desc")
-    List<Vote> findDoneVotesByUserId(@Param("userId") Long userId, @Param("currentDate") LocalDateTime currentDate);
+    List<Vote> findDoneVotesByUserId(@Param("userId") Long userId, @Param("currentDate") LocalDate currentDate);
 
     @Query(value = "select count(*) from vote_participant " +
             "where vote_id = :voteId", nativeQuery = true)

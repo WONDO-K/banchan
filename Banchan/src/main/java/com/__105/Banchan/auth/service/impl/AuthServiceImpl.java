@@ -102,11 +102,11 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public ResponseEntity<TokenResponseStatus> refresh(String accessToken, String refreshToken) {
         try {
-            // 액세스 토큰의 유효성 검사
-            if (!jwtUtil.verifyToken(accessToken)) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body(new TokenResponseStatus(ErrorCode.INVALID_PARAMETER.getStatus(), null));
-            }
+//            // 액세스 토큰의 유효성 검사
+//            if (!jwtUtil.verifyToken(accessToken)) {
+//                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+//                        .body(new TokenResponseStatus(ErrorCode.INVALID_PARAMETER.getStatus(), null));
+//            }
 
             // 리프레시 토큰 유효성 검사
             if (!jwtUtil.verifyToken(refreshToken)) {
@@ -130,10 +130,11 @@ public class AuthServiceImpl implements AuthService {
             }
 
             // 리프레시 토큰 정보가 없는 경우
+            log.info("리프레시 토큰 정보를 찾을 수 없습니다.");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new TokenResponseStatus(ErrorCode.REDIS_REFRESH_TOKEN_NOT_FOUND.getStatus(), null));
         } catch (Exception e) {
-            log.error("액세스 토큰 갱신 실패. 액세스 토큰: {}, 리프레시 토큰: {}, 오류: {}", accessToken, refreshToken, e.getMessage());
+            log.info("액세스 토큰 갱신 실패. 액세스 토큰: {}, 리프레시 토큰: {}, 오류: {}", accessToken, refreshToken, e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new TokenResponseStatus(ErrorCode.INTERNAL_SERVER_ERROR.getStatus(), null));
         }
