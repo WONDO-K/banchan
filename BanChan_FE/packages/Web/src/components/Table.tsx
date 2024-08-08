@@ -1,10 +1,6 @@
 import React from "react";
 import TableRow from "./TableRow";
-
-interface TableProps {
-  headers: string[];
-  data: (string | number | React.ReactNode)[][];
-}
+import { TableProps } from "../Type";
 
 const Table: React.FC<TableProps> = ({ headers, data }) => {
   return (

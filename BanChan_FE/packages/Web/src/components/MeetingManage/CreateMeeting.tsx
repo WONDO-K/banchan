@@ -1,22 +1,34 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useCookies } from "react-cookie";
+
+const baseUrl = import.meta.env.VITE_BASE_API_URL;
 
 const CreateMeeting: React.FC = () => {
   const [roomName, setRoomName] = useState("");
   const [startDate, setStartDate] = useState("");
   const [startTime, setStartTime] = useState("");
+  const [cookies] = useCookies();
 
   const navigate = useNavigate();
 
   const handleCreateMeeting = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:8080/api/session/createRoom", {
-        roomName,
-        startDate,
-        startTime,
-      });
+      await axios.post(
+        `${baseUrl}/api/session/createRoom`,
+        {
+          roomName,
+          startDate,
+          startTime,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${cookies.Token}`,
+          },
+        }
+      );
       navigate(`/meeting/reservedMeeting`);
     } catch (error) {
       console.error("Error creating meeting:", error);

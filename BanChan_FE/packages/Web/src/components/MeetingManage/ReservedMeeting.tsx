@@ -7,17 +7,10 @@ import NavItem from "../NavItem";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { Meeting } from "../../Type";
+import { useCookies } from "react-cookie";
 
 const baseUrl = import.meta.env.VITE_BASE_API_URL;
-interface Meeting {
-  id: number;
-  roomName: string;
-  startDate: string;
-  startTime: string;
-  session: string | null;
-  createdAt: string | null;
-  active: boolean;
-}
 
 const NavElements = () => {
   return (
@@ -31,11 +24,19 @@ const NavElements = () => {
 const ReservedMeeting: React.FC = () => {
   const navigate = useNavigate();
   const [meetings, setMeetings] = useState<Meeting[]>([]);
+  const [cookies] = useCookies();
 
   useEffect(() => {
     const fetchMeetings = async () => {
       try {
-        const response = await axios.get(`${baseUrl}/api/session/get/roomList`);
+        const response = await axios.get(
+          `${baseUrl}/api/session/get/roomList`,
+          {
+            headers: {
+              Authorization: `Bearer ${cookies.Token}`,
+            },
+          }
+        );
 
         if (response.data && Array.isArray(response.data.data)) {
           setMeetings(response.data.data);
@@ -59,7 +60,9 @@ const ReservedMeeting: React.FC = () => {
       {
         headers: {
           "Content-Type": "application/json",
-          Authorization: "Basic " + btoa("OPENVIDUAPP:YOUR_SECRET"),
+          Authorization: `Bearer ${cookies.Token}`,
+
+          // Authorization: "Basic " + btoa("OPENVIDUAPP:YOUR_SECRET"),
         },
       }
     );
@@ -71,7 +74,9 @@ const ReservedMeeting: React.FC = () => {
       {
         headers: {
           "Content-Type": "application/json",
-          Authorization: "Basic " + btoa("OPENVIDUAPP:YOUR_SECRET"),
+          Authorization: `Bearer ${cookies.Token}`,
+
+          // Authorization: "Basic " + btoa("OPENVIDUAPP:YOUR_SECRET"),
         },
       }
     );
@@ -143,7 +148,7 @@ const ReservedMeeting: React.FC = () => {
           </Link>
         </div>
         <Table headers={headers} data={data} />
-        <Pagination  maxPage={1} />
+        <Pagination maxPage={1} />
       </div>
     </>
   );

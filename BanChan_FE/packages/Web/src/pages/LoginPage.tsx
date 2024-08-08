@@ -30,11 +30,8 @@ const LoginPage = () => {
       // setUserId 함수를 호출하여 state 변수인 userId의 값을 cookies.rememberUserId로 설정
       setRememberMe(true);
       // state 변수인 setIsRemember 값을 true로 설정
-      console.log("hi");
     }
   }, [cookies.rememberUserId, cookies.rememberUserPw]);
-  // rememberUserId 값이 변경될 때만 useEffect 함수가 실행되도록 설정한다.
-  // 이렇게 하면 불필요한 state 업데이트를 방지할 수 있음
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -77,12 +74,14 @@ const LoginPage = () => {
         });
 
         setCookie("Token", response.data.accessToken);
-
-        const config = {
-          headers: {
-            Authorization: `Bearer ${cookies.Token}`, // Use response data here
-          },
-        };
+        
+        setTimeout(async () => {
+          const config = {
+            headers: {
+              Authorization: `Bearer ${response.data.accessToken}`, // Use response data directly here
+            },
+          };
+        
 
         try {
           const user_data = await axios.get(
@@ -107,6 +106,7 @@ const LoginPage = () => {
           console.log(err);
           alert("유저 정보를 들고오는데 실패하였습니다");
         }
+      },100);
       } catch (err) {
         console.log(err);
         alert("로그인에 실패하였습니다 아이디,비밀번호를 확인해주세요");

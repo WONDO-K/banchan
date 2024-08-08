@@ -1,5 +1,5 @@
 import axios from 'axios';
-import apiClient from './api';
+import apiClient from './api.ts';
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 

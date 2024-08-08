@@ -1,10 +1,8 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-// 메인 페이지들
 import HomePage from "../pages/HomePage";
 import SocialLoginPage from "../pages/SocialLoginPage";
 import LoginPage from "../pages/LoginPage";
 import Notice from "../components/Community/Notice";
-import Board from "../components/Community/Board";
 import Ask from "../components/Community/Ask";
 import ReservedMeeting from "../components/MeetingManage/ReservedMeeting";
 import FinishedMeeting from "../components/MeetingManage/FinishedMeeting";
@@ -31,7 +29,7 @@ import MyPage from "../pages/MyPage";
 import VoteEnd from "../components/VoteManage/VoteEnd";
 import SessionJoinPage from "../pages/SessionJoinPage";
 import OpenViduSession from "../OpenviduSession";
-import KakaoRedirect from "../pages/KakaoRedirect";
+import Kakaocallback from "../pages/KakaoCallback";
 import KakaoLoginButton from '../components/Buttons/KakaoLoginButton'; // KakaoLoginButton 컴포넌트 임포트
 import UserDetailForm from '../components/UserDetailForm'; // UserDetailForm 컴포넌트 임포트
 
@@ -42,13 +40,12 @@ function AppRoutes() {
       {/* 레이아웃 적용 X */}
       <Route path="/" element={<SocialLoginPage />} />
       <Route path="/login" element={<LoginPage />} />
-      <Route path="/write" element={<Write />} />
       <Route path="/update" element={<Update />} />
       <Route path="/meetingPage/:id" element={<MeetingPage />} />
       <Route path="/chatBox" element={<ChatBox />} />
       <Route path="/openvidu" element={<OpenViduSession />} />
 
-      <Route path="/login/oauth2/code/kakao" element={<KakaoRedirect />} />
+      <Route path="/login/oauth2/code/kakao" element={<Kakaocallback />} />
       <Route path="/kakao-login" element={<KakaoLoginButton />} />
       {/* 메인레이아웃 - 상단 툴바 및 좌측 메뉴바 */}
       <Route element={<MainLayout />}>
@@ -59,8 +56,10 @@ function AppRoutes() {
         <Route path="/userManage" element={<UserManagePage />}>
           <Route index element={<Navigate to="approval" />} />
           <Route path="detail" element={<UserDetailForm />} />
-          <Route path="approval" element={<Approval />} />
-          <Route path="manage" element={<Manage />} />
+          {/* <Route path="approval" element={<Approval />} />
+          <Route path="manage" element={<Manage />} /> */}
+          <Route path="/userManage/approval" element={<Approval />} />
+          <Route path="/userManage/manage" element={<Manage />} />
         </Route>
 
         {/* 회의관리 페이지 */}
@@ -75,10 +74,10 @@ function AppRoutes() {
         {/* 커뮤니티 페이지 */}
         <Route path="/community" element={<CommunityPage />}>
           <Route index element={<Navigate to="notice" />} />
-          <Route path="notice" element={<Notice />} />
-          <Route path="board" element={<Board />} />
+          <Route path="notice/*" element={<Notice />} />
           <Route path="ask" element={<Ask />} />
-          <Route path="/community/:boardType/:id" element={<Detail />} />
+          <Route path=":boardType/detail/:id" element={<Detail />} />
+          <Route path=":boardType/write" element={<Write />} />
         </Route>
 
         {/* 투표관리 페이지 */}
@@ -87,8 +86,8 @@ function AppRoutes() {
           <Route path="active" element={<ActiveVote />} />
           <Route path="finish" element={<FinishedVote />} />
           <Route path="create" element={<VoteCreatePage />} />
-          <Route path="active/:id" element={<VoteDetail />} />
-          <Route path="finish/:id" element={<VoteEnd />} />
+          <Route path="active/detail/:id" element={<VoteDetail />} />
+          <Route path="finish/detail/:id" element={<VoteEnd />} />
         </Route>
         {/* 메세지 전송 */}
         <Route path="/message" element={<SendMessage />} />

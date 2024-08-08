@@ -3,13 +3,9 @@ import { useSwipeable } from "react-swipeable";
 import { useNavigate } from "react-router-dom";
 import { SwipeableContentProps } from "../../Types";
 
-const SwipeableContent: React.FC<SwipeableContentProps> = ({ items }) => {
+const SwipeableResults: React.FC<SwipeableContentProps> = ({ items }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const navigate = useNavigate();
-
-  const [selectedOptions, setSelectedOptions] = useState<number[]>(
-    Array(items.length).fill(-1)
-  );
 
   const handlers = useSwipeable({
     onSwipedLeft: () =>
@@ -20,14 +16,20 @@ const SwipeableContent: React.FC<SwipeableContentProps> = ({ items }) => {
     trackMouse: true,
   });
 
-  const handleOptionClick = (index: number, optionIndex: number) => {
-    const newSelectedOptions = [...selectedOptions];
-    newSelectedOptions[index] = optionIndex;
-    setSelectedOptions(newSelectedOptions);
+  const goToVoteList = () => {
+    navigate("/m/voteList");
   };
 
-  const handleFinishVoteClick = () => {
-    navigate("/m/finishedVote");
+  // Generating random percentages for each option
+  const generateRandomPercentages = (options: string[]) => {
+    let remaining = 100;
+    const percentages = options.map((_, index) => {
+      if (index === options.length - 1) return remaining;
+      const percentage = Math.floor(Math.random() * remaining);
+      remaining -= percentage;
+      return percentage;
+    });
+    return percentages;
   };
 
   return (
@@ -39,11 +41,15 @@ const SwipeableContent: React.FC<SwipeableContentProps> = ({ items }) => {
         className="flex transition-transform duration-500 ease-in-out"
         style={{
           transform: `translateX(-${(currentIndex / 2) * 100}%)`,
-          width: `${(items.length / 2) * 100}%`,
+          width: `${Math.ceil(items.length / 2) * 100}%`,
         }}
       >
-        {items.map((item, index) =>
-          index % 2 === 0 ? (
+        {items.map((item, index) => {
+          const percentages = generateRandomPercentages(item.options);
+          const maxPercentageIndex = percentages.indexOf(
+            Math.max(...percentages)
+          );
+          return index % 2 === 0 ? (
             <div
               key={index}
               className="flex flex-col w-[300px] flex-none"
@@ -55,14 +61,11 @@ const SwipeableContent: React.FC<SwipeableContentProps> = ({ items }) => {
                   {item.options.map((option, optionIdx) => (
                     <p
                       key={optionIdx}
-                      className={`text-gray-800 cursor-pointer p-2 rounded-md ${
-                        selectedOptions[index] === optionIdx
-                          ? "bg-blue-500 text-white"
-                          : "bg-white"
+                      className={`text-gray-800 p-2 rounded-md bg-white ${
+                        optionIdx === maxPercentageIndex ? "bg-yellow-300" : ""
                       }`}
-                      onClick={() => handleOptionClick(index, optionIdx)}
                     >
-                      {option}
+                      {option} - {percentages[optionIdx]}%
                     </p>
                   ))}
                 </div>
@@ -76,14 +79,19 @@ const SwipeableContent: React.FC<SwipeableContentProps> = ({ items }) => {
                     {items[index + 1].options.map((option, optionIdx) => (
                       <p
                         key={optionIdx}
-                        className={`text-gray-800 cursor-pointer p-2 rounded-md ${
-                          selectedOptions[index + 1] === optionIdx
-                            ? "bg-blue-500 text-white"
-                            : "bg-white"
+                        className={`text-gray-800 p-2 rounded-md bg-white ${
+                          optionIdx === maxPercentageIndex
+                            ? "bg-yellow-300"
+                            : ""
                         }`}
-                        onClick={() => handleOptionClick(index + 1, optionIdx)}
                       >
-                        {option}
+                        {option} -{" "}
+                        {
+                          generateRandomPercentages(items[index + 1].options)[
+                            optionIdx
+                          ]
+                        }
+                        %
                       </p>
                     ))}
                   </div>
@@ -92,19 +100,19 @@ const SwipeableContent: React.FC<SwipeableContentProps> = ({ items }) => {
               {currentIndex === index && currentIndex >= items.length - 2 && (
                 <div className="flex ml-[130px] ">
                   <button
-                    onClick={handleFinishVoteClick}
+                    onClick={goToVoteList}
                     className="py-2 px-4 bg-green-500 text-white font-semibold rounded-full hover:bg-green-600"
                   >
-                    투표 완료
+                    투표 목록
                   </button>
                 </div>
               )}
             </div>
-          ) : null
-        )}
+          ) : null;
+        })}
       </div>
     </div>
   );
 };
 
-export default SwipeableContent;
+export default SwipeableResults;

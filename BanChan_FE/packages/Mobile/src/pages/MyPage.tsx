@@ -1,31 +1,5 @@
 import React, { useState } from "react";
-import { NavLink } from "react-router-dom";
-
-interface SidebarItemProps {
-  icon: string;
-  text: string;
-  to: string;
-}
-
-const SidebarItem: React.FC<SidebarItemProps> = ({ icon, text, to }) => {
-  return (
-    <NavLink
-      to={to}
-      className={({ isActive }) =>
-        `flex items-center w-full text-black focus:text-customBlue hover:text-customBlue hover:border-l-4 hover:border-customBlue ${
-          isActive ? "border-l-4 border-customBlue text-customBlue" : ""
-        }`
-      }
-    >
-      <span className="material-symbols-outlined text-[30px] pl-10">
-        {icon}
-      </span>
-      <div className="mt-[2.8px] ml-2 ">
-        <span className="ml-2 text-[18px]">{text}</span>
-      </div>
-    </NavLink>
-  );
-};
+import Header from "../components/Header";
 
 const MyPage = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -34,11 +8,6 @@ const MyPage = () => {
   const [phoneNumber, setPhoneNumber] = useState("010-1234-5678");
   const [linkedAccount, setLinkedAccount] = useState("연동된 계정");
   const [name, setName] = useState("이름");
-  const [menuOpen, setMenuOpen] = useState(false);
-
-  const handleMenuToggle = () => {
-    setMenuOpen(!menuOpen);
-  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,67 +15,13 @@ const MyPage = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center bg-gray-100">
+    <div className="min-h-screen">
+      <Header>내 정보</Header>
       <div
         className="w-full max-w-md p-8 bg-white shadow-md rounded-md h-screen"
-        style={{ height: "800px" }}
+        style={{ height: "750px" }}
       >
-        <div className="flex items-center justify-between bg-blue-500 w-full py-2 fixed top-0 left-0">
-          <button className="text-white">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              className="w-6 h-6"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M15 19l-7-7 7-7"
-              />
-            </svg>
-          </button>
-          <h2 className="text-xl font-bold text-white">내 정보</h2>
-          <div className=""></div>
-          <div className="relative">
-            <button
-              onClick={handleMenuToggle}
-              className="text-white focus:outline-none"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                className="w-6 h-6"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
-              </svg>
-            </button>
-            {menuOpen && (
-              <div
-                className="absolute right-0 mt-2 w-[270px]  bg-white border rounded shadow-lg
-              space-y-12 text-center h-[712px] transition-transform duration-700 transform ${menuOpen ? 'translate-y-0' : 'translate-y-full'}`}"
-              >
-                <div className="mt-[100px]"></div>
-                <SidebarItem icon="person" text="마이페이지" to="/" />
-                <SidebarItem icon="forum" text="커뮤니티" to="/" />
-                <SidebarItem icon="how_to_vote" text="투표" to="/" />
-                <SidebarItem icon="calendar_today" text="회의" to="/" />
-                <div className="mt-[50px]"></div>
-                <SidebarItem icon="logout" text="로그아웃" to="/" />
-              </div>
-            )}
-          </div>
-        </div>
-        <form className="mt-[70px]" onSubmit={handleSubmit}>
+        <form className="mt-[20px]" onSubmit={handleSubmit}>
           <div>
             <label
               htmlFor="apartmentCode"

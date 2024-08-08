@@ -1,10 +1,11 @@
-// import React from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import logo from "@assets/logo.png";
-import kakao from "@assets/kakao_logo.png";
+// import kakao from "@assets/kakao_logo.png";
 import google from "@assets/google_logo.png";
+import KakaoLoginButton from "../components/Buttons/KakaoLoginButton"; // KakaoLoginButton 컴포넌트 임포트
 
-const SocialLoginPage = () => {
+const SocialLoginPage: React.FC = () => {
   const navigate = useNavigate();
 
   const handleLogin = () => {
@@ -22,17 +23,11 @@ const SocialLoginPage = () => {
           </div>
         </div>
         <div className="flex flex-col items-center space-y-4">
-          <button className="bg-yellow-400 text-black py-3.5 px-20 rounded-2xl flex items-center justify-center mx-4">
-            <div className="w-[200px] flex items-center justify-center">
-              <img src={kakao} alt="KakaoTalk" className="w-6 h-6 mr-2" />
-              <span className="text-center">카카오로 계속하기</span>
-            </div>
-          </button>
+          <KakaoLoginButton />
 
           <button className="bg-white text-black border border-gray-300 py-3.5 px-20 rounded-2xl flex items-center justify-center mx-4">
             <div className="w-[200px] flex items-center justify-center">
               <img src={google} alt="Google" className="w-6 h-6 mr-2" />
-
               <span className="text-center">구글로 계속하기</span>
             </div>
           </button>

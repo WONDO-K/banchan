@@ -1,9 +1,5 @@
 import React from "react";
-import { Subscriber } from "openvidu-browser";
-
-interface SubscriberListProps {
-  subscribers: Subscriber[];
-}
+import { SubscriberListProps } from "../../Type";
 
 const SubscriberList: React.FC<SubscriberListProps> = ({ subscribers }) => {
   return (
