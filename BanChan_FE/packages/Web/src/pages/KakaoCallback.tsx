@@ -19,7 +19,9 @@ const KakaoCallback: React.FC = () => {
         console.log(`Received code: ${code}`);
 
         // 백엔드에 카카오 코드 전달하여 JWT 토큰 받기
-        const response = await axios.post(`${BACKEND_URL}/api/auth/kakao/login`, { code });
+        const response = await axios.get(`${BACKEND_URL}/api/auth/kakao/login`, { 
+          params: { code }
+        });
         const { accessToken, refreshToken } = response.data;
 
         // 토큰을 localStorage에 저장
