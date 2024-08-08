@@ -5,6 +5,7 @@ import BackButton from "../Buttons/BackButton";
 import { Form,VoteCreateType } from "../../Type";
 import { CreateVote } from "../../api/VoteAPI";
 import { useCookies } from "react-cookie";
+import { useNavigate } from "react-router-dom";
 const VoteCreatePage: React.FC = () => {
   const [cookies] = useCookies();
   const [forms, setForms] = useState<Form[]>([]);
@@ -59,6 +60,7 @@ const VoteCreatePage: React.FC = () => {
   };
 
   // 투표 등록
+  const navigate = useNavigate();
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     const data:VoteCreateType = {
       "title" : title,
@@ -75,7 +77,12 @@ const VoteCreatePage: React.FC = () => {
     // 서브밋 이벤트 방지
     e.preventDefault();
     // 백엔드로 POST 요청 보내는 로직 필요(axios)
-    CreateVote(cookies.Token,'api/votes/regist' ,data)
+    CreateVote(cookies.Token,'api/votes/regist' ,data).then(() => {
+
+      navigate('/vote/active')
+    }).catch((e) => {
+      console.log(e)
+    })
   };
 
   return (
