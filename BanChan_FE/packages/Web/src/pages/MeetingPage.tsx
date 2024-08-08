@@ -47,7 +47,7 @@ const MeetingPage: React.FC = () => {
 
   const joinSession = useCallback(
     async (mySession: Session, token: string) => {
-      const urlWithoutWSS = token.replace("wss://", "ws://");
+      // const urlWithoutWSS = token.replace("wss://", "ws://");
       try {
         if (!token || !sessionId) {
           console.error("SessionId or token is undefined");
@@ -58,7 +58,7 @@ const MeetingPage: React.FC = () => {
         console.log("Received token:", token);
 
         // 세션에 연결
-        await mySession.connect(urlWithoutWSS, { clientData: "Host" });
+        await mySession.connect(token, { clientData: "Host" });
         console.log("Successfully connected to session");
 
         const OV = new OpenVidu();

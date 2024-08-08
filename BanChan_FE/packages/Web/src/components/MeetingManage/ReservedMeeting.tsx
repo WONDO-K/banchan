@@ -38,10 +38,18 @@ const ReservedMeeting: React.FC = () => {
           }
         );
 
-        if (response.data && Array.isArray(response.data.data)) {
+        const url = response.data;
+        const urlParams = new URLSearchParams(new URL(url).search);
+        const token: string | null = urlParams.get("token");
+
+        if (!token) {
+          throw new Error("Failed to retrieve token from response");
+        }
+
+        if (token && Array.isArray(response.data.data)) {
           setMeetings(response.data.data);
         } else {
-          console.error("Expected an array but got:", response.data);
+          console.error("Expected an array but got:", token);
         }
       } catch (error) {
         console.error("Error fetching meetings:", error);
@@ -81,7 +89,13 @@ const ReservedMeeting: React.FC = () => {
       }
     );
 
-    const token = tokenResponse.data;
+    const url = tokenResponse.data;
+    const urlParams = new URLSearchParams(new URL(url).search);
+    const token: string | null = urlParams.get("token");
+
+    if (!token) {
+      throw new Error("Failed to retrieve token from response");
+    }
     return { sessionId, token };
   };
 
