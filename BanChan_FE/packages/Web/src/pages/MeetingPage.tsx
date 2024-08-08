@@ -62,7 +62,6 @@ const MeetingPage: React.FC = () => {
         console.log("Successfully connected to session");
 
         const OV = new OpenVidu();
-        OV.wsUri = `ws://${baseUrl}/openvidu`;
 
         const publisher = OV.initPublisher(undefined, {
           audioSource: undefined,
@@ -103,7 +102,6 @@ const MeetingPage: React.FC = () => {
         }
 
         const OV = new OpenVidu();
-        OV.wsUri = `ws://${baseUrl}/openvidu`;
 
         const mySession = OV.initSession();
 
