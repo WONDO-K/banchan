@@ -22,7 +22,7 @@ const Page: React.FC<PageProps> = ({
     const halfMaxPageNumbers = Math.floor(maxPageNumbers / 2);
 
     let startPage = Math.max(currentPage - halfMaxPageNumbers, 1);
-    let endPage = Math.min(startPage + maxPageNumbers - 1, totalPages);
+    const endPage = Math.min(startPage + maxPageNumbers - 1, totalPages);
 
     if (endPage - startPage < maxPageNumbers - 1) {
       startPage = Math.max(endPage - maxPageNumbers + 1, 1);

@@ -1,13 +1,13 @@
 import React, { useState } from "react";
-import { DrawerProps } from "../../Types";
+import CalendarApp from "./CalendarApp";
+import { CalendarDrawerProps } from "../../Types";
 
-const Drawer: React.FC<DrawerProps> = ({ title, items }) => {
+const CalendarDrawer: React.FC<CalendarDrawerProps> = ({ title }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleDrawer = () => {
     setIsOpen(!isOpen);
   };
-
   return (
     <div className="px-4 py-2">
       <h3
@@ -38,31 +38,10 @@ const Drawer: React.FC<DrawerProps> = ({ title, items }) => {
           isOpen ? "max-h-screen" : "max-h-0"
         }`}
       >
-        {items.map((item, index) => (
-          <div
-            className="py-4 border border-black rounded-2xl mt-4"
-            key={index}
-          >
-            <div className="p-3">
-              <h4 className="text-lg font-bold">{item.title}</h4>
-              <p className="text-gray-600">{item.date}</p>
-              <div className="mt-4 flex items-center space-x-2">
-                <button
-                  onClick={item.onClick}
-                  className="py-2 px-4 bg-blue-500 text-white font-semibold rounded-full hover:bg-blue-600"
-                >
-                  {item.buttonText}
-                </button>
-                <button className="py-2 px-4 bg-gray-200 text-blue-500 font-semibold rounded-full">
-                  {item.statusText}
-                </button>
-              </div>
-            </div>
-          </div>
-        ))}
+        <CalendarApp />
       </div>
     </div>
   );
 };
 
-export default Drawer;
+export default CalendarDrawer;

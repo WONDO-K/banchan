@@ -6,6 +6,7 @@ import Nav from "../Nav";
 import NavItem from "../NavItem";
 import SmallButton from "../Buttons/SmallButton";
 import { Meeting } from "../../Type";
+import { useCookies } from "react-cookie";
 
 const NavElements = () => {
   return (
@@ -20,11 +21,19 @@ const baseUrl = import.meta.env.VITE_BASE_API_URL;
 
 const FinishedMeeting: React.FC = () => {
   const [meetings, setMeetings] = useState<Meeting[]>([]);
+  const [cookies] = useCookies();
 
   useEffect(() => {
     const fetchMeetings = async () => {
       try {
-        const response = await axios.get(`${baseUrl}/api/session/get/roomList`);
+        const response = await axios.get(
+          `${baseUrl}/api/session/get/roomList`,
+          {
+            headers: {
+              Authorization: `Bearer ${cookies.Token}`,
+            },
+          }
+        );
         if (response.data && Array.isArray(response.data.data)) {
           setMeetings(response.data.data);
         } else {
@@ -65,7 +74,11 @@ const FinishedMeeting: React.FC = () => {
 
   const handleDeleteMeeting = async (meetingId: number) => {
     try {
-      await axios.delete(`${baseUrl}/api/session/delete/room/${meetingId}`);
+      await axios.delete(`${baseUrl}/api/session/delete/room/${meetingId}`, {
+        headers: {
+          Authorization: `Bearer ${cookies.Token}`,
+        },
+      });
       setMeetings((prevMeetings) =>
         prevMeetings.filter((meeting) => meeting.id !== meetingId)
       );

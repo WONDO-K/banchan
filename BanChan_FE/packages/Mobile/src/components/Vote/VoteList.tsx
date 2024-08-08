@@ -1,7 +1,11 @@
 import React from "react";
 import Drawer from "./Drawer";
+import { useNavigate } from "react-router-dom";
+import Header from "../Header";
+import { Items } from "../../Types";
 
 const VoteList: React.FC = () => {
+  const navigate = useNavigate();
   const ongoingItems = [
     {
       title: "LH 7월 3주차 투표",
@@ -32,50 +36,33 @@ const VoteList: React.FC = () => {
     },
   ];
 
+  const handleVoteClick = (item: Items) => {
+    navigate("/m/showvote", { state: { item } });
+  };
+
+  const handleResultClick = (item: Items) => {
+    navigate("/m/voteResult", { state: { item } });
+  };
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen ">
       {/* 상단 네비게이션 */}
-      <div className="flex items-center justify-between px-4 py-2 bg-blue-100">
-        <button className="text-gray-600">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            className="w-6 h-6"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M15 19l-7-7 7-7"
-            />
-          </svg>
-        </button>
-        <h2 className="text-xl font-bold text-gray-800">나의 투표</h2>
-        <button className="text-gray-600">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            className="w-6 h-6"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M4 6h16M4 12h16M4 18h16"
-            />
-          </svg>
-        </button>
-      </div>
-
+      <Header>나의 투표</Header>
       {/* 진행 중인 투표 */}
-      <Drawer title="진행 중인 투표" items={ongoingItems} />
-
+      <Drawer
+        title="진행중인 투표"
+        items={ongoingItems.map((item) => ({
+          ...item,
+          onClick: () => handleVoteClick(item),
+        }))}
+      />
       {/* 완료된 투표 */}
-      <Drawer title="완료된 투표" items={completedItems} />
+      <Drawer
+        title="완료된 투표"
+        items={completedItems.map((item) => ({
+          ...item,
+          onClick: () => handleResultClick(item),
+        }))}
+      />{" "}
     </div>
   );
 };

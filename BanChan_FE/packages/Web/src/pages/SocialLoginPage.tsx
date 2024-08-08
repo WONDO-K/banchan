@@ -5,7 +5,7 @@ import logo from "@assets/logo.png";
 import google from "@assets/google_logo.png";
 import KakaoLoginButton from "../components/Buttons/KakaoLoginButton"; // KakaoLoginButton 컴포넌트 임포트
 
-const SocialLoginPage = () => {
+const SocialLoginPage: React.FC = () => {
   const navigate = useNavigate();
 
   const handleLogin = () => {

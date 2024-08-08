@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
-import { IconName, ControlPanelsProps } from "../../Type";
+import { ControlPanelsProps } from "../../Type";
 
 const ControlPanels: React.FC<ControlPanelsProps> = ({
-  onChatToggle,
+  // onChatToggle,
   activeIcons,
   handleButtonClick,
 }) => {

@@ -1,11 +1,11 @@
 import React from "react";
-import { useLocation } from "react-router-dom";
-import SwipeableContent from "./SwipeableContent";
 import Header from "../Header";
+import SwipeableResults from "./SwipeableResult";
+import { useLocation } from "react-router-dom";
 
-const ShowVote: React.FC = () => {
+const VoteResult: React.FC = () => {
   const location = useLocation();
-  const { item } = location.state;
+  const { item } = location.state || { item: { title: "투표 결과" } }; // 기본값 설정
 
   const voteItems = [
     {
@@ -17,9 +17,9 @@ const ShowVote: React.FC = () => {
       options: [
         "1. 예",
         "2. 아니오",
-        "3.asdafas",
-        "4. ㅁㄴㅇㄻㄴㅇㅁㄴ",
-        "5. ㅁㄴㅇㅁㄴㅇ",
+        "3. 기타",
+        "4. 추가 선택",
+        "5. 선택 항목",
       ],
     },
     {
@@ -30,31 +30,19 @@ const ShowVote: React.FC = () => {
       question: "집안은 평안하십니까?",
       options: ["1. 예", "2. 아니오"],
     },
-    {
-      question: "어디가십니까?",
-      options: ["1. 예", "2. 아니오"],
-    },
-    {
-      question: "반갑습니다?",
-      options: ["1. 예", "2. 아니오"],
-    },
-    {
-      question: "안녕하세용?",
-      options: ["1. 예", "2. 아니오"],
-    },
   ];
 
   return (
-    <div className="min-h-screen w-[360px]">
-      <Header>투표</Header>
+    <div className="min-h-screen">
+      <Header>투표 결과</Header>
       <div className="p-4">
         <h3 className="text-[20px] font-bold mb-4 flex justify-center mt-10">
           {item.title}
         </h3>
-        <SwipeableContent items={voteItems} />
+        <SwipeableResults items={voteItems} />
       </div>
     </div>
   );
 };
 
-export default ShowVote;
+export default VoteResult;

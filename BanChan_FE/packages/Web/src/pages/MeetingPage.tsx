@@ -22,12 +22,12 @@ const MeetingPage: React.FC = () => {
   const [session, setSession] = useState<Session | null>(null);
   const [publisher, setPublisher] = useState<Publisher | null>(null);
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
-  const [isChatBoxVisible, setIsChatBoxVisible] = useState<boolean>(false);
+  // const [isChatBoxVisible, setIsChatBoxVisible] = useState<boolean>(false);
   const [thumbnailPlayer, setThumbnailPlayer] = useState<
     Publisher | Subscriber | null
   >(null);
 
-  const { token, roomName, date, active } = location.state as LocationState;
+  const { token, roomName } = location.state as LocationState;
 
   const subscriberStreams = useRef<Set<string>>(new Set());
   const [activeIcons, setActiveIcons] = useState<Record<IconName, boolean>>({
@@ -157,7 +157,7 @@ const MeetingPage: React.FC = () => {
   };
 
   const handleChatToggle = () => {
-    setIsChatBoxVisible((prevState) => !prevState);
+    // setIsChatBoxVisible((prevState) => !prevState);
   };
 
   const handleButtonClick = (icon: IconName) => {
