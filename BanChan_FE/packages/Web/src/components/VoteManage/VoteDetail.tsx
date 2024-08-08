@@ -1,74 +1,88 @@
-import React, { useState } from "react";
+import React, { useState , useEffect,useRef} from "react";
 import VoteForm from "./VoteForm";
 import BackButton from "../Buttons/BackButton";
 import { Link } from "react-router-dom";
+import { useCookies } from "react-cookie";
+import { getVoteDetail ,doVote} from "../../api/VoteAPI";
+import { useParams } from "react-router-dom";
+import { VoteDetailType } from "../../Type";
+import { useNavigate } from "react-router-dom";
 
 const VoteDetail: React.FC = () => {
+  const navigate = useNavigate();
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [cookies] = useCookies()
+  const [votes, setVotes] = useState<{ [key: number]: number }>({});
+  const [voteData,setvoteData] = useState<VoteDetailType|null>()
   // axios요청으로 voteData 안에 데이터 담아야함
-  const voteData = {
-    id: 1,
-    title: "제목입니다",
-    content:
-      "투표 예시입니다 아무거나 입력할레요 \nhttp://example.com/vote1.jpg 이건 주소에여",
-    start_date: "2024-07-30T15:14:10",
-    end_date: "2024-08-06T15:14:10",
-    created_at: "2024-07-30T15:14:10",
-    questions: [
-      {
-        question_id: 1,
-        question_text: "첫번째 투표",
-        options: [
-          {
-            id: 1,
-            option_text: "찬성",
-          },
-          {
-            id: 2,
-            option_text: "반대",
-          },
-        ],
-      },
-      {
-        question_id: 2,
-        question_text: "두번째 투표",
-        options: [
-          {
-            id: 1,
-            option_text: "A안",
-          },
-          {
-            id: 2,
-            option_text: "B안",
-          },
-          {
-            id: 3,
-            option_text: "C안",
-          },
-        ],
-      },
-    ],
-  };
-  const [votes, setVotes] = useState<{ [key: number]: number | null }>({});
+  const { id } = useParams();
+  const [scrollPosition, setScrollPosition] = useState(0);
+
+  
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const Data = await getVoteDetail(cookies.Token,`api/votes/detail/${id}`);
+        setvoteData(Data)
+        }
+      catch (error) {
+        alert('데이터를 가져오는 중 오류가 발생했습니다.')
+      }
+      }
+      fetchData();
+  },[])
+  
 
   const handleVoteChange = (question_id: number, option_id: number) => {
-    setVotes((prevVotes) => ({
-      ...prevVotes,
-      [question_id]: option_id,
-    }));
+    const scrollContainer = scrollContainerRef.current;
+    if (scrollContainer) {
+      setScrollPosition(scrollContainer.scrollTop);
+      setVotes((prevVotes) => ({
+        ...prevVotes,
+        [question_id]: option_id,
+      }));
+    }
   };
-
+  useEffect(() => {
+    const scrollContainer = scrollContainerRef.current;
+    if (scrollContainer) {
+      scrollContainer.scrollTop = scrollPosition;
+    }
+  }, [scrollPosition]);
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if(!voteData){
+      alert('투표 데이터를 읽을 수 없습니다.')
+      return
+    }
+
     if (Object.keys(votes).length === voteData.questions.length) {
       const voteResult = Object.keys(votes).map((question_id) => ({
-        question_id: Number(question_id),
-        option_id: votes[Number(question_id)],
+        questionId: Number(question_id),
+        optionId: votes[Number(question_id)],
       }));
       const Data = {
         voteId: voteData.id,
-        response: voteResult,
+        responses: voteResult,
       };
       console.log(Data);
+
+
+      const voting = async () => {
+        try {
+          await doVote(cookies.Token,'api/votes/vote',Data);
+          }
+        catch (error) {
+          alert('데이터를 가져오는 중 오류가 발생했습니다.')
+        }
+        }
+        voting().then(() => {
+          navigate('/vote/active')
+        }).catch(() => {
+          alert('투표가 정상적으로 진행되지 않았습니다.')
+        })
+
       // 이 밑에 axios 요청이 들어감
     } else {
       alert("모든 항목에 투표를 해 주세요");
@@ -76,10 +90,14 @@ const VoteDetail: React.FC = () => {
   };
 
   const Contents = () => {
+
     return (
       // 백엔드로 POST 요청 보내는 로직 필요
       // 투표 가져오는 로직, submit 했을 시 투표 결과 보내는 로직 및 투표 틀 만들기 필요
-      <form onSubmit={handleSubmit}>
+      voteData ? (
+
+        
+        <form onSubmit={handleSubmit}>
         {/* 제목 */}
         <div>
           <h2 className="text-base m-2 text-customTextColor">제목</h2>
@@ -91,19 +109,22 @@ const VoteDetail: React.FC = () => {
         <div>
           <h2 className="text-base m-2 text-customTextColor">내용</h2>
           {/* 본문 */}
-          <div className="w-full h-[350px] overflow-y-auto bg-customBackgroundColor resize-none text-base px-4 py-2 rounded-lg shadow-md border-solid border-2 outline-none transition-transform transform">
+          <div 
+          ref={scrollContainerRef}
+          className="w-full h-[350px] overflow-y-auto bg-customBackgroundColor resize-none text-base px-4 py-2 rounded-lg shadow-md border-solid border-2 outline-none transition-transform transform"
+          >
             <p className=" whitespace-pre-wrap">{voteData.content}</p>
 
             {voteData.questions.map((question) => (
               <VoteForm
-                key={question.question_id}
-                question={question}
-                voteSelection={handleVoteChange}
-                selectedOption={
-                  Object.hasOwnProperty.call(votes, question.question_id)
-                    ? votes[question.question_id]
-                    : null
-                }
+              key={question.questionId}
+              question={question}
+              voteSelection={handleVoteChange}
+              selectedOption={
+                Object.hasOwnProperty.call(votes, question.questionId)
+                ? votes[question.questionId]
+                : null
+              }
               />
             ))}
           </div>
@@ -111,8 +132,8 @@ const VoteDetail: React.FC = () => {
         {/* 투표 기간 */}
         <div className="flex justify-end pt-2">
           <span className="text-sm font-semibold mx-4">
-            투표 기간 : {voteData.start_date.replace("T", " ").slice(0, -3)} ~{" "}
-            {voteData.end_date.replace("T", " ").slice(0, -3)}
+            투표 기간 : {voteData.startDate.replace("T", " ")} ~{" "}
+            {voteData.endDate.replace("T", " ")}
           </span>
         </div>
         {/* 투표 버튼 */}
@@ -120,14 +141,14 @@ const VoteDetail: React.FC = () => {
           <button
             type="button"
             className=" w-32 h-10 mx-3 bg-customBlue text-white p-2 rounded-full"
-          >
+            >
             투표 정지
           </button>
           <Link to="/message">
             <button
               type="button"
               className=" w-32 h-10 mx-3 bg-customBlue text-white p-2 rounded-full"
-            >
+              >
               투표 알람 전송
             </button>
           </Link>
@@ -135,14 +156,19 @@ const VoteDetail: React.FC = () => {
           <button
             type="submit"
             className=" w-32 h-10 mx-3 bg-customBlue text-white p-2 rounded-full"
-          >
+            >
             투표 제출
           </button>
         </div>
       </form>
+      ) : (
+      <div>
+        로딩중
+      </div>
+      )
     );
   };
-
+  
   return (
     <div className="p-8">
       <div className="">

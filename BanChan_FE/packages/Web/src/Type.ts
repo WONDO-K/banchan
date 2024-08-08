@@ -83,6 +83,37 @@ export interface VoteListType {
   voted: boolean;
 }
 
+export interface VoteDetailType {
+  id : number,
+  title : string,
+  content : string,
+  imageUrl : string|null,
+  startDate : string,
+  endDate : string,
+  createdAt : string,
+  questions : voteQuestion[]
+}
+
+interface voteQuestion {
+  questionId : number,
+  questionText : string,
+  options : voteOption[]
+}
+interface voteOption {
+  id : number,
+  optionText : string
+}
+
+export interface VoteType {
+  voteId : number,
+  responses : OptionType[]
+}
+
+interface OptionType {
+  questionId : number
+  optionId : number
+}
+
 export interface CommunityGetType {
   content: CommunityListType[];
 }

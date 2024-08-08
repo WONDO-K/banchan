@@ -2,6 +2,7 @@ import axios from "axios";
 import { CommunityParamsType } from "../Type";
 const API_URL = import.meta.env.VITE_API_URL;
 
+// 커뮤니티 get 요청 전반
 export const getCommunityList = async (Token:string,API_REST:string,params:CommunityParamsType) => {
     try {
       const response = await axios.get(`${API_URL}/${API_REST}`, {
