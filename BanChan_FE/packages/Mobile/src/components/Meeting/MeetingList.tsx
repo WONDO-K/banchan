@@ -22,20 +22,6 @@ const MeetingList: React.FC = () => {
   //       statusText: "회의 참여 인원: 0명",
   //     },
   //   ];
-  const ongoingItems = [
-    {
-      title: "LH 7월 3주차 회의",
-      date: "07.15 19:00 ~ ",
-      buttonText: "회의 참여",
-      statusText: "회의 참여 인원: 12명",
-    },
-    {
-      title: "LH 7월 3주차 회의",
-      date: "07.15 19:00 ~ ",
-      buttonText: "회의 참여",
-      statusText: "회의 참여 인원: 12명",
-    },
-  ];
 
   const completedItems = [
     {
@@ -52,10 +38,6 @@ const MeetingList: React.FC = () => {
     },
   ];
 
-  const handleMeetingClick = (item: Items) => {
-    navigate("/m/meetingHome", { state: { item } });
-  };
-
   const handleResultClick = (item: Items) => {
     navigate("/m/voteResult", { state: { item } });
   };
@@ -63,16 +45,9 @@ const MeetingList: React.FC = () => {
     <div className="min-h-screen ">
       {/* 상단 네비게이션 */}
       <Header>나의 회의</Header>
-      {/* 진행 중인 투표 */}
+      {/* 예정된 회의 */}
       <CalendarDrawer title="예정된 회의" />
-      <Drawer
-        title="진행중인 회의"
-        items={ongoingItems.map((item) => ({
-          ...item,
-          onClick: () => handleMeetingClick(item),
-        }))}
-      />
-      {/* 완료된 투표 */}
+      {/* 완료된 회의 */}
       <Drawer
         title="완료된 회의"
         items={completedItems.map((item) => ({

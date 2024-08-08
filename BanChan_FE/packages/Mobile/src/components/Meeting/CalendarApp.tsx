@@ -2,8 +2,10 @@ import React from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import "../../App.css";
-// import moment from "moment";
+import moment from "moment";
 import "moment/locale/ko";
+
+moment.locale("ko");
 
 const CalendarApp: React.FC = () => {
   // const [value, setValue] = useState(new Date());
@@ -19,7 +21,7 @@ const CalendarApp: React.FC = () => {
           // value={value}
           next2Label={null}
           prev2Label={null}
-          // formatDay={(locale, date) => moment(date).format("D")}
+          formatDay={(_, date) => moment(date).format("D")}
           // tileContent={addContent}
           showNeighboringMonth={false}
         />

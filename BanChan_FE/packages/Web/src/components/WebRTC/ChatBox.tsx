@@ -1,12 +1,7 @@
 import React, { useState, ChangeEvent, FormEvent } from "react";
+import { ChatBoxProps } from "../../Type";
 
-interface Message {
-  id: number;
-  text: string;
-}
-
-const ChatBox: React.FC = () => {
-  const [messages, setMessages] = useState<Message[]>([]);
+const ChatBox: React.FC<ChatBoxProps> = ({ onSendMessage, messages }) => {
   const [inputValue, setInputValue] = useState<string>("");
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -16,11 +11,7 @@ const ChatBox: React.FC = () => {
   const handleFormSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (inputValue.trim()) {
-      const newMessage: Message = {
-        id: messages.length + 1,
-        text: inputValue,
-      };
-      setMessages([...messages, newMessage]);
+      onSendMessage(inputValue);
       setInputValue("");
     }
   };

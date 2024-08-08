@@ -4,6 +4,7 @@ import axios from "axios";
 import { useCookies } from "react-cookie";
 
 const baseUrl = import.meta.env.VITE_BASE_API_URL;
+console.log("Base URL:", baseUrl);
 
 const CreateMeeting: React.FC = () => {
   const [roomName, setRoomName] = useState("");
@@ -15,6 +16,8 @@ const CreateMeeting: React.FC = () => {
 
   const handleCreateMeeting = async (e: React.FormEvent) => {
     e.preventDefault();
+    const token = cookies.Token;
+    console.log("Token:", token);
     try {
       await axios.post(
         `${baseUrl}/api/session/createRoom`,
@@ -25,7 +28,8 @@ const CreateMeeting: React.FC = () => {
         },
         {
           headers: {
-            Authorization: `Bearer ${cookies.Token}`,
+            // Authorization: "Basic " + btoa("OPENVIDUAPP:YOUR_SECRET"),
+            Authorization: `Bearer ${token}`,
           },
         }
       );

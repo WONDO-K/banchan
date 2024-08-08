@@ -12,12 +12,14 @@ import ControlPanels from "../components/WebRTC/ControlPanels";
 import ThumbnailPlayer from "../components/WebRTC/ThumbnailPlayer";
 import SubscriberList from "../components/WebRTC/SubscribeList";
 import { IconName, LocationState } from "../Type";
+import { useCookies } from "react-cookie";
 
 const baseUrl = import.meta.env.VITE_BASE_API_URL;
 
 const MeetingPage: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const [cookies] = useCookies();
   const { id: sessionId } = useParams<{ id: string }>(); // URL 파라미터를 가져옵니다
   const [session, setSession] = useState<Session | null>(null);
   const [publisher, setPublisher] = useState<Publisher | null>(null);
@@ -71,7 +73,7 @@ const MeetingPage: React.FC = () => {
         });
 
         // 퍼블리셔를 세션에 추가
-        mySession.publish(publisher);
+        await mySession.publish(publisher);
         setPublisher(publisher);
         setThumbnailPlayer(publisher);
 
@@ -145,7 +147,8 @@ const MeetingPage: React.FC = () => {
       await axios.delete(`${baseUrl}/api/session/delete/${sessionId}`, {
         headers: {
           "Content-Type": "application/json",
-          Authorization: "Basic " + btoa("OPENVIDUAPP:YOUR_SECRET"),
+          // Authorization: "Basic " + btoa("OPENVIDUAPP:YOUR_SECRET"),
+          Authorization: `Bearer ${cookies.Token}`,
         },
       });
       navigate("/meeting/reservedMeeting");

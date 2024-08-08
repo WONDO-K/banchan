@@ -49,7 +49,6 @@ export interface SmallButtonProps {
   onClick?: () => void;
 }
 
-
 export interface Post {
   id: number;
   title: string;
@@ -71,31 +70,30 @@ export interface Meeting {
 }
 
 export interface VoteGetType {
-  data : VoteListType[]
+  data: VoteListType[];
 }
 export interface VoteListType {
-    id: number;
-    content : string;
-    title: string;
-    startDate: string;
-    endDate: string;
-    voteCount: number;
-    finishCount: number;
-    voted: boolean;
+  id: number;
+  content: string;
+  title: string;
+  startDate: string;
+  endDate: string;
+  voteCount: number;
+  finishCount: number;
+  voted: boolean;
 }
 
 export interface CommunityGetType {
-  content : CommunityListType[]
-
+  content: CommunityListType[];
 }
 export interface CommunityListType {
-  id : number
-  title : string
-  content : string
-  username : string
-  views : number
-  likes : number
-  createdAt : string
+  id: number;
+  title: string;
+  content: string;
+  username: string;
+  views: number;
+  likes: number;
+  createdAt: string;
 }
 
 export interface MultiSelectDropdownProps {
@@ -105,15 +103,14 @@ export interface MultiSelectDropdownProps {
   setSelectedOptions: React.Dispatch<React.SetStateAction<string[]>>;
 }
 export interface VoteCreateType {
-  title:string;
-  content:string
-  startDate:string;
-  endDate:string;
-  questions : {
-    questionText : string;
-    options : string[]
-  } []
-
+  title: string;
+  content: string;
+  startDate: string;
+  endDate: string;
+  questions: {
+    questionText: string;
+    options: string[];
+  }[];
 }
 export interface Form {
   id: number;
@@ -184,10 +181,20 @@ export interface DataItem {
   [key: string]: string | number | boolean | React.ReactNode;
 }
 
-export interface CommunityParamsType{
-  keyword:string
-  sortBy:string
-  sortDirection:string
-  page:number
-  size:number
+export interface CommunityParamsType {
+  keyword: string;
+  sortBy: string;
+  sortDirection: string;
+  page: number;
+  size: number;
+}
+
+export interface Message {
+  id: number;
+  text: string;
+}
+
+export interface ChatBoxProps {
+  onSendMessage: (message: string) => void;
+  messages: Message[];
 }
