@@ -32,8 +32,7 @@ const ActiveVote = () => {
           return {
             ...(items),
             voteDate: `${items.startDate
-              .replace("T", " ")
-              .slice(0, -3)} ~ ${items.endDate.replace("T", " ").slice(0, -3)}`,
+              .replace("T", " ")} ~ ${items.endDate.replace("T", " ")}`,
             voteRate: ((items.finishCount / items.voteCount) * 100).toFixed(1) + '%'
             };
           });
