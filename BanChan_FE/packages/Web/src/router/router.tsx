@@ -12,7 +12,6 @@ import Write from "../components/CRUD/Write";
 import Detail from "../components/CRUD/Detail";
 import Update from "../components/CRUD/Update";
 import MeetingPage from "../pages/MeetingPage";
-import ChatBox from "../components/WebRTC/ChatBox";
 import VoteManagePage from "../pages/VoteManagePage";
 import MainLayout from "../components/MainLayout";
 import VoteCreatePage from "../components/VoteManage/VoteCreate";
@@ -30,9 +29,8 @@ import VoteEnd from "../components/VoteManage/VoteEnd";
 import SessionJoinPage from "../pages/SessionJoinPage";
 import OpenViduSession from "../OpenviduSession";
 import Kakaocallback from "../pages/KakaoCallback";
-import KakaoLoginButton from '../components/Buttons/KakaoLoginButton'; // KakaoLoginButton 컴포넌트 임포트
-import UserDetailForm from '../components/UserDetailForm'; // UserDetailForm 컴포넌트 임포트
-
+import KakaoLoginButton from "../components/Buttons/KakaoLoginButton"; // KakaoLoginButton 컴포넌트 임포트
+import UserDetailForm from "../components/UserDetailForm"; // UserDetailForm 컴포넌트 임포트
 
 function AppRoutes() {
   return (
@@ -42,7 +40,6 @@ function AppRoutes() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/update" element={<Update />} />
       <Route path="/meetingPage/:id" element={<MeetingPage />} />
-      <Route path="/chatBox" element={<ChatBox />} />
       <Route path="/openvidu" element={<OpenViduSession />} />
 
       <Route path="/login/oauth2/code/kakao" element={<Kakaocallback />} />

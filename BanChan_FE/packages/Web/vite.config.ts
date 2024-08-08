@@ -5,6 +5,9 @@ import path from "path";
 
 export default defineConfig({
   plugins: [react(), tsconfigPaths()],
+  define: {
+    "process.env": process.env,
+  },
   resolve: {
     alias: {
       "@assets": path.resolve(__dirname, "./src/assets"),
@@ -12,12 +15,12 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      '/api': {
-        target: 'http://i11e105.p.ssafy.io', // 실제 API 서버 주소
+      "/api": {
+        target: "http://i11e105.p.ssafy.io", // 실제 API 서버 주소
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, '')
-      }
-    }
+        rewrite: (path) => path.replace(/^\/api/, ""),
+      },
+    },
   },
   build: {
     outDir: "dist",

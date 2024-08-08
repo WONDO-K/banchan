@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useCookies } from "react-cookie";
 
 const baseUrl = import.meta.env.VITE_BASE_API_URL;
 console.log(baseUrl);
@@ -8,6 +9,7 @@ console.log(baseUrl);
 const SessionJoinPage: React.FC = () => {
   const [sessionId, setSessionId] = useState("");
   const navigate = useNavigate();
+  const [cookies] = useCookies();
 
   const handleJoinSession = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,7 +33,9 @@ const SessionJoinPage: React.FC = () => {
       {
         headers: {
           "Content-Type": "application/json",
-          Authorization: "Basic " + btoa("OPENVIDUAPP:YOUR_SECRET"),
+          Authorization: `Bearer ${cookies.Token}`,
+
+          // Authorization: "Basic " + btoa("OPENVIDUAPP:YOUR_SECRET"),
         },
       }
     );
