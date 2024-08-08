@@ -61,6 +61,8 @@ const MeetingPage: React.FC = () => {
         console.log("Successfully connected to session");
 
         const OV = new OpenVidu();
+        OV.wsUri = `ws://${baseUrl}/openvidu`;
+
         const publisher = OV.initPublisher(undefined, {
           audioSource: undefined,
           videoSource: undefined,
@@ -93,40 +95,48 @@ const MeetingPage: React.FC = () => {
 
   useEffect(() => {
     const initSession = async () => {
-      if (!sessionId || !token) {
-        console.error("sessionId or token is undefined");
-        return;
-      }
-
-      const OV = new OpenVidu();
-      const mySession = OV.initSession();
-
-      const streamCreatedHandler = (event: StreamEvent) => {
-        console.log("Stream created:", event.stream.streamId);
-        if (!subscriberStreams.current.has(event.stream.streamId)) {
-          subscriberStreams.current.add(event.stream.streamId);
-          const subscriber = mySession.subscribe(event.stream, undefined);
-          setSubscribers((prevSubscribers) => [...prevSubscribers, subscriber]);
-          console.log("Number of subscribers: ", subscribers.length + 1);
+      try {
+        if (!sessionId || !token) {
+          console.error("sessionId or token is undefined");
+          return;
         }
-      };
 
-      const streamDestroyedHandler = (event: StreamEvent) => {
-        console.log("Stream destroyed:", event.stream.streamId);
-        subscriberStreams.current.delete(event.stream.streamId);
-        setSubscribers((prevSubscribers) =>
-          prevSubscribers.filter(
-            (subscriber) => subscriber.stream.streamId !== event.stream.streamId
-          )
-        );
-        console.log("Number of subscribers: ", subscribers.length);
-      };
+        const OV = new OpenVidu();
+        const mySession = OV.initSession();
 
-      mySession.on("streamCreated", streamCreatedHandler);
-      mySession.on("streamDestroyed", streamDestroyedHandler);
+        const streamCreatedHandler = (event: StreamEvent) => {
+          console.log("Stream created:", event.stream.streamId);
+          if (!subscriberStreams.current.has(event.stream.streamId)) {
+            subscriberStreams.current.add(event.stream.streamId);
+            const subscriber = mySession.subscribe(event.stream, undefined);
+            setSubscribers((prevSubscribers) => [
+              ...prevSubscribers,
+              subscriber,
+            ]);
+            console.log("Number of subscribers: ", subscribers.length + 1);
+          }
+        };
 
-      await joinSession(mySession, token);
-      setSession(mySession);
+        const streamDestroyedHandler = (event: StreamEvent) => {
+          console.log("Stream destroyed:", event.stream.streamId);
+          subscriberStreams.current.delete(event.stream.streamId);
+          setSubscribers((prevSubscribers) =>
+            prevSubscribers.filter(
+              (subscriber) =>
+                subscriber.stream.streamId !== event.stream.streamId
+            )
+          );
+          console.log("Number of subscribers: ", subscribers.length);
+        };
+
+        mySession.on("streamCreated", streamCreatedHandler);
+        mySession.on("streamDestroyed", streamDestroyedHandler);
+
+        await joinSession(mySession, token);
+        setSession(mySession);
+      } catch (error) {
+        console.error("Error initializing session:", error);
+      }
     };
 
     initSession();
