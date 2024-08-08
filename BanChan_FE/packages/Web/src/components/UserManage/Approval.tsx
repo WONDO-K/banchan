@@ -1,11 +1,20 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-// import axios from "axios";
+import axios from "axios";
 import Pagination from "../Pagination";
 import Table from "../Table";
 import Nav from "../Nav";
 import NavItem from "../NavItem";
 import SmallButton from "../Buttons/SmallButton";
+
+interface User {
+  id: number;
+  name: string;
+  phone: string;
+  email: string;
+  date: string;
+  address: string;
+}
 
 const approve = (handleApprove: () => void) => {
   return (
@@ -31,58 +40,7 @@ const reject = (handleReject: () => void) => {
   );
 };
 
-interface User {
-  id: number;
-  name: string;
-  phone: string;
-  email: string;
-  date: string;
-  address: string;
-}
-
 const headers = ["번호", "이름", "연락처", "이메일", "신청일", "동/호수", "승인", "거절"];
-const data: User[] = [
-  {
-    id: 1,
-    name: "김싸피",
-    phone: "010-1231-4567",
-    email: "aaa@aaa.com",
-    date: "2022-01-01",
-    address: "101동/1102호",
-  },
-  {
-    id: 2,
-    name: "이싸피",
-    phone: "010-1111-2222",
-    email: "bbb@bb.com",
-    date: "2022-01-02",
-    address: "101동/505호",
-  },
-  {
-    id: 3,
-    name: "박싸피",
-    phone: "010-2222-3333",
-    email: "ccc@ccc.com",
-    date: "2022-01-02",
-    address: "101동/1234호",
-  },
-  {
-    id: 4,
-    name: "최싸피",
-    phone: "010-6666-6666",
-    email: "ddd@ddd.com",
-    date: "2022-01-02",
-    address: "101동/1232호",
-  },
-  {
-    id: 5,
-    name: "김아무개",
-    phone: "010-5555-5555",
-    email: "fff@fff.com",
-    date: "2022-01-02",
-    address: "101동/7894호",
-  },
-];
 
 const NavElements = () => {
   return (
@@ -95,19 +53,36 @@ const NavElements = () => {
 
 const Approval: React.FC = () => {
   const navigate = useNavigate();
+  const [data, setData] = useState<User[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/users`);
+        setData(response.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const handleApprove = async (user: User) => {
     try {
-      // 주석 처리된 API 호출 부분 - 배포할 땐 저거 주석 해제하고 보내면 될 듯 - get으로 해야되나?
-      // await axios.post(`/api/admin/users/approval/${encodeURIComponent(user.name)}`);
+      const encodedUsername = encodeURIComponent(user.name);
+      const apiUrl = `${process.env.REACT_APP_API_BASE_URL}/api/admin/users/approval/${encodedUsername}`;
+      await axios.post(apiUrl);
       navigate("/userManage/manage", { state: { user } });
     } catch (error) {
       console.error("Error approving user:", error);
+      alert("사용자 승인이 실패했습니다. 다시 시도해주세요.");
     }
   };
 
   const handleReject = (id: number) => {
     console.log(`User with ID ${id} rejected.`);
+    alert("사용자가 거절되었습니다.");
   };
 
   const rows = data.map(user => [
