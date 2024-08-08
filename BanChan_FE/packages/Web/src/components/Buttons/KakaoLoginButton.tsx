@@ -16,7 +16,7 @@ const KakaoLoginButton: React.FC = () => {
     >
       <div className="w-[200px] flex items-center justify-center">
         <img
-          src="/assets/kakao_logo.png"
+          src="../src/assets/kakao_logo.png"
           alt="KakaoTalk"
           className="w-6 h-6 mr-2"
         />
