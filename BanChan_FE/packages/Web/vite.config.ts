@@ -16,7 +16,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "http://i11e105.p.ssafy.io", // 실제 API 서버 주소
+        target: "https://i11e105.p.ssafy.io", // 실제 API 서버 주소
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ""),
       },
