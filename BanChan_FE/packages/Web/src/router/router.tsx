@@ -38,7 +38,6 @@ function AppRoutes() {
       {/* 레이아웃 적용 X */}
       <Route path="/" element={<SocialLoginPage />} />
       <Route path="/login" element={<LoginPage />} />
-      <Route path="/update" element={<Update />} />
       <Route path="/meetingPage/:id" element={<MeetingPage />} />
       <Route path="/openvidu" element={<OpenViduSession />} />
 
@@ -74,6 +73,7 @@ function AppRoutes() {
           <Route path="notice/*" element={<Notice />} />
           <Route path="ask" element={<Ask />} />
           <Route path=":boardType/detail/:id" element={<Detail />} />
+          <Route path=":boardType/edit/:id" element={<Update />} />
           <Route path=":boardType/write" element={<Write />} />
         </Route>
 

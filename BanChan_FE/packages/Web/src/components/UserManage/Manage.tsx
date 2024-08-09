@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import Pagination from "../Pagination";
 import Table from "../Table";
 import Nav from "../Nav";
 import NavItem from "../NavItem";
@@ -224,7 +223,6 @@ const Manage: React.FC = () => {
       <div className="container mx-auto p-4 mt-3">
         <div className="flex justify-end items-center mb-6 mr-6"></div>
         <Table headers={headers} data={rows} />
-        <Pagination maxPage={1} />
       </div>
     </>
   );

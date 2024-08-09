@@ -12,7 +12,7 @@ const HeaderFormet: { [key: string]: string } = {
   title: "제목",
   writer: "작성자",
   voteDate: "투표 기간",
-  createdAt: "작성일",
+  createdAt: "작성 시각",
   voteRate: "투표율",
   views: "조회수",
   likes: "추천수",
