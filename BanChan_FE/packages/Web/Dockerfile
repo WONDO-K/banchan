@@ -12,8 +12,6 @@ RUN npm install @types/node --save-dev
 
 RUN npm install @types/crypto-js --save-dev
 
-RUN npm install --save-dev @types/moment
-
 COPY . .
 
 RUN npm run build

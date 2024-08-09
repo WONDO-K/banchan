@@ -22,8 +22,8 @@ const NavElements = () => {
 const Ask: React.FC = () => {
   const [data, setData] = useState<DataItem[]>([]);
   const [cookies] = useCookies();
-  const [maxPage,setMaxPage] = useState<number>(1);
-  const [crtPage,setCrtPage] = useState<number>(1);
+  const [maxPage] = useState<number>(1);
+  const [crtPage] = useState<number>(1);
 
   const [params,setParams] = useState<CommunityParamsType>({
     keyword:'',
@@ -36,7 +36,12 @@ const Ask: React.FC = () => {
   useEffect(() => {
     const getData = async () => {
       const askList = await getCommunityList(cookies.Token,'api/ask/list',params);
-      setMaxPage(askList.totalPages)
+      console.log(askList);
+      setParams({  
+        ...params,
+        page:crtPage-1
+      }
+      )
       const real_data = askList.content.map((item:CommunityListType) => ({
         id: item.id,
         title: item.title,
@@ -48,19 +53,7 @@ const Ask: React.FC = () => {
       setData(real_data);
     };
     getData();
-  }, [params,cookies.Token]);
-
-
-  useEffect(() => {
-    setParams((prevParams) => ({
-      ...prevParams,
-      page: crtPage - 1,
-    }));
-  }, [crtPage]);
-  
-  const handlePageChange = (page: number) => {
-    setCrtPage(page);
-  };
+  }, []);
 
   return (
     <>
@@ -70,7 +63,7 @@ const Ask: React.FC = () => {
           <Sorting />
         </div>
         <TempTable headerProp={headers} data={data} />
-        <Pagination maxPage={maxPage} currentPage={crtPage} onPageChange={handlePageChange} />
+        <Pagination maxPage={maxPage} />
       </div>
     </>
   );
