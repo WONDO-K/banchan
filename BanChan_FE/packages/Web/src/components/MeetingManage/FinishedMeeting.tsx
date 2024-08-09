@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import Pagination from "../Pagination";
 import Table from "../Table";
 import Nav from "../Nav";
 import NavItem from "../NavItem";
@@ -106,7 +105,6 @@ const FinishedMeeting: React.FC = () => {
       <div className="container mx-auto p-4 mt-3">
         <div className="flex justify-end items-center mb-6 mr-6"></div>
         <Table headers={headers} data={data} />
-        <Pagination maxPage={1} />
       </div>
     </>
   );

@@ -100,14 +100,15 @@ const Page: React.FC<PageProps> = ({
 
 interface PaginationProps {
   maxPage: number;
+  currentPage: number;
+  onPageChange: (page: number) => void;
 }
-const Pagination: React.FC<PaginationProps> = ({ maxPage }) => {
-  const [currentPage, setCurrentPage] = useState(1);
+const Pagination: React.FC<PaginationProps> = ({ maxPage ,  currentPage, onPageChange }) => {
   const totalItems = maxPage * 10;
   const itemsPerPage = 10;
 
   const handlePageChange = (page: number) => {
-    setCurrentPage(page);
+    onPageChange(page);
   };
 
   return (
