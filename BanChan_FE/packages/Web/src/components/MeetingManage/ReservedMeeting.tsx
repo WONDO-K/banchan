@@ -1,4 +1,5 @@
 import LargeButton from "../Buttons/LargeButton";
+import Pagination from "../Pagination";
 import Table from "../Table";
 import SmallButton from "../Buttons/SmallButton";
 import Nav from "../Nav";
@@ -148,6 +149,7 @@ const ReservedMeeting: React.FC = () => {
           </Link>
         </div>
         <Table headers={headers} data={data} />
+        <Pagination maxPage={1} />
       </div>
     </>
   );

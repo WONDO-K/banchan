@@ -57,8 +57,6 @@ export interface Post {
   views: number;
   likes: number;
   createdAt: string;
-  admin: boolean;
-  writer : boolean;
 }
 
 export interface Meeting {
@@ -230,9 +228,4 @@ export interface Message {
 export interface ChatBoxProps {
   onSendMessage: (message: string) => void;
   messages: Message[];
-}
-
-export interface UpdateProps {
-  title:string
-  content : string
 }
