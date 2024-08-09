@@ -88,6 +88,30 @@ const MeetingPage: React.FC = () => {
         console.log("Publisher added to session");
       } catch (error) {
         console.error("Error connecting to session:", error);
+
+        if (error.message.includes("Token not valid")) {
+          console.log("Token expired, requesting a new token...");
+          // 새로운 토큰을 요청하는 로직을 추가합니다.
+          try {
+            const response = await axios.get(
+              `${baseUrl}/api/session/newToken/${sessionId}`,
+              {
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${cookies.Token}`,
+                },
+              }
+            );
+
+            const newToken = response.data.token;
+            console.log("Received new token:", newToken);
+
+            // 새 토큰으로 다시 연결 시도
+            await joinSession(mySession, newToken);
+          } catch (tokenError) {
+            console.error("Error requesting new token:", tokenError.message);
+          }
+        }
       }
     },
     [sessionId]
