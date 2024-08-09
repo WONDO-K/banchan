@@ -2,10 +2,8 @@ import React from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import "../../App.css";
-import moment from "moment";
-import "moment/locale/ko";
-
-moment.locale("ko");
+import { format } from "date-fns";
+import { ko } from "date-fns/locale";
 
 const CalendarApp: React.FC = () => {
   // const [value, setValue] = useState(new Date());
@@ -16,12 +14,12 @@ const CalendarApp: React.FC = () => {
 
       <div className="flex flex-col items-center justify-center">
         <Calendar
-          locale="ko"
+          locale="ko-KR" // 문자열로 로케일을 전달
           // onChange={onChange}
           // value={value}
           next2Label={null}
           prev2Label={null}
-          formatDay={(_, date) => moment(date).format("D")}
+          formatDay={(_, date) => format(date, "d", { locale: ko })} // date-fns의 locale 객체를 사용
           // tileContent={addContent}
           showNeighboringMonth={false}
         />
