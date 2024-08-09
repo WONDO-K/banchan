@@ -87,7 +87,8 @@ const MeetingPage: React.FC = () => {
 
         console.log("Publisher added to session");
       } catch (error) {
-        console.error("Error connecting to session:", error);
+        if (error instanceof Error) {
+          console.error("Error connecting to session:", error);
 
         if (error.message.includes("Token not valid")) {
           console.log("Token expired, requesting a new token...");
@@ -109,10 +110,14 @@ const MeetingPage: React.FC = () => {
             // 새 토큰으로 다시 연결 시도
             await joinSession(mySession, newToken);
           } catch (tokenError) {
+            if (tokenError instanceof Error) {
+
             console.error("Error requesting new token:", tokenError.message);
-          }
+                      }
+               }
         }
       }
+    }
     },
     [sessionId]
   );
