@@ -49,7 +49,7 @@ const ReservedMeeting: React.FC = () => {
     };
 
     fetchMeetings();
-  }, []);
+  }, [cookies]);
 
   const createSession = async (
     meetingId: number
