@@ -1,8 +1,8 @@
 import React from "react";
 import logo from "@assets/logo.png";
-import kakao from "@assets/kakao_logo.png";
 import google from "@assets/google_logo.png";
 import { useNavigate } from "react-router-dom";
+import KakaoLoginButton from '../components/oauthlogin/KakaoLoginButton'; // Import the KakaoLoginButton component
 
 const FirstPage: React.FC = () => {
   const navigate = useNavigate();
@@ -17,10 +17,8 @@ const FirstPage: React.FC = () => {
         <img src={logo} alt="Kakao Logo" className="w-[361px] h-[230px] mr-2" />
       </div>
       <div className="w-80">
-        <button className="mt-10 flex items-center justify-center w-full mb-4 p-4 border border-black rounded-lg">
-          <img src={kakao} alt="Kakao Logo" className="w-6 h-6 mr-2" />
-          카카오로 계속하기
-        </button>
+        {/* Replace the existing Kakao button with KakaoLoginButton */}
+        <KakaoLoginButton />
         <button className="mt-4 flex items-center justify-center w-full mb-4 p-4 border border-black rounded-lg">
           <img src={google} alt="Google Logo" className="w-6 h-6 mr-2" />
           구글로 계속하기
