@@ -1,45 +1,64 @@
-import React from "react";
+import React,{useEffect,useState} from "react";
 import Header from "../../Header";
 import { useNavigate } from "react-router-dom";
-
-const notifications = [
-  {
-    id: 1,
-    title: "모라 LH 7월 3주차 투표 결과 공지",
-    date: "2024.07.17",
-    likes: 181,
-  },
-  {
-    id: 2,
-    title: "모라 LH 7월 1주차 투표 결과 공지",
-    date: "2024.07.08",
-    likes: 163,
-  },
-  {
-    id: 3,
-    title: "단지 내 공사 관련 공지",
-    date: "2024.06.28",
-    likes: 121,
-  },
-  {
-    id: 4,
-    title: "단지 내 공사 관련 공지",
-    date: "2024.06.28",
-    likes: 121,
-  },
-  {
-    id: 4,
-    title: "단지 내 공사 관련 공지",
-    date: "2024.06.28",
-    likes: 121,
-  },
-];
+import { getCommunityList } from "../../../mobileapi/CommunityAPI";
+import { useCookies } from "react-cookie";
+import { CommunityListType,CommunityParamsType } from "../../../Types";
+import Pagination from "../../Pagination";
 
 const NoticeList: React.FC = () => {
   const navigate = useNavigate();
+  const [totalitem,setTotal] = useState(0)
+  const [totalPages, setTotalPage] = useState(1)
+  const [currentPage, setCurrentPage] = useState(1)
+
+  const [notifications,setData] = useState([{
+    id:-1,
+    title:'존재하는 데이터가 없습니다.',
+    date:'0000-00-00',
+    views:-1
+  }])
+  const [params,setParams] = useState<CommunityParamsType>({
+    keyword:'',
+    sortBy:'createdAt',
+    sortDirection:'desc',
+    page:0,
+    size:4
+  })
+
+  useEffect(() => {
+    setParams((prevParams) => ({
+      ...prevParams,
+      page: currentPage - 1,
+    }));
+  }, [currentPage]);
   
-  const goToDetail = () => {
-    navigate("/m/community/notice/detail");
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const [cookies] = useCookies()
+  useEffect(() => {
+    const getData = async () => {
+      const askList = await getCommunityList(cookies.Token,'api/notice/list',params);
+      console.log(askList);
+      setTotal(askList.totalElements)
+      setTotalPage(askList.totalPages)
+      const real_data = askList.content.map((item:CommunityListType) => ({
+        id: item.id,
+        title: item.title,
+        writer: item.username,
+        date: item.createdAt.replace("T", " ").slice(0, -7),
+        views: item.views
+      }));
+      setData(real_data)
+    };
+    getData();
+  }, [params,cookies.Token]);
+
+
+  const goToDetail = (id:number) => {
+    navigate(`/m/community/notice/detail/${id}`);
   };
   return (
     <div className="min-h-screen">
@@ -49,7 +68,7 @@ const NoticeList: React.FC = () => {
           <div className="text-gray-500 mr-2">
             <i className="fas fa-bell"></i>
           </div>
-          <div className="text-gray-500">총 57건의 공지사항이 있습니다.</div>
+          <div className="text-gray-500">총 {totalitem}건의 공지사항이 있습니다.</div>
         </div>
         <div className="relative mb-4">
           <input
@@ -65,7 +84,7 @@ const NoticeList: React.FC = () => {
           {notifications.map((item) => (
             <div key={item.id} className="border-b py-3">
               <div className="flex flex-col justify-between items-start">
-                <div onClick={goToDetail} className="font-semibold text-lg">
+                <div onClick={() => goToDetail(item.id)} className="font-semibold text-lg">
                   <span className="text-blue-500">[공지] </span>
                   {item.title}
                 </div>
@@ -78,13 +97,8 @@ const NoticeList: React.FC = () => {
 
 
           {/* 페이징처리 코드 알아서 넣으면 됨 !  */}
-          <div className="flex justify-center items-center space-x-2">
-            <button className="px-4 py-2 rounded-md">1</button>
-            <button className="px-4 py-2 rounded-md">2</button>
-            <button className="px-4 py-2 rounded-md">3</button>
-            <span className="px-4 py-2">...</span>
-            <button className="px-4 py-2 rounded-md">12</button>
-          </div>
+          
+          <Pagination totalPages={totalPages} currentPage={currentPage} onPageChange={handlePageChange}></Pagination>
         </div>
       </div>
     </div>

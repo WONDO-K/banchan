@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate } from "react-router-dom";
 import Header from "../Header";
 
 const HomeInfo: React.FC = () => {
@@ -8,7 +8,7 @@ const HomeInfo: React.FC = () => {
   const [buildingNo, setBuildingNo] = useState("");
   const [unitNo, setUnitNo] = useState("");
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -20,15 +20,20 @@ const HomeInfo: React.FC = () => {
       unitNo,
     };
 
+    // 로컬 스토리지에서 accessToken 가져오기
+    const accessToken = localStorage.getItem("accessToken");
+
     try {
       const response = await axios.post("/api/user/setmyapt", requestBody, {
-        withCredentials: true, // 쿠키 인증
+        headers: {
+          Authorization: `Bearer ${accessToken}`, // accessToken을 Authorization 헤더에 포함
+        },
+        withCredentials: true, // 쿠키 인증이 필요하면 사용
       });
 
       if (response.status === 200) {
         alert("아파트 정보가 성공적으로 저장되었습니다.");
-        // 알림 후 홈 페이지로 이동
-        navigate("/home");
+        navigate("/home"); // 알림 후 홈 페이지로 이동
       } else {
         alert("아파트 정보 저장에 실패했습니다.");
       }

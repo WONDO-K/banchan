@@ -36,7 +36,7 @@ const KakaoCallback: React.FC = () => {
         localStorage.setItem('refreshToken', refreshToken);
 
         // 인증 후 홈으로 이동
-        navigate('/m/homeinfo');
+        navigate('/m/home');
       } catch (error) {
         console.error('카카오 로그인 실패:', error);
         alert('카카오 로그인에 실패하였습니다.')
