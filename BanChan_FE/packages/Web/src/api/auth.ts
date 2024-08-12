@@ -69,15 +69,20 @@ export const reissueToken = async () => {
 };
 
 // 로그아웃
-export const logout = async () => {
+export const logout = async (accessToken: string) => {
   try {
-    const response = await axios.post(`${BACKEND_URL}/api/auth/token/logout`, {}, { withCredentials: true });
+    const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/auth/token/logout`, {}, { 
+      headers: {
+        Authorization: `Bearer ${accessToken}`, // Authorization 헤더에 accessToken을 포함
+      },
+      withCredentials: true // 쿠키를 함께 전송 
+    });
 
     if (response.status !== 200) {
       throw new Error('Failed to logout');
     }
 
-    // 로그아웃 후 로컬 스토리지 등 클라이언트 측 상태 초기화
+    // 로그아웃 후 클라이언트 측 상태 초기화
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
   } catch (error) {
@@ -85,6 +90,7 @@ export const logout = async () => {
     throw error;
   }
 };
+
 
 // 내 정보 초기 설정
 export const setMyInfo = async (info: { name: string; phone: string }) => {

@@ -27,11 +27,17 @@ const notifications = [
     date: "2024.06.28",
     likes: 121,
   },
+  {
+    id: 4,
+    title: "단지 내 공사 관련 공지",
+    date: "2024.06.28",
+    likes: 121,
+  },
 ];
 
-const App: React.FC = () => {
+const NoticeList: React.FC = () => {
   const navigate = useNavigate();
-
+  
   const goToDetail = () => {
     navigate("/m/community/notice/detail");
   };
@@ -65,22 +71,12 @@ const App: React.FC = () => {
                 </div>
                 <div className="text-gray-500 text-sm">{item.date}</div>
               </div>
-              <div className="text-gray-500 text-sm flex items-center mt-2">
-                <i className="fas fa-thumbs-up mr-2"></i>
-                {item.likes}
-              </div>
             </div>
           ))}
         </div>
         <div className="flex flex-col justify-between mt-4">
-          <div className="flex space-x-2 justify-end">
-            <button className="bg-blue-100 text-blue-500 px-4 py-2 rounded-md">
-              작성일
-            </button>
-            <button className="bg-orange-100 text-orange-500 px-4 py-2 rounded-md">
-              추천순
-            </button>
-          </div>
+
+
           {/* 페이징처리 코드 알아서 넣으면 됨 !  */}
           <div className="flex justify-center items-center space-x-2">
             <button className="px-4 py-2 rounded-md">1</button>
@@ -95,4 +91,4 @@ const App: React.FC = () => {
   );
 };
 
-export default App;
+export default NoticeList;

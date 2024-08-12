@@ -5,6 +5,7 @@ import Nav from "../Nav";
 import NavItem from "../NavItem";
 import SmallButton from "../Buttons/SmallButton";
 import axios from "axios";
+import { useCookies } from "react-cookie";
 
 const ModifyButton = ({ handleModify }: { handleModify: () => void }) => {
   return (
@@ -54,6 +55,18 @@ const RejectButton = ({ handleReject }: { handleReject: () => void }) => {
   );
 };
 
+const DeleteButton = ({ handleDelete }: { handleDelete: () => void }) => {
+  return (
+    <SmallButton
+      title="삭제"
+      bgColor="bg-white"
+      txtColor="text-customRed"
+      borderColor="border-customRed"
+      onClick={handleDelete}
+    />
+  );
+};
+
 interface User {
   id: number;
   name: string;
@@ -74,6 +87,7 @@ const NavElements = () => {
 };
 
 const Manage: React.FC = () => {
+  const [cookies] = useCookies(["Token"]);
   const location = useLocation();
   const newUser: User | undefined = location.state?.user;
 
@@ -82,17 +96,44 @@ const Manage: React.FC = () => {
   const [editedUser, setEditedUser] = useState<User | null>(null);
 
   useEffect(() => {
+    const fetchUserDetails = async (user: User) => {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_BASE_URL}/api/admin/users/detail/${encodeURIComponent(user.name)}`,
+          {
+            headers: {
+              Authorization: `Bearer ${cookies.Token}`,
+            },
+          }
+        );
+        return { ...user, ...response.data };
+      } catch (error) {
+        console.error("Error fetching user details:", error);
+        return user; // fallback to basic user info if detailed fetch fails
+      }
+    };
+
     const fetchData = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/users`);
-        setUsers(response.data);
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_BASE_URL}/api/admin/users/list`,
+          {
+            headers: {
+              Authorization: `Bearer ${cookies.Token}`,
+            },
+          }
+        );
+        const usersWithDetails = await Promise.all(
+          response.data.map((user: User) => fetchUserDetails(user))
+        );
+        setUsers(usersWithDetails);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
 
     fetchData();
-  }, []);
+  }, [cookies.Token]);
 
   useEffect(() => {
     if (newUser) {
@@ -109,8 +150,11 @@ const Manage: React.FC = () => {
     if (editedUser) {
       try {
         const apiUrl = `${process.env.REACT_APP_API_BASE_URL}/api/admin/users/modify/${editedUser.id}`;
-        //api url 확인하기
-        await axios.put(apiUrl, editedUser);
+        await axios.put(apiUrl, editedUser, {
+          headers: {
+            Authorization: `Bearer ${cookies.Token}`,
+          },
+        });
         setUsers((prevUsers) =>
           prevUsers.map((user) =>
             user.id === editedUser.id ? editedUser : user
@@ -128,7 +172,11 @@ const Manage: React.FC = () => {
     try {
       const encodedUsername = encodeURIComponent(user.name);
       const apiUrl = `${process.env.REACT_APP_API_BASE_URL}/api/admin/users/approval/${encodedUsername}`;
-      await axios.post(apiUrl);
+      await axios.post(apiUrl, {}, {
+        headers: {
+          Authorization: `Bearer ${cookies.Token}`,
+        },
+      });
       setUsers((prevUsers) =>
         prevUsers.map((u) =>
           u.id === user.id ? { ...u, approved: true } : u
@@ -144,7 +192,11 @@ const Manage: React.FC = () => {
   const handleReject = async (user: User) => {
     try {
       const apiUrl = `${process.env.REACT_APP_API_BASE_URL}/api/admin/users/reject/${user.id}`;
-      await axios.post(apiUrl);
+      await axios.post(apiUrl, {}, {
+        headers: {
+          Authorization: `Bearer ${cookies.Token}`,
+        },
+      });
       setUsers((prevUsers) =>
         prevUsers.filter((u) => u.id !== user.id)
       );
@@ -155,6 +207,24 @@ const Manage: React.FC = () => {
     }
   };
 
+  const handleDelete = async (user: User) => {
+    try {
+      const apiUrl = `${process.env.REACT_APP_API_BASE_URL}/api/admin/users/revoke/${user.name}`;
+      await axios.delete(apiUrl, {
+        headers: {
+          Authorization: `Bearer ${cookies.Token}`,
+        },
+      });
+      setUsers((prevUsers) =>
+        prevUsers.filter((u) => u.id !== user.id)
+      );
+      alert("사용자가 삭제되었습니다.");
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      alert("사용자 삭제가 실패했습니다. 다시 시도해주세요.");
+    }
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     if (editedUser) {
@@ -162,7 +232,7 @@ const Manage: React.FC = () => {
     }
   };
 
-  const headers = ["번호", "이름", "연락처", "이메일", "신청일", "동/호수", "수정", "승인", "거절"];
+  const headers = ["번호", "이름", "연락처", "이메일", "신청일", "동/호수", "수정", "승인", "거절", "삭제"];
 
   const rows = users.map((user) =>
     editingId === user.id ? (
@@ -200,7 +270,8 @@ const Manage: React.FC = () => {
         />,
         <SaveButton handleSave={saveChanges} />,
         <ApproveButton handleApprove={() => handleApprove(user)} />,
-        <RejectButton handleReject={() => handleReject(user)} />
+        <RejectButton handleReject={() => handleReject(user)} />,
+        <DeleteButton handleDelete={() => handleDelete(user)} />,
       ]
     ) : (
       [
@@ -212,7 +283,8 @@ const Manage: React.FC = () => {
         user.address,
         <ModifyButton handleModify={() => startEditing(user)} />,
         user.approved ? "승인됨" : <ApproveButton handleApprove={() => handleApprove(user)} />,
-        <RejectButton handleReject={() => handleReject(user)} />
+        <RejectButton handleReject={() => handleReject(user)} />,
+        <DeleteButton handleDelete={() => handleDelete(user)} />,
       ]
     )
   );
@@ -221,7 +293,6 @@ const Manage: React.FC = () => {
     <>
       <NavElements />
       <div className="container mx-auto p-4 mt-3">
-        <div className="flex justify-end items-center mb-6 mr-6"></div>
         <Table headers={headers} data={rows} />
       </div>
     </>
