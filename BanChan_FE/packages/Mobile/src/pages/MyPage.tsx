@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom"; // useNavigate 추가
 import Header from "../components/Header";
 
 const HomeInfo: React.FC = () => {
   const [apartmentCode, setApartmentCode] = useState("");
   const [buildingNo, setBuildingNo] = useState("");
   const [unitNo, setUnitNo] = useState("");
+
+  const navigate = useNavigate(); // useNavigate 훅 초기화
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -21,7 +24,7 @@ const HomeInfo: React.FC = () => {
 
       if (response.status === 200) {
         alert("아파트 정보가 성공적으로 저장되었습니다.");
-        // 성공적으로 저장 후 필요한 행동을 여기서 처리 (예: 페이지 이동)
+        navigate("/m/home"); // 등록이 성공하면 /m/home 경로로 리디렉션
       } else {
         alert("아파트 정보 저장에 실패했습니다.");
       }
@@ -92,6 +95,7 @@ const HomeInfo: React.FC = () => {
             className="fixed bottom-0 left-0 right-0 w-full py-4 font-semibold text-white bg-blue-500 rounded-t-xl hover:bg-blue-600"
           >
             등록하기
+
           </button>
         </form>
       </div>
@@ -100,3 +104,4 @@ const HomeInfo: React.FC = () => {
 };
 
 export default HomeInfo;
+//버튼 누르면 home으로 이동 가능하게 수정

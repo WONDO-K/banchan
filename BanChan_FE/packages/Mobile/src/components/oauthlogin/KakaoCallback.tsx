@@ -29,7 +29,7 @@ const KakaoCallback: React.FC = () => {
         localStorage.setItem('refreshToken', refreshToken);
 
         // 인증 후 홈으로 이동
-        navigate('/m/home');
+        navigate('/m/homeinfo');
       } catch (error) {
         console.error('카카오 로그인 실패:', error);
         navigate('/m/FirstPage'); // 로그인 실패 시 로그인 페이지로 이동
