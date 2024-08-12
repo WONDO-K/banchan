@@ -32,6 +32,7 @@ const KakaoCallback: React.FC = () => {
         navigate('/m/homeinfo');
       } catch (error) {
         console.error('카카오 로그인 실패:', error);
+        alert('카카오 로그인에 실패하였습니다.')
         navigate('/m'); // 로그인 실패 시 로그인 페이지로 이동
       }
     };

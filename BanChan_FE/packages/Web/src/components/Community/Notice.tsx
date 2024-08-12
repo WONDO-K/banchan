@@ -9,7 +9,7 @@ import { getCommunityList } from "../../api/CommunityAPI";
 import { CommunityParamsType,CommunityListType,DataItem} from "../../Type";
 import { useEffect, useState } from "react";
 
-const headers = ["id", "title", "writer", "createdAt"];
+const headers = ["id", "title", "writer", "createdAt",'views'];
 
 const NavElements = () => {
   return (
@@ -44,6 +44,7 @@ const Notice: React.FC = () => {
         title: item.title,
         writer: item.username,
         createdAt: item.createdAt.replace("T", " ").slice(0, -7),
+        views: item.views
       }));
       setData(real_data);
     };
