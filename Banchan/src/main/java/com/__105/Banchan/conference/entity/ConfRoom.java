@@ -50,7 +50,7 @@ public class ConfRoom {
     private boolean isActive;
 
     // 회의 요약 내용을 저장합니다.
-    @Column(name = "conf_summury")
+    @Column(name = "conf_summury", columnDefinition = "TEXT")
     private String summury;
 
     @PrePersist

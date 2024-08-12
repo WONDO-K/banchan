@@ -1,8 +1,6 @@
 package com.__105.Banchan.conference.controller;
 
-import com.__105.Banchan.conference.dto.ConfRequest;
-import com.__105.Banchan.conference.dto.ConfRoomResponse;
-import com.__105.Banchan.conference.dto.DataResponse;
+import com.__105.Banchan.conference.dto.*;
 import com.__105.Banchan.conference.service.OpenViduService;
 import io.openvidu.java.client.*;
 import lombok.RequiredArgsConstructor;
@@ -118,5 +116,20 @@ public class OpenViduController {
         } catch (OpenViduJavaClientException | OpenViduHttpException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @GetMapping("/detail/{roomId}")
+    public ResponseEntity<?> detail(@PathVariable Long roomId,
+                                    @AuthenticationPrincipal UserDetails userDetails) {
+
+        ConfDetailResponse response = openViduService.getDetailRoom(roomId, userDetails.getUsername());
+        return ResponseEntity.ok().body(response);
+    }
+
+    @GetMapping("/get/roomName/{sessionId}")
+    public ResponseEntity<?> getRoomName(@PathVariable String sessionId) {
+
+        ConfInfoResponse roomInfo = openViduService.getRoomName(sessionId);
+        return ResponseEntity.ok().body(roomInfo);
     }
 }

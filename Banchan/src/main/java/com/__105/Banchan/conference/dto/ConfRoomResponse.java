@@ -20,4 +20,6 @@ public class ConfRoomResponse {
     private String session;
     private LocalDateTime createdAt;
     private boolean isActive;
+    // 요약본이 생성이 되었는지 유무
+    private boolean isSummaryComplete;
 }

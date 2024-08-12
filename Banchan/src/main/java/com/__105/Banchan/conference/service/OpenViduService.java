@@ -1,5 +1,7 @@
 package com.__105.Banchan.conference.service;
 
+import com.__105.Banchan.conference.dto.ConfDetailResponse;
+import com.__105.Banchan.conference.dto.ConfInfoResponse;
 import com.__105.Banchan.conference.dto.ConfRequest;
 import com.__105.Banchan.conference.dto.ConfRoomResponse;
 import com.__105.Banchan.conference.entity.ConfRoom;
@@ -108,6 +110,7 @@ public class OpenViduService {
             confRoomResponse.setStartDate(confRoom.getStartDate());
             confRoomResponse.setStartTime(confRoom.getStartTime());
             confRoomResponse.setActive(confRoom.isActive());
+            confRoomResponse.setSummaryComplete(confRoom.getSummury() != null);
             return confRoomResponse;
         }).collect(Collectors.toList());
     }
@@ -171,5 +174,37 @@ public class OpenViduService {
         room.saveSummury(text);
 
         confRoomRepository.save(room);
+    }
+
+    public ConfDetailResponse getDetailRoom(Long roomId, String username) {
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (user.getRole() != Role.ADMIN) {
+            throw new RuntimeException("not admin");
+        }
+
+        ConfRoom room = confRoomRepository.findById(roomId)
+                .orElseThrow(() -> new RuntimeException("Room not found"));
+
+        return ConfDetailResponse.builder()
+                .id(room.getId())
+                .roomName(room.getRoomName())
+                .startDate(room.getStartDate())
+                .startTime(room.getStartTime())
+                .summary(room.getSummury())
+                .build();
+    }
+
+    public ConfInfoResponse getRoomName(String sessionId) {
+
+        ConfRoom room = confRoomRepository.findBySession(sessionId)
+                .orElseThrow(() -> new RuntimeException("Session not found"));
+
+        return ConfInfoResponse.builder()
+                .id(room.getId())
+                .roomName(room.getRoomName())
+                .build();
     }
 }
