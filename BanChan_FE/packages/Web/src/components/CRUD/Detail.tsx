@@ -52,19 +52,6 @@ const Detail: React.FC = () => {
             ></div>
           </div>
           <div className="flex justify-end mt-[40px]">
-            {
-              boardType == 'notice' ? (
-
-                  <SmallButton
-                  title="추천"
-                  bgColor="bg-white"
-                  txtColor="text-customBlue"
-                  borderColor="border-customBlue"
-                  />
-              ):(
-                <></>
-              )
-            }
             <div className="mr-3"></div>
             {post.writer ? 
             (
