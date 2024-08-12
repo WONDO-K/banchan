@@ -19,6 +19,7 @@
     "react-router-dom": "^6.25.1",
     "react-swipeable": "^7.0.1",
     "shared": "^0.2.0",
+    "sweetalert2": "^11.12.4",
     "vite-plugin-pwa": "^0.20.1"
   },
   "devDependencies": {

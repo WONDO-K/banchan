@@ -14,19 +14,21 @@ const SessionJoinPage: React.FC = () => {
   const handleJoinSession = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const token = await createToken(sessionId);
+      const { token, roomName } = await createToken(sessionId); // roomName도 함께 받음
 
       console.log("Token created: ", token); // Token 확인 로그
 
       navigate(`/meetingPage/${sessionId}`, {
-        state: { token, sessionId },
+        state: { token, sessionId, roomName },
       });
     } catch (error) {
       console.error("Error joining session:", error);
     }
   };
 
-  const createToken = async (sessionId: string): Promise<string> => {
+  const createToken = async (
+    sessionId: string
+  ): Promise<{ token: string; roomName: string }> => {
     const response = await axios.post(
       `${baseUrl}/api/session/${sessionId}/token`,
       {},
@@ -42,7 +44,20 @@ const SessionJoinPage: React.FC = () => {
 
     const token = response.data;
 
-    return token;
+    const roomNameResponse = await axios.get(
+      `${baseUrl}/api/session/get/roomName/${sessionId}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${cookies.Token}`,
+        },
+      }
+    );
+
+    const roomName = roomNameResponse.data.roomName;
+    console.log(roomName);
+
+    return { token, roomName };
   };
 
   return (
