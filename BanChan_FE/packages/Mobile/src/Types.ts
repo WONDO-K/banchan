@@ -1,5 +1,4 @@
 import { ReactNode } from "react";
-import { Subscriber } from "openvidu-browser";
 export interface SidebarItemProps {
   icon: string;
   text: string;
@@ -39,41 +38,6 @@ export interface Items {
 
 // 이 밑은 type것
 
-export type IconName =
-  | "record_voice_over"
-  | "mic"
-  | "videocam"
-  | "radio_button_checked"
-  | "radio_button_unchecked"
-  | "headset_mic"
-  | "exit_to_app"
-  | "book"
-  | "group"
-  | "chat_bubble"
-  | "notifications";
-
-export interface ControlPanelsProps {
-  onChatToggle: () => void;
-  activeIcons: Record<IconName, boolean>;
-  handleButtonClick: (icon: IconName) => void;
-}
-
-export interface ThumbnailPlayerProps {
-  stream: MediaStream | null;
-  className?: string;
-}
-
-export interface SubscriberListProps {
-  subscribers: Subscriber[];
-}
-
-export interface LocationState {
-  token: string;
-  roomName: string;
-  date: string;
-  startTime: string;
-  active: boolean;
-}
 
 export interface LargeButtonProps {
   title: string;
@@ -99,16 +63,6 @@ export interface Post {
   createdAt: string;
   admin: boolean;
   writer : boolean;
-}
-
-export interface Meeting {
-  id: number;
-  roomName: string;
-  startDate: string;
-  startTime: string;
-  session: string | null;
-  createdAt: string | null;
-  active: boolean;
 }
 
 export interface VoteGetType {
