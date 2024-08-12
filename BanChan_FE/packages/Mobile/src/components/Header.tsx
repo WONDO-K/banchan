@@ -1,25 +1,56 @@
-import React, { useState } from "react";
+import React, { useState, ReactElement } from "react";
 import { useNavigate } from "react-router-dom";
 import { SidebarItemProps, HeaderProps } from "../Types";
 import { NavLink } from "react-router-dom";
 
-const SidebarItem: React.FC<SidebarItemProps> = ({ icon, text, to }) => {
+const SidebarItem: React.FC<SidebarItemProps> = ({
+  icon,
+  text,
+  to,
+  children,
+}) => {
+  const navigate = useNavigate();
+
+  const handleChildClick = (childTo: string) => {
+    navigate(childTo);
+  };
+
   return (
-    <NavLink
-      to={to}
-      className={({ isActive }) =>
-        `flex items-center w-full text-black focus:text-customBlue hover:text-customBlue hover:border-l-4 hover:border-customBlue ${
-          isActive ? "border-l-4 border-customBlue text-customBlue" : ""
-        }`
-      }
-    >
-      <span className="material-symbols-outlined text-[30px] pl-10">
-        {icon}
-      </span>
-      <div className="mt-[2.8px] ml-2 ">
-        <span className="ml-2 text-[18px]">{text}</span>
-      </div>
-    </NavLink>
+    <div>
+      <NavLink
+        to={to}
+        className={({ isActive }) =>
+          `flex items-center w-full text-black focus:text-customBlue hover:text-customBlue hover:border-l-4 hover:border-customBlue ${
+            isActive ? "border-l-4 border-customBlue text-customBlue" : ""
+          }`
+        }
+      >
+        <span className="material-symbols-outlined text-[30px] pl-10">
+          {icon}
+        </span>
+        <div className="mt-[2.8px] ml-2 ">
+          <span className="ml-2 text-[18px]">{text}</span>
+        </div>
+      </NavLink>
+      {children && (
+        <div className="ml-5 mt-6 space-y-4">
+          {React.Children.map(children, (child) => {
+            if (React.isValidElement(child)) {
+              const element = child as ReactElement<{
+                to: string;
+                onClick?: () => void;
+              }>;
+              if (element.props.to) {
+                return React.cloneElement(element, {
+                  onClick: () => handleChildClick(element.props.to),
+                });
+              }
+            }
+            return child;
+          })}
+        </div>
+      )}
+    </div>
   );
 };
 
@@ -81,20 +112,36 @@ const Header: React.FC<HeaderProps> = ({ children }) => {
           >
             <div className="mt-[100px]"></div>
             <SidebarItem icon="person" text="마이페이지" to="/m/mypage" />
-            <div className="mt-[50px]"></div>
+            <div className="mt-[40px]"></div>
 
-            <SidebarItem icon="forum" text="커뮤니티" to="/" />
-            <div className="mt-[50px]"></div>
+            <SidebarItem
+              icon="forum"
+              text="커뮤니티"
+              to="/m/community/notice/list"
+            >
+              <SidebarItem
+                icon="person_raised_hand"
+                text="건의함"
+                to="/m/community/ask/list"
+              />
+              <SidebarItem
+                icon="assignment"
+                text="게시판"
+                to="/m/community/board/list"
+              />
+            </SidebarItem>
+
+            <div className="mt-[40px]"></div>
 
             <SidebarItem icon="how_to_vote" text="투표" to="/m/voteList" />
-            <div className="mt-[50px]"></div>
+            <div className="mt-[40px]"></div>
 
             <SidebarItem
               icon="calendar_today"
               text="회의"
               to="/m/meetingList"
             />
-            <div className="mt-[150px]"></div>
+            <div className="mt-[100px]"></div>
             <SidebarItem icon="logout" text="로그아웃" to="/" />
           </div>
         )}

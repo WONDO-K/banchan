@@ -1,7 +1,9 @@
+import { ReactNode } from "react";
 export interface SidebarItemProps {
   icon: string;
   text: string;
   to: string;
+  children?: ReactNode;
 }
 
 export interface SwipeableContentProps {

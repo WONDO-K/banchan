@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useCookies } from "react-cookie";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_BASE_API_URL;
 const LoginPage = () => {
   const navigate = useNavigate();
   const [cookies, setCookie, removeCookie] = useCookies([
@@ -74,39 +74,38 @@ const LoginPage = () => {
         });
 
         setCookie("Token", response.data.accessToken);
-        
+
         setTimeout(async () => {
           const config = {
             headers: {
               Authorization: `Bearer ${response.data.accessToken}`, // Use response data directly here
             },
           };
-        
 
-        try {
-          const user_data = await axios.get(
-            `${API_URL}/api/user/myinfo`,
-            config
-          );
+          try {
+            const user_data = await axios.get(
+              `${API_URL}/api/user/myinfo`,
+              config
+            );
 
-          console.log(user_data.data);
-          alert(`${user_data.data.username}님 환영합니다!`);
-          if (rememberMe) {
-            setCookie("rememberUserId", user.userId, {
-              path: "/",
-              expires: new Date(Date.now() + 604800000),
-            });
-            setCookie("rememberUserPw", user.password, {
-              path: "/",
-              expires: new Date(Date.now() + 604800000),
-            });
+            console.log(user_data.data);
+            alert(`${user_data.data.username}님 환영합니다!`);
+            if (rememberMe) {
+              setCookie("rememberUserId", user.userId, {
+                path: "/",
+                expires: new Date(Date.now() + 604800000),
+              });
+              setCookie("rememberUserPw", user.password, {
+                path: "/",
+                expires: new Date(Date.now() + 604800000),
+              });
+            }
+            navigate("/home");
+          } catch (err) {
+            console.log(err);
+            alert("유저 정보를 들고오는데 실패하였습니다");
           }
-          navigate("/home");
-        } catch (err) {
-          console.log(err);
-          alert("유저 정보를 들고오는데 실패하였습니다");
-        }
-      },100);
+        }, 100);
       } catch (err) {
         console.log(err);
         alert("로그인에 실패하였습니다 아이디,비밀번호를 확인해주세요");
