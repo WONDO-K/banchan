@@ -46,8 +46,7 @@ const router: React.FC = () => {
         element={<KakaoCallback />}
       />{" "}
       {/* 콜백 경로 추가 */}
-      <Route path="/m/login" element={<FirstPage />} /> {/* 콜백 경로 추가 */}
-    </Routes>
+      </Routes>
   );
 };
 
