@@ -40,6 +40,17 @@ public enum ErrorCode {
     INVALID_BUILDING_NUMBER(400, "AP004", "잘못된 건물 번호입니다."),
     INVALID_UNIT_NUMBER(400, "AP005", "잘못된 유닛 번호입니다. 문자를 입력이 발생했는지 확인이 필요합니다."),
 
+    // SMS 인증 관련 에러 코드
+    OTP_GENERATION_FAILED(500, "OTP001", "OTP 생성 중 오류가 발생했습니다."),
+    INVALID_OTP(400, "OTP002", "잘못된 OTP입니다."),
+    OTP_EXPIRED(400, "OTP003", "OTP가 만료되었습니다."),
+    OTP_VALIDATION_FAILED(500, "OTP004", "OTP 검증 중 오류가 발생했습니다."),
+    MAX_OTP_ATTEMPTS_EXCEEDED(403, "OTP005", "최대 OTP 시도 횟수를 초과했습니다."),
+    OTP_NOT_FOUND(404, "OTP006", "해당 전화번호에 대한 OTP를 찾을 수 없습니다."),
+    OTP_ALREADY_USED(400, "OTP007", "이미 사용된 OTP입니다."),
+    PHONE_NUMBER_REQUIRED(400, "OTP008", "전화번호가 필요합니다."),
+    OTP_REQUIRED(400, "OTP009", "OTP가 필요합니다."),
+
     // 일반적인 에러 코드
     INTERNAL_SERVER_ERROR(500, "S001", "서버 내부 오류가 발생했습니다."),
     BAD_REQUEST(400, "S002", "잘못된 요청입니다."),

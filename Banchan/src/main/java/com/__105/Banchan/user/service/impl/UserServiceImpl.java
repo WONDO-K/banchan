@@ -1,10 +1,9 @@
 package com.__105.Banchan.user.service.impl;
 
-import com.__105.Banchan.auth.dto.SecurityUserDto;
+import com.__105.Banchan.auth.dto.security.SecurityUserDto;
 import com.__105.Banchan.auth.jwt.JwtAuthFilter;
 import com.__105.Banchan.common.exception.CustomException;
 import com.__105.Banchan.common.exception.ErrorCode;
-import com.__105.Banchan.user.dto.UserDto;
 import com.__105.Banchan.user.dto.UserResponseDto;
 import com.__105.Banchan.user.entity.Apartment;
 import com.__105.Banchan.user.entity.User;

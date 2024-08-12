@@ -1,4 +1,4 @@
-package com.__105.Banchan.auth.dto;
+package com.__105.Banchan.auth.dto.kakao;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
