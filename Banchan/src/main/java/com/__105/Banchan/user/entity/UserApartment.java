@@ -35,4 +35,8 @@ public class UserApartment {
 
     @Column(name = "is_granted", nullable = false)
     private boolean isGranted;
+
+    public void setIsGranted() {
+        this.isGranted = true;
+    }
 }

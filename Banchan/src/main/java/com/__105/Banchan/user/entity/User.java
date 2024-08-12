@@ -58,7 +58,6 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<UserApartment> userApartments = new HashSet<>();
 
-
     public void changePhone(String phone) {
         this.phone = phone;
     }

@@ -11,15 +11,26 @@ import com.__105.Banchan.notice.repository.NoticeSpecification;
 import com.__105.Banchan.user.entity.Apartment;
 import com.__105.Banchan.user.entity.User;
 import com.__105.Banchan.user.entity.UserApartment;
+import com.__105.Banchan.user.enums.Role;
 import com.__105.Banchan.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,6 +42,9 @@ public class NoticeServiceImpl implements NoticeService {
     private final UserRepository userRepository;
     private final NoticeCommentRepository noticeCommentRepository;
     private final NoticeImageRepository noticeImageRepository;
+
+    @Value("${file.upload-dir}")
+    private String fileUploadPath;
 
     @Override
     public void registerNotice(NoticePostRequest requestDto, String username) {
@@ -52,6 +66,36 @@ public class NoticeServiceImpl implements NoticeService {
                 .build();
 
         noticeRepository.save(notice);
+
+        List<MultipartFile> files = requestDto.getFiles();
+        if (files != null && !files.isEmpty()) {
+            for (MultipartFile file : files) {
+                String originalFilename = file.getOriginalFilename();
+                String storedFileName  = saveFile(file);
+
+                NoticeImage noticeImage = NoticeImage.builder()
+                        .notice(notice)
+                        .originalFilename(originalFilename)
+                        .storedFilename(storedFileName)
+                        .imageUrl(fileUploadPath + "/" + storedFileName)
+                        .build();
+
+                noticeImageRepository.save(noticeImage);
+            }
+        }
+    }
+
+    private String saveFile(MultipartFile file) {
+
+        try {
+            String originalFileName  = file.getOriginalFilename();
+            String storedFileName = UUID.randomUUID().toString() + "_" + originalFileName;
+            Path filePath = Paths.get(fileUploadPath, storedFileName);
+            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+            return storedFileName;
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to store file", e);
+        }
     }
 
     @Override
@@ -74,6 +118,18 @@ public class NoticeServiceImpl implements NoticeService {
         responseDto.setViews(notice.getViews());
         responseDto.setAdmin(isAdmin);
         responseDto.setWriter(notice.getUser().getUsername().equals(username));
+
+        List<NoticeImage> noticeFiles = noticeImageRepository.findAllByNotice(notice);
+        List<NoticeDetailResponse.FileDetail> fileDetails = noticeFiles.stream()
+                .map(file -> {
+                    NoticeDetailResponse.FileDetail fileDetail = new NoticeDetailResponse.FileDetail();
+                    fileDetail.setId(file.getId());
+                    fileDetail.setOriginalFilename(file.getOriginalFilename());
+                    return fileDetail;
+                })
+                .collect(Collectors.toList());
+
+        responseDto.setFiles(fileDetails);
 
         return responseDto;
     }
@@ -138,6 +194,10 @@ public class NoticeServiceImpl implements NoticeService {
         Specification<Notice> spec = Specification.where(null);
         spec = spec.and(NoticeSpecification.whereApt(aptCode));
 
+        if (user.getRole() != Role.ADMIN) {
+            spec = spec.and(NoticeSpecification.whereUser(user.getId()));
+        }
+
         if (requestDTO.getKeyword() != null && !requestDTO.getKeyword().isEmpty()) {
             spec = spec.and(NoticeSpecification.containsKeyword(requestDTO.getKeyword()));
         }
@@ -153,6 +213,7 @@ public class NoticeServiceImpl implements NoticeService {
                         .title(notice.getTitle())
                         .content(notice.getContent())
                         .username(notice.getUser().getUsername())
+                        .views(notice.getViews())
                         .createdAt(notice.getCreatedAt())
                         .build()
         ).collect(Collectors.toList());
@@ -226,6 +287,28 @@ public class NoticeServiceImpl implements NoticeService {
                 .build();
 
         noticeCommentRepository.save(noticeComment);
+    }
+
+    @Override
+    public NoticeImage getNoticeFileById(Long fileId) {
+        return noticeImageRepository.findById(fileId)
+                .orElseThrow(() -> new RuntimeException("not fount file"));
+    }
+
+    @Override
+    public Resource loadFileAsResource(NoticeImage noticeFile) {
+
+        try {
+            Path filePath = Paths.get(noticeFile.getImageUrl());
+            Resource resource = new UrlResource(filePath.toUri());
+            if (resource.exists()) {
+                return resource;
+            } else {
+                throw new RuntimeException("File not found " + noticeFile.getStoredFilename());
+            }
+        } catch (IOException ex) {
+            throw new RuntimeException("File not found " + noticeFile.getStoredFilename(), ex);
+        }
     }
 
 }

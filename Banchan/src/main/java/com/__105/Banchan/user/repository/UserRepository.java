@@ -23,4 +23,18 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "(SELECT ua1.apartment.code FROM UserApartment ua1 " +
             "WHERE ua1.user.id = :userId)")
     List<User> findUsersInSameApartment(@Param("userId") Long userId);
+
+    @Query("select u from User u " +
+            "where u.id in " +
+            "(select ua.user.id from UserApartment ua " +
+            "where ua.isGranted = false " +
+            "and ua.apartment.code = :code)")
+    List<User> findUsersInGrantedApartment(@Param("code") String code);
+
+    @Query("select u from User u " +
+            "where u.id in " +
+            "(select ua.user.id from UserApartment ua " +
+            "where ua.isGranted = true " +
+            "and ua.apartment.code = :code)")
+    List<User> findAllUserSameApt(@Param("code") String code);
 }

@@ -48,6 +48,8 @@ public class AskController {
             isAdmin = true;
         }
 
+        // 쿠키를 통해 최근 조회했던 게시글 조회수 고정하는 로직입니다!
+        // Cookie가 아무것도 없을 경우에 NPE 발생 가능성 존재하므로 null 예외 처리
         Cookie[] cookies = request.getCookies();
         if (cookies == null) {
             cookies = new Cookie[0];

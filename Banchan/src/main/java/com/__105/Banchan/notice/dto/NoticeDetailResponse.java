@@ -24,5 +24,13 @@ public class NoticeDetailResponse {
     private LocalDateTime createdAt;
     private boolean isAdmin;
     private boolean isWriter;
+    private List<FileDetail> files;
+
+    @Getter
+    @Setter
+    public static class FileDetail {
+        private Long id;
+        private String originalFilename;
+    }
 
 }

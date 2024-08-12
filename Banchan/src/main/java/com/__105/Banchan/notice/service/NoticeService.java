@@ -1,6 +1,8 @@
 package com.__105.Banchan.notice.service;
 
 import com.__105.Banchan.notice.dto.*;
+import com.__105.Banchan.notice.entitiy.NoticeImage;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -24,4 +26,8 @@ public interface NoticeService {
     void deleteNoticeComment(Long commentId, boolean isAdmin, String username);
 
     void updateNoticeComment(Long commentId, NoticeCommentRequest requestDto, String username, boolean isAdmin);
+
+    NoticeImage getNoticeFileById(Long fileId);
+
+    Resource loadFileAsResource(NoticeImage noticeFile);
 }

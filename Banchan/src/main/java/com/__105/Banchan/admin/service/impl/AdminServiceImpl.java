@@ -35,16 +35,25 @@ public class AdminServiceImpl implements AdminService {
     private final UserAptRepository userAptRepository;
     private final Logger log = LoggerFactory.getLogger(SecurityUtil.class);
 
-
-
     @Override
     @Transactional(readOnly = true)
-    public List<UserListDto> getUserList() {
+    public List<UserListDto> getUserList(String username) {
 
         User admin = userService.getMyInfo().toEntity();
         log.info("관리자 유저 리스트 조회");
 
-        return userRepository.findAll().stream()
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        String aptCode = user.getUserApartments()
+                .stream()
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Not Found User's Apt"))
+                .getApartment().getCode();
+
+        List<User> users = userRepository.findAllUserSameApt(aptCode);
+
+        return users.stream()
                 .map(UserListDto::from)
                 .collect(Collectors.toList());
     }
@@ -112,11 +121,34 @@ public class AdminServiceImpl implements AdminService {
                 throw new CustomException(ErrorCode.INVALID_PARAMETER);
         }
 
+        // 등록된 아파트에 대해서 권한 true 변경
+        user.getUserApartments().stream()
+                .findFirst()
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_APARTMENT_NOT_FOUND))
+                .setIsGranted();
+
         // Role이 설정된 후 저장
         userRepository.save(user);
         log.info("권한 부여가 완료되었습니다.");
     }
 
+    @Override
+    public List<UserListDto> getApprovalUserList(String username) {
 
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
+        String aptCode = user.getUserApartments()
+                .stream()
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Not Found User's Apt"))
+                .getApartment().getCode();
+
+        List<User> users = userRepository.findUsersInGrantedApartment(aptCode);
+        log.info("권환 미부여 회원 정보 조회");
+
+        return users.stream()
+                .map(UserListDto::from)
+                .collect(Collectors.toList());
+    }
 }

@@ -20,6 +20,13 @@ public class NoticeImage {
     @JoinColumn(name = "notice_id", nullable = false)
     private Notice notice;
 
+    @Column(name = "original_filename", nullable = false)
+    private String originalFilename;
+
+    @Column(name = "stored_filename", nullable = false)
+    private String storedFilename;
+
     @Column(name = "image_url", nullable = false)
     private String imageUrl;
+
 }

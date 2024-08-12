@@ -29,7 +29,8 @@ public class AdminController {
             log.warn("권한이 없습니다.");
             return ResponseEntity.badRequest().body("권한이 없습니다.");
         }
-        return ResponseEntity.ok().body(adminService.getUserList());
+        String username = userService.getMyInfo().getUsername();
+        return ResponseEntity.ok().body(adminService.getUserList(username));
     }
 
     @PostMapping("users/approval/{username}")
@@ -42,6 +43,18 @@ public class AdminController {
         }
         adminService.approvalSignUp(username);
         return ResponseEntity.ok().body("승인 완료");
+    }
+
+    @PostMapping("/users/approval")
+    @Operation(summary = "회원가입 대기 인원 목록", description = "회원가입 대기 인원 목록을 조회합니다.")
+    public ResponseEntity<?> getApprovalUserList() {
+        String currentUserRole = userService.getMyInfo().getRole();
+        if (!currentUserRole.equals(Role.ADMIN.toString())) {
+            log.warn("권한이 없습니다.");
+            return ResponseEntity.badRequest().body("권한이 없습니다.");
+        }
+        String username = userService.getMyInfo().getUsername();
+        return ResponseEntity.ok().body(adminService.getApprovalUserList(username));
     }
 
     @DeleteMapping("/users/revoke/{username}")
