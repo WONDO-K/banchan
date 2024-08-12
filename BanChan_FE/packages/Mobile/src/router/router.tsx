@@ -30,6 +30,7 @@ const router: React.FC = () => {
       <Route path="/m/meetingHome" element={<MeetingHome />} />
       <Route path="/m/homeInfo" element={<HomeInfo />} />
       <Route path="/m/login/oauth2/code/kakao" element={<KakaoCallback />} /> {/* 콜백 경로 추가 */}
+      <Route path="/m/login" element={<FirstPage />} /> {/* 콜백 경로 추가 */}
     </Routes>
   );
 };

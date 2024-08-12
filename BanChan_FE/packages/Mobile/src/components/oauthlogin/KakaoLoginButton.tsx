@@ -1,7 +1,7 @@
 import React from 'react';
 
 const KAKAO_CLIENT_ID = import.meta.env.VITE_KAKAO_CLIENT_ID;
-const KAKAO_REDIRECT_URI = import.meta.env.M_VITE_KAKAO_REDIRECT_URI;
+const KAKAO_REDIRECT_URI = import.meta.env.VITE_M_KAKAO_REDIRECT_URI;
 
 const KakaoLoginButton: React.FC = () => {
   const handleKakaoLogin = () => {

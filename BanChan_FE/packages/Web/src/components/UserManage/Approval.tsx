@@ -13,6 +13,7 @@ interface User {
   email: string;
   date: string;
   address: string;
+  status: string;
 }
 
 const approve = (handleApprove: () => void) => {
@@ -57,7 +58,7 @@ const Approval: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/users`);
+        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/admin/users/list`);
         setData(response.data);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -84,16 +85,18 @@ const Approval: React.FC = () => {
     alert("사용자가 거절되었습니다.");
   };
 
-  const rows = data.map(user => [
-    user.id,
-    user.name,
-    user.phone,
-    user.email,
-    user.date,
-    user.address,
-    approve(() => handleApprove(user)),
-    reject(() => handleReject(user.id)),
-  ]);
+  const rows = data
+    .filter(user => user.status === 'pending') ///대기상태인 사람만 보이게 어떻게 해봤는데 이거 이렇게 해도 되나, 서버에서는 이거 구분되어있는지 확인 필요
+    .map(user => [
+      user.id,
+      user.name,
+      user.phone,
+      user.email,
+      user.date,
+      user.address,
+      approve(() => handleApprove(user)),
+      reject(() => handleReject(user.id)),
+    ]);
 
   return (
     <>
