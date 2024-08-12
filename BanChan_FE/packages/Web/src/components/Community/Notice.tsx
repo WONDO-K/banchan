@@ -66,7 +66,6 @@ const Notice: React.FC = () => {
         <NavElements />
         <div className="container mx-auto p-4 mt-3">
           <div className="flex justify-end items-center mb-6 mr-6">
-            <Sorting />
             <LargeButton title="글작성" to="write" />
           </div>
           <TempTable headerProp={headers} data={data} />

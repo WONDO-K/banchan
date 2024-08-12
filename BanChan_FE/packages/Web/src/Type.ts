@@ -167,17 +167,29 @@ export interface VoteCreateFormProps {
 }
 
 export interface VoteItemForm {
-  option_id: number;
-  option_text: string;
-  vote_count: number;
+  optionId: number;
+  optionText: string;
+  voteCount: number;
 }
 
 export interface VoteFormProps {
   vote: {
-    question_id: number;
-    question_text: string;
-    option_results: VoteItemForm[];
+    questionId: number;
+    questionText: string;
+    optionResults: VoteItemForm[];
   };
+}
+interface VoteResultItems {
+    questionId: number;
+    questionText: string;
+    optionResults: VoteItemForm[];
+}
+export interface VoteResultType {
+
+  voteId : number;
+  content : string;
+  title : string;
+  questionResults: VoteResultItems[]
 }
 
 export interface SidebarItemProps {

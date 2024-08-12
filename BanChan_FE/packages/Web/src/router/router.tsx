@@ -18,7 +18,7 @@ import VoteCreatePage from "../components/VoteManage/VoteCreate";
 import VoteDetail from "../components/VoteManage/VoteDetail";
 import ActiveVote from "../components/VoteManage/ActiveVote";
 import FinishedVote from "../components/VoteManage/FinishedVote";
-import SendMessage from "../components/VoteManage/SendMessage";
+import SendMessage from "../components/SendMessage";
 import CommunityPage from "../pages/CommunityPage";
 import MeetingManagePage from "../pages/MeetingManagePage";
 import UserManagePage from "../pages/UserManagePage";

@@ -1,12 +1,10 @@
 import React, { useState , useEffect,useRef} from "react";
 import VoteForm from "./VoteForm";
 import BackButton from "../Buttons/BackButton";
-import { Link } from "react-router-dom";
 import { useCookies } from "react-cookie";
-import { getVoteDetail ,doVote} from "../../api/VoteAPI";
-import { useParams } from "react-router-dom";
+import { getVoteDetail ,doVote,DeleteVote} from "../../api/VoteAPI";
+import { Link,useParams,useNavigate } from "react-router-dom";
 import { VoteDetailType } from "../../Type";
-import { useNavigate } from "react-router-dom";
 
 const VoteDetail: React.FC = () => {
   const navigate = useNavigate();
@@ -32,7 +30,12 @@ const VoteDetail: React.FC = () => {
       fetchData();
   },[])
   
-
+  const handleDeleteVote = async () => {
+    await DeleteVote(cookies.Token,`api/votes/delete/${id}`).then(() => {
+      alert('투표가 삭제되었습니다.');
+      navigate('/vote/active')
+    })
+  }
   const handleVoteChange = (question_id: number, option_id: number) => {
     const scrollContainer = scrollContainerRef.current;
     if (scrollContainer) {
@@ -141,8 +144,9 @@ const VoteDetail: React.FC = () => {
           <button
             type="button"
             className=" w-32 h-10 mx-3 bg-customBlue text-white p-2 rounded-full"
+            onClick={handleDeleteVote}
             >
-            투표 정지
+            투표 삭제
           </button>
           <Link to="/message">
             <button

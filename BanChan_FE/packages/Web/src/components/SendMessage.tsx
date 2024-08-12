@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import BackButton from "../Buttons/BackButton";
+import BackButton from "./Buttons/BackButton";
 import { useNavigate } from "react-router-dom";
-import { sendSMS } from "../../api/SenaMassageAPI";
-import { MultiSelectDropdownProps } from "../../Type";
+import { sendSMS } from "../api/SenaMassageAPI";
+import { MultiSelectDropdownProps } from "../Type";
 
 const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
   options,
@@ -69,7 +69,7 @@ const SendMessage: React.FC = () => {
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
       navigate(-1);
       e.preventDefault();
-      const phone = ["010-2098-3066", "010-2859-4797"];
+      const phone = ["010-2098-3066"];
       phone.map((number) => {
         const after = number.replace(/-/gi, "");
         const messages = [
