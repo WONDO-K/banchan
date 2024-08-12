@@ -70,6 +70,7 @@ export const CreateVote = async (Token:string,API_REST:string,data:VoteCreateTyp
   }
 };
 
+// 투표 진행
 export const doVote = async (Token:string,API_REST:string,data:VoteType) => {
   try {
     console.log(data)
@@ -95,6 +96,7 @@ export const doVote = async (Token:string,API_REST:string,data:VoteType) => {
   }
 };
 
+// 투표 삭제
 export const DeleteVote = async (Token:string,API_REST:string) => {
   try {
     const response = await axios.delete(`${API_URL}/${API_REST}`, {

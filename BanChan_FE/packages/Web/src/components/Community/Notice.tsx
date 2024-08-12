@@ -1,4 +1,4 @@
-import React from "react";
+import React,{ useEffect, useState } from "react";
 import Pagination from "../Pagination";
 import LargeButton from "../Buttons/LargeButton";
 import NavItem from "../NavItem";
@@ -7,7 +7,6 @@ import { useCookies } from "react-cookie";
 import TempTable from "../TempTable";
 import { getCommunityList } from "../../api/CommunityAPI";
 import { CommunityParamsType,CommunityListType,DataItem} from "../../Type";
-import { useEffect, useState } from "react";
 
 const headers = ["id", "title", "writer", "createdAt",'views'];
 

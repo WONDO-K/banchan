@@ -15,7 +15,6 @@ import NoticeList from "../components/Community/Notice/NoticeList";
 import NoticeDetail from "../components/Community/Notice/NoticeDetail";
 import AskList from "../components/Community/Ask/AskList";
 import AskWrite from "../components/Community/Ask/AskWrite";
-import BoardList from "../components/Community/Board/BoardList";
 import KakaoCallback from "../components/oauthlogin/KakaoCallback"; // KakaoCallback 컴포넌트 임포트
 
 const router: React.FC = () => {
@@ -38,7 +37,6 @@ const router: React.FC = () => {
         <Route path="notice/detail" element={<NoticeDetail />} />
         <Route path="ask/list" element={<AskList />} />
         <Route path="ask/write" element={<AskWrite />} />
-        <Route path="board/list" element={<BoardList />} />
       </Route>
       <Route path="/m/homeInfo" element={<HomeInfo />} />
       <Route
