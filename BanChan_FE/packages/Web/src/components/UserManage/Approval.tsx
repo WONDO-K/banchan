@@ -86,7 +86,7 @@ const Approval: React.FC = () => {
   };
 
   const rows = data
-    .filter(user => user.status === 'pending') ///대기상태인 사람만 보이게 어떻게 해봤는데 이거 이렇게 해도 되나, 서버에서는 이거 구분되어있는지 확인 필요
+    .filter(user => user.status === 'pending')
     .map(user => [
       user.id,
       user.name,
