@@ -1,13 +1,14 @@
 import React, { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
+import { useCookies } from 'react-cookie';
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 const KakaoCallback: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-
+  const [cookies, setCookie] = useCookies(["Token"]);
   useEffect(() => {
     const fetchToken = async () => {
       try {
@@ -25,7 +26,8 @@ const KakaoCallback: React.FC = () => {
         const { accessToken, refreshToken } = response.data;
 
         // 토큰을 localStorage에 저장
-        localStorage.setItem('accessToken', accessToken);
+        setCookie('Token',accessToken)
+        localStorage.setItem('accessToken', cookies.Token);
         localStorage.setItem('refreshToken', refreshToken);
 
         // 인증 후 홈으로 이동

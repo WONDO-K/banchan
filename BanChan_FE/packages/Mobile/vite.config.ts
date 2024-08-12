@@ -13,5 +13,5 @@ export default defineConfig({
   build: {
     outDir: "dist",
   },
-  base: '/m/',  // 모든 경로에 /m을 붙이도록 설정
+  base: '/m',  // 모든 경로에 /m을 붙이도록 설정
 });
