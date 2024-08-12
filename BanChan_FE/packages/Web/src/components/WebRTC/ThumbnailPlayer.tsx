@@ -16,7 +16,7 @@ const ThumbnailPlayer: React.FC<ThumbnailPlayerProps> = ({
   return (
     <video
       ref={videoRef}
-      className={`w-[800px] h-[600px] bg-black ${className}`}
+      className={`w-[900px] h-[675px] bg-black object-contain ${className}`}
       autoPlay
       playsInline
       muted

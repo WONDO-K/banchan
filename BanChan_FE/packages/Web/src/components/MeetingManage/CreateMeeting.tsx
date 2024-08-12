@@ -2,9 +2,10 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useCookies } from "react-cookie";
+import Swal from "sweetalert2";
 
 const baseUrl = import.meta.env.VITE_BASE_API_URL;
-console.log("Base URL:", baseUrl);
+// console.log("Base URL:", baseUrl);
 
 const CreateMeeting: React.FC = () => {
   const [roomName, setRoomName] = useState("");
@@ -33,9 +34,21 @@ const CreateMeeting: React.FC = () => {
           },
         }
       );
-      navigate(`/meeting/reservedMeeting`);
+      Swal.fire({
+        title: "회의 생성 완료",
+        text: "회의가 성공적으로 생성되었1습니다.",
+        icon: "success",
+        confirmButtonText: "확인",
+      });
+      navigate(`/meeting/reservedMeeting`, { state: roomName });
     } catch (error) {
       console.error("Error creating meeting:", error);
+      Swal.fire({
+        title: "회의 생성 실패",
+        text: "회의 생성 중 오류가 발생했습니다.",
+        icon: "error",
+        confirmButtonText: "확인",
+      });
     }
   };
 

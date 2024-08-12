@@ -24,7 +24,8 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onSendMessage, messages }) => {
       <div className="mb-4 h-[500px] overflow-y-auto border border-gray-200 p-4 rounded">
         {messages.map((message) => (
           <div key={message.id} className="mb-2 p-2 bg-gray-100 rounded">
-            {message.text}
+            <div className="font-bold">{"동대표"}</div>
+            <div>{message.text}</div>
           </div>
         ))}
       </div>

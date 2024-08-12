@@ -5,6 +5,7 @@ import {
   Publisher,
   Subscriber,
   StreamEvent,
+  SignalEvent,
 } from "openvidu-browser";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -13,6 +14,7 @@ import ThumbnailPlayer from "../components/WebRTC/ThumbnailPlayer";
 import SubscriberList from "../components/WebRTC/SubscribeList";
 import { IconName, LocationState } from "../Type";
 import { useCookies } from "react-cookie";
+import ChatBox from "../components/WebRTC/ChatBox";
 
 const baseUrl = import.meta.env.VITE_BASE_API_URL;
 
@@ -24,7 +26,8 @@ const MeetingPage: React.FC = () => {
   const [session, setSession] = useState<Session | null>(null);
   const [publisher, setPublisher] = useState<Publisher | null>(null);
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
-  // const [isChatBoxVisible, setIsChatBoxVisible] = useState<boolean>(false);
+  const [isChatBoxVisible, setIsChatBoxVisible] = useState<boolean>(false);
+  const [messages, setMessages] = useState<{ id: number; text: string }[]>([]);
 
   const [thumbnailPlayer, setThumbnailPlayer] = useState<
     Publisher | Subscriber | null
@@ -80,6 +83,19 @@ const MeetingPage: React.FC = () => {
           videocam: publisher.stream.videoActive,
           mic: publisher.stream.audioActive,
         }));
+
+        mySession.on("signal:chat", (event: SignalEvent) => {
+          if (event.data) {
+            // event.data가 undefined가 아닌지 확인
+            const newMessage = {
+              id: Date.now(),
+              text: event.data,
+            };
+            setMessages((prevMessages) => [...prevMessages, newMessage]);
+          } else {
+            console.error("Received an undefined message");
+          }
+        });
 
         console.log("Publisher added to session");
       } catch (error: unknown) {
@@ -247,8 +263,17 @@ const MeetingPage: React.FC = () => {
     }
   };
 
+  const sendMessage = (message: string) => {
+    if (session) {
+      session.signal({
+        data: message,
+        type: "chat",
+      });
+    }
+  };
+
   const handleChatToggle = () => {
-    // setIsChatBoxVisible((prevState) => !prevState);
+    setIsChatBoxVisible((prevState) => !prevState);
   };
 
   const handleButtonClick = (icon: IconName) => {
@@ -310,23 +335,38 @@ const MeetingPage: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-customTextColor">
-      <h1 className="text-2xl mb-4">회의 ID: {roomName}</h1>
-      <div className="flex flex-col items-center">
-        <div className="flex justify-center items-center mb-4">
-          {thumbnailPlayer && (
-            <ThumbnailPlayer
-              stream={thumbnailPlayer.stream?.getMediaStream() ?? null}
-            />
-          )}
+    <div
+      className={`flex ${
+        isChatBoxVisible ? "justify-between" : "justify-center"
+      } items-center w-full h-screen bg-customTextColor`}
+    >
+      <div
+        className={`flex flex-col items-center justify-center ${
+          isChatBoxVisible ? "w-3/4" : "w-full"
+        }`}
+      >
+        {roomName && <h1 className="text-2xl mb-4">회의명: {roomName}</h1>}
+        <div className="flex flex-col items-center">
+          <div className="flex justify-center items-center mb-4">
+            {thumbnailPlayer && (
+              <ThumbnailPlayer
+                stream={thumbnailPlayer.stream?.getMediaStream() ?? null}
+              />
+            )}
+          </div>
+          <SubscriberList subscribers={subscribers} />
         </div>
-        <SubscriberList subscribers={subscribers} />
+        <ControlPanels
+          onChatToggle={handleChatToggle}
+          activeIcons={activeIcons}
+          handleButtonClick={handleButtonClick}
+        />
       </div>
-      <ControlPanels
-        onChatToggle={handleChatToggle}
-        activeIcons={activeIcons}
-        handleButtonClick={handleButtonClick}
-      />
+      {isChatBoxVisible && (
+        <div className="w-1/4 h-full">
+          <ChatBox messages={messages} onSendMessage={sendMessage} />
+        </div>
+      )}
     </div>
   );
 };
