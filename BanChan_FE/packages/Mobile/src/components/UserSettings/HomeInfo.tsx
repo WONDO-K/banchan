@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Header from "../Header";
+import { useCookies } from "react-cookie";
 
 const HomeInfo: React.FC = () => {
   const [apartmentCode, setApartmentCode] = useState("");
@@ -9,7 +10,7 @@ const HomeInfo: React.FC = () => {
   const [unitNo, setUnitNo] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-
+  const [cookies] = useCookies()
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setLoading(true); // 로딩 시작
@@ -21,7 +22,7 @@ const HomeInfo: React.FC = () => {
     };
 
     // 로컬 스토리지에서 accessToken 가져오기
-    const accessToken = localStorage.getItem("accessToken");
+    const accessToken = cookies.Token
 
     try {
       const response = await axios.post("/api/user/setmyapt", requestBody, {
