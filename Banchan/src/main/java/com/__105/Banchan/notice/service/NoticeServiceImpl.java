@@ -11,6 +11,7 @@ import com.__105.Banchan.notice.repository.NoticeSpecification;
 import com.__105.Banchan.user.entity.Apartment;
 import com.__105.Banchan.user.entity.User;
 import com.__105.Banchan.user.entity.UserApartment;
+import com.__105.Banchan.user.enums.Role;
 import com.__105.Banchan.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -192,6 +193,10 @@ public class NoticeServiceImpl implements NoticeService {
 
         Specification<Notice> spec = Specification.where(null);
         spec = spec.and(NoticeSpecification.whereApt(aptCode));
+
+        if (user.getRole() != Role.ADMIN) {
+            spec = spec.and(NoticeSpecification.whereUser(user.getId()));
+        }
 
         if (requestDTO.getKeyword() != null && !requestDTO.getKeyword().isEmpty()) {
             spec = spec.and(NoticeSpecification.containsKeyword(requestDTO.getKeyword()));

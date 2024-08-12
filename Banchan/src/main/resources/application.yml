@@ -14,7 +14,7 @@ spring:
         show_sql: true # SQL 쿼리를 콘솔에 출력
         format_sql: true # SQL 쿼리를 읽기 쉽게 포맷팅
     hibernate:
-      ddl-auto: update # 애플리케이션 시작 시 데이터베이스 스키마 자동 생성
+      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO} # 애플리케이션 시작 시 데이터베이스 스키마 자동 생성
     database-platform: org.hibernate.dialect.MySQLDialect # MySQL Dialect 설정
 
   profiles:
@@ -48,9 +48,19 @@ springdoc:
     path: /swagger-ui.html # Swagger UI 접근 경로 설정
 
 openvidu:
-  url: http://localhost:4443
-  secret: MY_SECRET
+  url: ${OPENVIDU_PUBLICURL}
+  secret: ${OPENVIDU_SECRET}
 
 file:
   upload-dir: /app/uploads
+  record:
+    path: /opt/openvidu/recordings/
 
+chatgpt:
+  api-key: ${GPT_APIKEY}
+  model: ${GPT_MODEL}
+  max-token: 8196
+  temperature: 0.0
+  top-p: 1.0
+  media-type: application/json; charset=UTF-8
+  url: https://api.openai.com/v1/chat/completions
