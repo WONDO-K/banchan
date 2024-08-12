@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 
-const API_URL = import.meta.env.M_VITE_API_URL; // 모바일 환경 변수 확인
+const API_URL = import.meta.env.VITE_M_API_URL; // 모바일 환경 변수 확인
 
 const apiClient = axios.create({
   baseURL: API_URL, // 환경 변수를 사용하여 API URL 설정
