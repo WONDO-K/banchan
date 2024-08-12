@@ -141,8 +141,8 @@ const Header: React.FC<HeaderProps> = ({ children }) => {
               text="회의"
               to="/m/meetingList"
             />
-            <div className="mt-[100px]"></div>
-            <SidebarItem icon="logout" text="로그아웃" to="/" />
+            <div className="mt-[150px]"></div>
+            <SidebarItem icon="logout" text="로그아웃" to="/m" />
           </div>
         )}
       </div>

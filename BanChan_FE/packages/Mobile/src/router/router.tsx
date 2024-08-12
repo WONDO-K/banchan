@@ -25,7 +25,6 @@ const router: React.FC = () => {
       <Route path="/m/home" element={<Home />} />
       <Route path="/m/homeInfo" element={<HomeInfo />} />
       <Route path="/m/mypage" element={<MyPage />} />
-      <Route path="/m/mypage" element={<MyPage />} />
       <Route path="/m/showVote" element={<ShowVote />} />
       <Route path="/m/voteList" element={<VoteList />} />
       <Route path="/m/voteResult" element={<VoteResult />} />
