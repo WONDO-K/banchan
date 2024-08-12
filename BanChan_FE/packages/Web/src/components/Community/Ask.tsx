@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import Sorting from "../Sorting";
 import Pagination from "../Pagination";
 import Nav from "../Nav";
 import NavItem from "../NavItem";
@@ -67,7 +66,6 @@ const Ask: React.FC = () => {
       <NavElements />
       <div className="container mx-auto p-4 mt-3">
         <div className="flex justify-end items-center mb-6 mr-6">
-          <Sorting />
         </div>
         <TempTable headerProp={headers} data={data} />
         <Pagination maxPage={maxPage} currentPage={crtPage} onPageChange={handlePageChange} />

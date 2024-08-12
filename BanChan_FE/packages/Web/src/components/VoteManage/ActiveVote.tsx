@@ -1,6 +1,5 @@
 import Nav from "../Nav";
 import NavItem from "../NavItem";
-import Sorting from "../Sorting";
 import TempTable from "../TempTable";
 import LargeButton from "../Buttons/LargeButton";
 import {DataItem} from "../../Type";
@@ -50,7 +49,6 @@ const ActiveVote = () => {
       <NavElements />
       <div className="container mx-auto p-4 mt-3">
         <div className="flex justify-end items-center mb-6 mr-6">
-          <Sorting />
           <LargeButton title="투표 생성" to="/vote/create"></LargeButton>
         </div>
         <TempTable headerProp={header} data={votes} />

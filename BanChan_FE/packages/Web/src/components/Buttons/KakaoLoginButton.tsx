@@ -2,7 +2,7 @@ import React from 'react';
 
 const KAKAO_CLIENT_ID = import.meta.env.VITE_KAKAO_CLIENT_ID;
 const KAKAO_REDIRECT_URI = import.meta.env.VITE_KAKAO_REDIRECT_URI;
-
+import kakao from '@assets/kakao_logo.png'
 const KakaoLoginButton: React.FC = () => {
   const handleKakaoLogin = () => {
     const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${KAKAO_CLIENT_ID}&redirect_uri=${KAKAO_REDIRECT_URI}`;
@@ -16,7 +16,7 @@ const KakaoLoginButton: React.FC = () => {
     >
       <div className="w-[200px] flex items-center justify-center">
         <img
-          src="../src/assets/kakao_logo.png"
+          src={kakao}
           alt="KakaoTalk"
           className="w-6 h-6 mr-2"
         />

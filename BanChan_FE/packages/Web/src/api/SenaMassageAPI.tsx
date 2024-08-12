@@ -2,8 +2,8 @@ import axios from 'axios';
 import CryptoJS from 'crypto-js';
 
 
-const API_KEY = 'NCSGEFIKKQVZ1SLH';
-const API_SECRET = 'HGII6YVTYNW7ZYD2KRTCAJPUOHUBXSJX';
+const API_KEY = import.meta.env.MESSAGE_API_KEY
+const API_SECRET = import.meta.env.MESSAGE_API_SECRET_KEY
 
 // ISO 8601 형식의 현재 시간 생성
 const getCurrentIsoDate = (): string => {

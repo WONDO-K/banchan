@@ -1,7 +1,6 @@
 import React from "react";
 import Pagination from "../Pagination";
 import LargeButton from "../Buttons/LargeButton";
-import Sorting from "../Sorting";
 import NavItem from "../NavItem";
 import Nav from "../Nav";
 import { useCookies } from "react-cookie";
@@ -66,7 +65,6 @@ const Notice: React.FC = () => {
         <NavElements />
         <div className="container mx-auto p-4 mt-3">
           <div className="flex justify-end items-center mb-6 mr-6">
-            <Sorting />
             <LargeButton title="글작성" to="write" />
           </div>
           <TempTable headerProp={headers} data={data} />
