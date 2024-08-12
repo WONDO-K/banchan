@@ -1,4 +1,4 @@
-package com.__105.Banchan.auth.dto;
+package com.__105.Banchan.auth.dto.login;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

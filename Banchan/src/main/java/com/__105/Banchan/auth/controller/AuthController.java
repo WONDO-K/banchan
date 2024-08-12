@@ -1,14 +1,20 @@
 package com.__105.Banchan.auth.controller;
 
 
-import com.__105.Banchan.auth.dto.KakaoUserInfoDto;
+import com.__105.Banchan.auth.dto.kakao.KakaoUserInfoDto;
 import com.__105.Banchan.auth.dto.StatusResponseDto;
-import com.__105.Banchan.auth.dto.TokenResponseStatus;
+import com.__105.Banchan.auth.dto.login.TokenResponseStatus;
 
 import com.__105.Banchan.auth.dto.login.OriginLoginRequestDto;
+import com.__105.Banchan.auth.dto.otp.OtpCreateResponseDto;
+import com.__105.Banchan.auth.dto.otp.OtpRequestDto;
+import com.__105.Banchan.auth.dto.otp.OtpResponseDto;
+import com.__105.Banchan.auth.dto.otp.OtpValidateRequestDto;
 import com.__105.Banchan.auth.jwt.GeneratedToken;
 import com.__105.Banchan.auth.service.AuthService;
 
+import com.__105.Banchan.common.exception.ErrorCode;
+import com.__105.Banchan.redis.service.OtpService;
 import com.__105.Banchan.user.repository.UserRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -34,6 +40,7 @@ import java.util.Map;
 public class AuthController {
 
     private final AuthService authService;
+    private final OtpService otpService;
     private final Logger log = LoggerFactory.getLogger(getClass());
     private final UserRepository userRepository;
 
@@ -123,5 +130,59 @@ public class AuthController {
             log.error("카카오 로그인 처리 중 오류 발생", e);
             return ResponseEntity.status(500).body(Map.of("error", "카카오 로그인 처리 중 오류 발생"));
         }
+    }
+
+    @PostMapping("/otp/generate")
+    @Operation(summary = "OTP 생성", description = "SMS 인증을 위한 OTP 생성")
+    public ResponseEntity<OtpCreateResponseDto> generateOtp(@RequestBody OtpRequestDto requestDto) {
+        OtpCreateResponseDto responseDto = otpService.generateOtp(requestDto);
+        return ResponseEntity.ok(responseDto);
+    }
+
+    @PostMapping("/otp/validate")
+    @Operation(summary = "OTP 검증", description = "사용자가 입력한 OTP를 검증")
+    public ResponseEntity<OtpResponseDto> validateOtp(@RequestBody OtpValidateRequestDto requestDto) {
+        String phoneNumber = requestDto.getPhoneNumber();
+        String otp = requestDto.getOtp();
+
+        log.info("OTP 검증 요청 수신: 전화번호 {}", phoneNumber);
+
+        // phoneNumber와 otp가 null이거나 빈 문자열일 경우, 오류 응답 반환
+        if (phoneNumber == null || phoneNumber.trim().isEmpty()) {
+            log.warn("OTP 검증 실패: 전화번호가 제공되지 않음");
+            return ResponseEntity.badRequest().body(new OtpResponseDto(false, ErrorCode.PHONE_NUMBER_REQUIRED.getMessage()));
+        }
+
+        if (otp == null || otp.trim().isEmpty()) {
+            log.warn("OTP 검증 실패: OTP가 제공되지 않음");
+            return ResponseEntity.badRequest().body(new OtpResponseDto(false, ErrorCode.OTP_REQUIRED.getMessage()));
+        }
+
+        // OTP 검증 처리
+        OtpResponseDto responseDto = otpService.validateOtp(requestDto, otp);
+
+        // 검증 결과에 따른 오류 응답 처리
+        if (!responseDto.isSuccess()) {
+            if (responseDto.getMessage().equals(ErrorCode.OTP_EXPIRED.getMessage())) {
+                log.info("OTP 검증 실패: 전화번호 {}의 OTP가 만료됨", phoneNumber);
+                return ResponseEntity.status(ErrorCode.OTP_EXPIRED.getStatus())
+                        .body(responseDto);
+            } else if (responseDto.getMessage().equals(ErrorCode.MAX_OTP_ATTEMPTS_EXCEEDED.getMessage())) {
+                log.info("OTP 검증 실패: 전화번호 {}의 시도 횟수 초과", phoneNumber);
+                return ResponseEntity.status(ErrorCode.MAX_OTP_ATTEMPTS_EXCEEDED.getStatus())
+                        .body(responseDto);
+            } else if (responseDto.getMessage().equals(ErrorCode.INVALID_OTP.getMessage())) {
+                log.info("OTP 검증 실패: 전화번호 {}에 대한 잘못된 OTP", phoneNumber);
+                return ResponseEntity.status(ErrorCode.INVALID_OTP.getStatus())
+                        .body(responseDto);
+            } else {
+                log.error("OTP 검증 중 알 수 없는 오류 발생: 전화번호 {}", phoneNumber);
+                return ResponseEntity.status(ErrorCode.INTERNAL_SERVER_ERROR.getStatus())
+                        .body(new OtpResponseDto(false, ErrorCode.INTERNAL_SERVER_ERROR.getMessage()));
+            }
+        }
+
+        log.info("OTP 검증 성공: 전화번호 {}", phoneNumber);
+        return ResponseEntity.ok(responseDto);
     }
 }

@@ -1,6 +1,6 @@
 package com.__105.Banchan.auth.jwt;
 
-import com.__105.Banchan.auth.dto.SecurityUserDto;
+import com.__105.Banchan.auth.dto.security.SecurityUserDto;
 import com.__105.Banchan.auth.exception.JwtException;
 import com.__105.Banchan.redis.service.TokenBlacklistService;
 import com.__105.Banchan.user.entity.User;

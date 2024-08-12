@@ -1,4 +1,4 @@
-package com.__105.Banchan.auth.dto;
+package com.__105.Banchan.auth.dto.security;
 
 import com.__105.Banchan.user.enums.Role;
 import lombok.Builder;
