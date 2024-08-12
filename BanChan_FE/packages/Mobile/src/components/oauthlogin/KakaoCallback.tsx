@@ -27,7 +27,9 @@ const KakaoCallback: React.FC = () => {
 
         // 토큰을 localStorage에 저장
         setCookie('Token',accessToken)
-        localStorage.setItem('accessToken', cookies.Token);
+        alert('카카오 로그인 성공')
+        alert(cookies.Token)
+        localStorage.setItem('accessToken', accessToken);
         localStorage.setItem('refreshToken', refreshToken);
 
         // 인증 후 홈으로 이동
