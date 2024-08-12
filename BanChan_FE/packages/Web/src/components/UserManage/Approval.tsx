@@ -13,6 +13,7 @@ interface User {
   email: string;
   date: string;
   address: string;
+  status: string;
 }
 
 const approve = (handleApprove: () => void) => {
@@ -57,7 +58,7 @@ const Approval: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/users`);
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/admin/users/list`);
         setData(response.data);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -70,7 +71,7 @@ const Approval: React.FC = () => {
   const handleApprove = async (user: User) => {
     try {
       const encodedUsername = encodeURIComponent(user.name);
-      const apiUrl = `${process.env.REACT_APP_API_BASE_URL}/api/admin/users/approval/${encodedUsername}`;
+      const apiUrl = `${import.meta.env.VITE_BACKEND_URL}/api/admin/users/approval/${encodedUsername}`;
       await axios.post(apiUrl);
       navigate("/userManage/manage", { state: { user } });
     } catch (error) {
@@ -84,16 +85,18 @@ const Approval: React.FC = () => {
     alert("사용자가 거절되었습니다.");
   };
 
-  const rows = data.map(user => [
-    user.id,
-    user.name,
-    user.phone,
-    user.email,
-    user.date,
-    user.address,
-    approve(() => handleApprove(user)),
-    reject(() => handleReject(user.id)),
-  ]);
+  const rows = data
+    .filter(user => user.status === 'pending')
+    .map(user => [
+      user.id,
+      user.name,
+      user.phone,
+      user.email,
+      user.date,
+      user.address,
+      approve(() => handleApprove(user)),
+      reject(() => handleReject(user.id)),
+    ]);
 
   return (
     <>

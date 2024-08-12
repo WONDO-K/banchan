@@ -8,7 +8,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 
 const items = [
   { icon: "person", text: "마이페이지", to: "/m/mypage" },
-  { icon: "forum", text: "커뮤니티", to: "" },
+  { icon: "forum", text: "커뮤니티", to: "/m/community" },
   { icon: "how_to_vote", text: "투표", to: "/m/voteList" },
   { icon: "calendar_today", text: "회의", to: "/m/meetingList" },
 ];

@@ -44,15 +44,36 @@ const FinishedMeeting: React.FC = () => {
     };
 
     fetchMeetings();
-  }, []);
+  }, [cookies.Token]);
 
-  const checkResult = () => {
+  const meetingSummary = async (meetingId: number) => {
+    try {
+      const response = await axios.post(
+        `${baseUrl}/api/speech/${meetingId}`,
+        {},
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${cookies.Token}`,
+          },
+        }
+      );
+      console.log(response.data);
+    } catch (error) {
+      console.error("fail to summary", error);
+    }
+  };
+
+  const checkResult = (meetingId: number) => {
     return (
       <SmallButton
         title="회의 내용보기"
         bgColor="bg-white"
         txtColor=""
         borderColor="border-customGreen"
+        onClick={() => {
+          meetingSummary(meetingId);
+        }}
       />
     );
   };
@@ -95,7 +116,7 @@ const FinishedMeeting: React.FC = () => {
       meeting.roomName,
       "관리자",
       `${meeting.id}` + "명",
-      checkResult(),
+      checkResult(meeting.id),
       deleteMeeting(meeting.id),
     ]);
 

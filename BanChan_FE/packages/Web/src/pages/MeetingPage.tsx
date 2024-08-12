@@ -20,14 +20,17 @@ const MeetingPage: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [cookies] = useCookies();
-  const { id: sessionId } = useParams<{ id: string }>(); // URL 파라미터를 가져옵니다
+  const { id: sessionId } = useParams<{ id: string }>();
   const [session, setSession] = useState<Session | null>(null);
   const [publisher, setPublisher] = useState<Publisher | null>(null);
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
   // const [isChatBoxVisible, setIsChatBoxVisible] = useState<boolean>(false);
+
   const [thumbnailPlayer, setThumbnailPlayer] = useState<
     Publisher | Subscriber | null
   >(null);
+  const [recordingId, setRecordingId] = useState<string | null>(null);
+  const [stopRecordingRequest, setStopRecordingRequest] = useState(false);
 
   const { token, roomName } = location.state as LocationState;
 
@@ -36,33 +39,27 @@ const MeetingPage: React.FC = () => {
     record_voice_over: false,
     mic: false,
     videocam: false,
-    screen_share: false,
     headset_mic: false,
     exit_to_app: false,
     book: false,
     group: false,
     chat_bubble: false,
     notifications: false,
+    radio_button_checked: false,
+    radio_button_unchecked: false,
   });
 
   const joinSession = useCallback(
     async (mySession: Session, token: string) => {
-      // const urlWithoutWSS = token.replace("wss://", "ws://");
       try {
         if (!token || !sessionId) {
           console.error("SessionId or token is undefined");
           return;
         }
 
-        console.log("Received sessionId:", sessionId);
-        console.log("Received token:", token);
-
-        // 세션에 연결
         await mySession.connect(token, { clientData: "Host" });
-        console.log("Successfully connected to session");
 
         const OV = new OpenVidu();
-
         const publisher = OV.initPublisher(undefined, {
           audioSource: undefined,
           videoSource: undefined,
@@ -74,7 +71,6 @@ const MeetingPage: React.FC = () => {
           mirror: false,
         });
 
-        // 퍼블리셔를 세션에 추가
         await mySession.publish(publisher);
         setPublisher(publisher);
         setThumbnailPlayer(publisher);
@@ -86,13 +82,14 @@ const MeetingPage: React.FC = () => {
         }));
 
         console.log("Publisher added to session");
-      } catch (error) {
-        if (error instanceof Error) {
-          console.error("Error connecting to session:", error);
+      } catch (error: unknown) {
+        console.error("Error connecting to session:", error);
 
-        if (error.message.includes("Token not valid")) {
+        if (
+          error instanceof Error &&
+          error.message.includes("Token not valid")
+        ) {
           console.log("Token expired, requesting a new token...");
-          // 새로운 토큰을 요청하는 로직을 추가합니다.
           try {
             const response = await axios.get(
               `${baseUrl}/api/session/newToken/${sessionId}`,
@@ -107,19 +104,14 @@ const MeetingPage: React.FC = () => {
             const newToken = response.data.token;
             console.log("Received new token:", newToken);
 
-            // 새 토큰으로 다시 연결 시도
             await joinSession(mySession, newToken);
           } catch (tokenError) {
-            if (tokenError instanceof Error) {
-
-            console.error("Error requesting new token:", tokenError.message);
-                      }
-               }
+            console.error("Error requesting new token:", error);
+          }
         }
       }
-    }
     },
-    [sessionId]
+    [sessionId, cookies.Token]
   );
 
   useEffect(() => {
@@ -131,11 +123,9 @@ const MeetingPage: React.FC = () => {
         }
 
         const OV = new OpenVidu();
-
         const mySession = OV.initSession();
 
         const streamCreatedHandler = (event: StreamEvent) => {
-          console.log("Stream created:", event.stream.streamId);
           if (!subscriberStreams.current.has(event.stream.streamId)) {
             subscriberStreams.current.add(event.stream.streamId);
             const subscriber = mySession.subscribe(event.stream, undefined);
@@ -143,12 +133,10 @@ const MeetingPage: React.FC = () => {
               ...prevSubscribers,
               subscriber,
             ]);
-            console.log("Number of subscribers: ", subscribers.length + 1);
           }
         };
 
         const streamDestroyedHandler = (event: StreamEvent) => {
-          console.log("Stream destroyed:", event.stream.streamId);
           subscriberStreams.current.delete(event.stream.streamId);
           setSubscribers((prevSubscribers) =>
             prevSubscribers.filter(
@@ -156,7 +144,6 @@ const MeetingPage: React.FC = () => {
                 subscriber.stream.streamId !== event.stream.streamId
             )
           );
-          console.log("Number of subscribers: ", subscribers.length);
         };
 
         mySession.on("streamCreated", streamCreatedHandler);
@@ -182,20 +169,81 @@ const MeetingPage: React.FC = () => {
     };
   }, [sessionId, token, joinSession]);
 
+  useEffect(() => {
+    if (recordingId) {
+      console.log("Recording ID has been updated:", recordingId);
+    }
+  }, [recordingId]);
+
+  useEffect(() => {
+    if (stopRecordingRequest && recordingId) {
+      console.log("Stopping recording with ID:", recordingId);
+      endRecording(sessionId!, recordingId);
+      setStopRecordingRequest(false); // 이 부분이 상태를 재조정
+      setActiveIcons((prevState) => ({
+        ...prevState,
+        radio_button_checked: false,
+        radio_button_unchecked: true,
+      }));
+    } else if (!stopRecordingRequest && recordingId === null) {
+      console.log("Recording has been stopped and ID reset");
+    }
+  }, [stopRecordingRequest, recordingId, sessionId]);
+
   const deleteSession = async (sessionId: string): Promise<void> => {
     try {
       await axios.delete(`${baseUrl}/api/session/delete/${sessionId}`, {
         headers: {
           "Content-Type": "application/json",
-          // Authorization: "Basic " + btoa("OPENVIDUAPP:YOUR_SECRET"),
           Authorization: `Bearer ${cookies.Token}`,
         },
       });
       navigate("/meeting/reservedMeeting");
-
-      console.log(`Session ${sessionId} deleted successfully`);
     } catch (error) {
       console.error(`Error deleting session ${sessionId}:`, error);
+    }
+  };
+
+  const startRecording = async (sessionId: string): Promise<void> => {
+    try {
+      const response = await axios.post(
+        `${baseUrl}/api/session/${sessionId}/startRecording`,
+        {},
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${cookies.Token}`,
+          },
+        }
+      );
+
+      const recordId = response.data.id;
+      console.log("Received Recording ID from API:", recordId);
+      setRecordingId(recordId); // recordingId 설정
+    } catch (error) {
+      console.error(`Error starting recording:`, error);
+    }
+  };
+
+  const endRecording = async (
+    sessionId: string,
+    recordId: string
+  ): Promise<void> => {
+    try {
+      await axios.post(
+        `${baseUrl}/api/session/${sessionId}/${recordId}/stopRecording`,
+        {},
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${cookies.Token}`,
+          },
+        }
+      );
+      setRecordingId(null);
+      console.log(`Recording stopped with ID: ${recordId}`);
+    } catch (error) {
+      console.error(`Error ending recording:`, error);
     }
   };
 
@@ -204,6 +252,7 @@ const MeetingPage: React.FC = () => {
   };
 
   const handleButtonClick = (icon: IconName) => {
+    console.log("handleButtonClick triggered with icon:", icon);
     if (icon === "chat_bubble") {
       handleChatToggle();
       setActiveIcons((prevState) => ({
@@ -211,8 +260,12 @@ const MeetingPage: React.FC = () => {
         [icon]: !prevState[icon],
       }));
     } else if (icon === "exit_to_app") {
-      if (session) session.disconnect();
-      deleteSession(sessionId!);
+      if (session) {
+        session.disconnect();
+        deleteSession(sessionId!);
+      } else {
+        console.error("Session is null or undefined.");
+      }
     } else if (icon === "videocam") {
       if (publisher) {
         const newPublishVideo = !activeIcons.videocam;
@@ -231,6 +284,23 @@ const MeetingPage: React.FC = () => {
           mic: newPublishMic,
         }));
       }
+    } else if (
+      icon === "radio_button_checked" &&
+      !activeIcons.radio_button_checked
+    ) {
+      console.log("Starting recording...");
+      startRecording(sessionId!);
+      setActiveIcons((prevState) => ({
+        ...prevState,
+        radio_button_checked: true,
+        radio_button_unchecked: false,
+      }));
+    } else if (
+      icon === "radio_button_unchecked" &&
+      activeIcons.radio_button_checked
+    ) {
+      console.log("Stopping recording...");
+      setStopRecordingRequest(true);
     } else {
       setActiveIcons((prevState) => ({
         ...prevState,

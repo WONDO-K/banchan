@@ -1,7 +1,36 @@
-import React from "react";
+import React, { useState } from "react";
+import axios from "axios";
 import Header from "../Header";
 
 const HomeInfo: React.FC = () => {
+  const [apartmentCode, setApartmentCode] = useState("");
+  const [buildingNo, setBuildingNo] = useState("");
+  const [unitNo, setUnitNo] = useState("");
+
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+
+    const requestBody = {
+      aptCode: apartmentCode,
+      buildingNo,
+      unitNo,
+    };
+
+    try {
+      const response = await axios.post("/api/user/setmyapt", requestBody);
+
+      if (response.status === 200) {
+        alert("아파트 정보가 성공적으로 저장되었습니다.");
+        // 성공적으로 저장 후 필요한 행동을 여기서 처리 (예: 페이지 이동)
+      } else {
+        alert("아파트 정보 저장에 실패했습니다.");
+      }
+    } catch (error) {
+      console.error("아파트 정보 저장 오류:", error);
+      alert("서버 오류가 발생했습니다. 나중에 다시 시도해주세요.");
+    }
+  };
+
   return (
     <div className="min-h-screen">
       <Header>세대 정보 기입</Header>
@@ -9,7 +38,7 @@ const HomeInfo: React.FC = () => {
         className="w-full max-w-md p-8 bg-white shadow-md rounded-md h-screen"
         style={{ height: "750px" }}
       >
-        <form className="mt-[20px]">
+        <form className="mt-[20px]" onSubmit={handleSubmit}>
           <div>
             <label
               htmlFor="apartmentCode"
@@ -23,6 +52,8 @@ const HomeInfo: React.FC = () => {
               type="text"
               required
               placeholder="아파트 코드를 입력하세요"
+              value={apartmentCode}
+              onChange={(e) => setApartmentCode(e.target.value)}
               className="block w-full px-4 text-[14px] py-4 mt-2 mb-10 border rounded-xl shadow-sm focus:ring focus:ring-opacity-50 focus:ring-blue-300 focus:outline-none"
             />
           </div>
@@ -35,54 +66,26 @@ const HomeInfo: React.FC = () => {
             </label>
             <div className="flex">
               <input
-                id="dongho"
-                name="dongho"
-                type="text"
+                id="buildingNo"
+                name="buildingNo"
+                type="number"
                 required
                 placeholder="동"
-                className="block w-[140px] px-4 text-[14px] py-4 mt-2 mr-4 mb-10 border rounded-xl shadow-sm focus:ring focus:ring-opacity-50 focus:ring-blue-300 focus:outline-none "
+                value={buildingNo}
+                onChange={(e) => setBuildingNo(e.target.value)}
+                className="block w-[140px] px-4 text-[14px] py-4 mt-2 mr-4 mb-10 border rounded-xl shadow-sm focus:ring focus:ring-opacity-50 focus:ring-blue-300 focus:outline-none"
               />
               <input
-                id="dongho"
-                name="dongho"
-                type="text"
+                id="unitNo"
+                name="unitNo"
+                type="number"
                 required
                 placeholder="호수"
+                value={unitNo}
+                onChange={(e) => setUnitNo(e.target.value)}
                 className="block w-[140px] px-4 text-[14px] py-4 mt-2 mb-10 border rounded-xl shadow-sm focus:ring focus:ring-opacity-50 focus:ring-blue-300 focus:outline-none"
               />
             </div>
-          </div>
-          <div>
-            <label
-              htmlFor="phoneNumber"
-              className="block text-sm font-medium text-gray-600"
-            >
-              이름
-            </label>
-            <input
-              id="phoneNumber"
-              name="phoneNumber"
-              type="text"
-              required
-              placeholder="이름 입력하세요"
-              className="block w-full text-[14px] px-4 py-4 mt-2 mb-10 border rounded-xl shadow-sm focus:ring focus:ring-opacity-50 focus:ring-blue-300 focus:outline-none"
-            />
-          </div>
-          <div>
-            <label
-              htmlFor="phoneNumber"
-              className="block text-sm font-medium text-gray-600"
-            >
-              휴대폰 번호
-            </label>
-            <input
-              id="phoneNumber"
-              name="phoneNumber"
-              type="text"
-              required
-              placeholder="휴대폰 번호를 입력하세요"
-              className="block w-full text-[14px] px-4 py-4 mt-2  border rounded-xl shadow-sm focus:ring focus:ring-opacity-50 focus:ring-blue-300 focus:outline-none"
-            />
           </div>
           <button
             type="submit"
