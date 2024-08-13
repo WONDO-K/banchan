@@ -10,7 +10,8 @@ const HomeInfo: React.FC = () => {
   const [unitNo, setUnitNo] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const [cookies] = useCookies()
+  const [cookies] = useCookies(["Token"]);
+
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setLoading(true); // 로딩 시작
@@ -21,8 +22,8 @@ const HomeInfo: React.FC = () => {
       unitNo,
     };
 
-    // 로컬 스토리지에서 accessToken 가져오기
-    const accessToken = cookies.Token
+    // 쿠키에서 accessToken 가져오기
+    const accessToken = cookies.Token;
 
     try {
       const response = await axios.post("/api/user/setmyapt", requestBody, {
@@ -34,7 +35,7 @@ const HomeInfo: React.FC = () => {
 
       if (response.status === 200) {
         alert("아파트 정보가 성공적으로 저장되었습니다.");
-        navigate("/home"); // 알림 후 홈 페이지로 이동
+        navigate("/m/home"); // 알림 후 홈 페이지로 이동
       } else {
         alert("아파트 정보 저장에 실패했습니다.");
       }

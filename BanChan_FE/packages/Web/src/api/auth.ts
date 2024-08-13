@@ -71,12 +71,12 @@ export const reissueToken = async () => {
 // 로그아웃
 export const logout = async (accessToken: string) => {
   try {
-    const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/auth/token/logout`, {}, { 
+    const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/token/logout`, {}, { 
       headers: {
         Authorization: `Bearer ${accessToken}`, // Authorization 헤더에 accessToken을 포함
       },
-      withCredentials: true // 쿠키를 함께 전송 
     });
+
 
     if (response.status !== 200) {
       throw new Error('Failed to logout');
@@ -151,3 +151,4 @@ export const updateUser = async (email: string, newPassword: string) => {
     throw error;
   }
 };
+

@@ -31,30 +31,6 @@ const SaveButton = ({ handleSave }: { handleSave: () => void }) => {
   );
 };
 
-const ApproveButton = ({ handleApprove }: { handleApprove: () => void }) => {
-  return (
-    <SmallButton
-      title="승인"
-      bgColor="bg-white"
-      txtColor="text-customBlue"
-      borderColor="border-customBlue"
-      onClick={handleApprove}
-    />
-  );
-};
-
-const RejectButton = ({ handleReject }: { handleReject: () => void }) => {
-  return (
-    <SmallButton
-      title="거절"
-      bgColor="bg-white"
-      txtColor="text-customRed"
-      borderColor="border-customRed"
-      onClick={handleReject}
-    />
-  );
-};
-
 const DeleteButton = ({ handleDelete }: { handleDelete: () => void }) => {
   return (
     <SmallButton
@@ -99,7 +75,7 @@ const Manage: React.FC = () => {
     const fetchUserDetails = async (user: User) => {
       try {
         const response = await axios.get(
-          `${process.env.REACT_APP_API_BASE_URL}/api/admin/users/detail/${encodeURIComponent(user.name)}`,
+          `${import.meta.env.VITE_BACKEND_URL}/api/admin/users/detail/${encodeURIComponent(user.name)}`,
           {
             headers: {
               Authorization: `Bearer ${cookies.Token}`,
@@ -116,7 +92,7 @@ const Manage: React.FC = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `${process.env.REACT_APP_API_BASE_URL}/api/admin/users/list`,
+          `${import.meta.env.VITE_BACKEND_URL}/api/admin/users/list`,
           {
             headers: {
               Authorization: `Bearer ${cookies.Token}`,
@@ -149,7 +125,7 @@ const Manage: React.FC = () => {
   const saveChanges = async () => {
     if (editedUser) {
       try {
-        const apiUrl = `${process.env.REACT_APP_API_BASE_URL}/api/admin/users/modify/${editedUser.id}`;
+        const apiUrl = `${import.meta.env.VITE_BACKEND_URL}/api/admin/users/modify/${editedUser.id}`;
         await axios.put(apiUrl, editedUser, {
           headers: {
             Authorization: `Bearer ${cookies.Token}`,
@@ -168,48 +144,9 @@ const Manage: React.FC = () => {
     }
   };
 
-  const handleApprove = async (user: User) => {
-    try {
-      const encodedUsername = encodeURIComponent(user.name);
-      const apiUrl = `${process.env.REACT_APP_API_BASE_URL}/api/admin/users/approval/${encodedUsername}`;
-      await axios.post(apiUrl, {}, {
-        headers: {
-          Authorization: `Bearer ${cookies.Token}`,
-        },
-      });
-      setUsers((prevUsers) =>
-        prevUsers.map((u) =>
-          u.id === user.id ? { ...u, approved: true } : u
-        )
-      );
-      alert("사용자가 승인되었습니다.");
-    } catch (error) {
-      console.error("Error approving user:", error);
-      alert("사용자 승인이 실패했습니다. 다시 시도해주세요.");
-    }
-  };
-
-  const handleReject = async (user: User) => {
-    try {
-      const apiUrl = `${process.env.REACT_APP_API_BASE_URL}/api/admin/users/reject/${user.id}`;
-      await axios.post(apiUrl, {}, {
-        headers: {
-          Authorization: `Bearer ${cookies.Token}`,
-        },
-      });
-      setUsers((prevUsers) =>
-        prevUsers.filter((u) => u.id !== user.id)
-      );
-      alert("사용자가 거절되었습니다.");
-    } catch (error) {
-      console.error("Error rejecting user:", error);
-      alert("사용자 거절이 실패했습니다. 다시 시도해주세요.");
-    }
-  };
-
   const handleDelete = async (user: User) => {
     try {
-      const apiUrl = `${process.env.REACT_APP_API_BASE_URL}/api/admin/users/revoke/${user.name}`;
+      const apiUrl = `${import.meta.env.VITE_BACKEND_URL}/api/admin/users/revoke/${encodeURIComponent(user.name)}`;
       await axios.delete(apiUrl, {
         headers: {
           Authorization: `Bearer ${cookies.Token}`,
@@ -232,7 +169,7 @@ const Manage: React.FC = () => {
     }
   };
 
-  const headers = ["번호", "이름", "연락처", "이메일", "신청일", "동/호수", "수정", "승인", "거절", "삭제"];
+  const headers = ["번호", "이름", "연락처", "이메일", "신청일", "동/호수", "수정", "삭제"];
 
   const rows = users.map((user) =>
     editingId === user.id ? (
@@ -269,8 +206,6 @@ const Manage: React.FC = () => {
           onChange={handleChange}
         />,
         <SaveButton handleSave={saveChanges} />,
-        <ApproveButton handleApprove={() => handleApprove(user)} />,
-        <RejectButton handleReject={() => handleReject(user)} />,
         <DeleteButton handleDelete={() => handleDelete(user)} />,
       ]
     ) : (
@@ -282,8 +217,6 @@ const Manage: React.FC = () => {
         user.date,
         user.address,
         <ModifyButton handleModify={() => startEditing(user)} />,
-        user.approved ? "승인됨" : <ApproveButton handleApprove={() => handleApprove(user)} />,
-        <RejectButton handleReject={() => handleReject(user)} />,
         <DeleteButton handleDelete={() => handleDelete(user)} />,
       ]
     )
